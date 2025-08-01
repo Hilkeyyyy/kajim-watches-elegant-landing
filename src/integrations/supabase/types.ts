@@ -14,16 +14,149 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          brand: string
+          case_size: string | null
+          category_id: string | null
+          created_at: string
+          description: string | null
+          features: string[] | null
+          id: string
+          image_url: string | null
+          images: string[] | null
+          material: string | null
+          model: string | null
+          movement: string | null
+          name: string
+          price: number
+          status: Database["public"]["Enums"]["product_status"] | null
+          stock_quantity: number | null
+          updated_at: string
+          warranty: string | null
+          water_resistance: string | null
+        }
+        Insert: {
+          brand: string
+          case_size?: string | null
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          features?: string[] | null
+          id?: string
+          image_url?: string | null
+          images?: string[] | null
+          material?: string | null
+          model?: string | null
+          movement?: string | null
+          name: string
+          price: number
+          status?: Database["public"]["Enums"]["product_status"] | null
+          stock_quantity?: number | null
+          updated_at?: string
+          warranty?: string | null
+          water_resistance?: string | null
+        }
+        Update: {
+          brand?: string
+          case_size?: string | null
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          features?: string[] | null
+          id?: string
+          image_url?: string | null
+          images?: string[] | null
+          material?: string | null
+          model?: string | null
+          movement?: string | null
+          name?: string
+          price?: number
+          status?: Database["public"]["Enums"]["product_status"] | null
+          stock_quantity?: number | null
+          updated_at?: string
+          warranty?: string | null
+          water_resistance?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          id: string
+          name: string | null
+          role: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          name?: string | null
+          role?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          name?: string | null
+          role?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin: {
+        Args: { user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      product_status: "active" | "inactive" | "out_of_stock"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +283,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      product_status: ["active", "inactive", "out_of_stock"],
+    },
   },
 } as const
