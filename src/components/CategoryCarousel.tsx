@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,6 +22,7 @@ interface CategoryCarouselProps {
 export const CategoryCarousel = ({ onCategorySelect, selectedCategoryId }: CategoryCarouselProps) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchCategories();
@@ -89,34 +91,33 @@ export const CategoryCarousel = ({ onCategorySelect, selectedCategoryId }: Categ
           >
             <CarouselContent className="-ml-2 md:-ml-4">
               {categories.map((category) => (
-                <CarouselItem key={category.id} className="pl-2 md:pl-4 basis-1/2 md:basis-1/3 lg:basis-1/4">
-                  <div className="p-1">
-                    <Button
-                      variant={selectedCategoryId === category.id ? "default" : "outline"}
-                      onClick={() => onCategorySelect(category.id)}
-                      className="w-full h-auto p-4 flex flex-col items-center space-y-2 font-inter"
-                    >
-                      {category.image_url && (
-                        <div className="w-16 h-16 rounded-full overflow-hidden bg-muted">
-                          <img
-                            src={category.image_url}
-                            alt={category.name}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                      )}
-                      
-                      <div className="text-center">
-                        <span className="font-medium text-sm">{category.name}</span>
-                        {category.is_featured && (
-                          <Badge variant="secondary" className="ml-2 text-xs">
-                            Destaque
-                          </Badge>
-                        )}
-                      </div>
-                    </Button>
-                  </div>
-                </CarouselItem>
+                 <CarouselItem key={category.id} className="pl-2 md:pl-4 basis-1/2 md:basis-1/3 lg:basis-1/4">
+                   <div className="p-1">
+                     <div
+                       onClick={() => navigate(`/categoria/${category.id}`)}
+                       className="w-full h-auto p-6 flex flex-col items-center space-y-4 font-inter cursor-pointer rounded-lg border hover:shadow-lg transition-all duration-300 bg-card hover:bg-accent"
+                     >
+                       {category.image_url && (
+                         <div className="w-20 h-20 rounded-lg overflow-hidden bg-muted">
+                           <img
+                             src={category.image_url}
+                             alt={category.name}
+                             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                           />
+                         </div>
+                       )}
+                       
+                       <div className="text-center space-y-2">
+                         <h3 className="font-medium text-sm text-foreground">{category.name}</h3>
+                         {category.is_featured && (
+                           <Badge variant="secondary" className="text-xs">
+                             Destaque
+                           </Badge>
+                         )}
+                       </div>
+                     </div>
+                   </div>
+                 </CarouselItem>
               ))}
             </CarouselContent>
             <CarouselPrevious className="hidden md:flex" />

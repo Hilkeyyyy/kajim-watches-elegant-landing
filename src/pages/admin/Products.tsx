@@ -8,6 +8,7 @@ import { Plus, Edit, Trash2, Eye } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { StockStatus } from '@/components/StockStatus';
 import { ProductBadge } from '@/components/ProductBadge';
+import { ProductModal } from '@/components/ProductModal';
 
 interface Product {
   id: string;
@@ -28,6 +29,8 @@ interface Product {
 const Products = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingProductId, setEditingProductId] = useState<string | undefined>();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -114,6 +117,22 @@ const Products = () => {
     }).format(price);
   };
 
+  const handleModalSuccess = () => {
+    fetchProducts();
+    setModalOpen(false);
+    setEditingProductId(undefined);
+  };
+
+  const openCreateModal = () => {
+    setEditingProductId(undefined);
+    setModalOpen(true);
+  };
+
+  const openEditModal = (productId: string) => {
+    setEditingProductId(productId);
+    setModalOpen(true);
+  };
+
   if (loading) {
     return (
       <div className="space-y-6">
@@ -149,7 +168,7 @@ const Products = () => {
             Gerencie os produtos da sua loja
           </p>
         </div>
-        <Button>
+        <Button onClick={openCreateModal}>
           <Plus className="mr-2 h-4 w-4" />
           Adicionar Produto
         </Button>
@@ -166,7 +185,7 @@ const Products = () => {
           {products.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-muted-foreground">Nenhum produto cadastrado ainda.</p>
-              <Button className="mt-4">
+              <Button className="mt-4" onClick={openCreateModal}>
                 <Plus className="mr-2 h-4 w-4" />
                 Adicionar primeiro produto
               </Button>
@@ -221,7 +240,7 @@ const Products = () => {
                         <Button variant="ghost" size="sm">
                           <Eye className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="sm">
+                        <Button variant="ghost" size="sm" onClick={() => openEditModal(product.id)}>
                           <Edit className="h-4 w-4" />
                         </Button>
                         <Button 
@@ -240,6 +259,13 @@ const Products = () => {
           )}
         </CardContent>
       </Card>
+
+      <ProductModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSuccess={handleModalSuccess}
+        productId={editingProductId}
+      />
     </div>
   );
 };

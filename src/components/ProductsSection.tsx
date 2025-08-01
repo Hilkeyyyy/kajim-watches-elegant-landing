@@ -21,17 +21,11 @@ interface Product {
 
 const ProductsSection = () => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchProducts();
   }, []);
-
-  useEffect(() => {
-    filterProducts();
-  }, [products, selectedCategoryId]);
 
   const fetchProducts = async () => {
     try {
@@ -52,16 +46,8 @@ const ProductsSection = () => {
     }
   };
 
-  const filterProducts = () => {
-    if (!selectedCategoryId) {
-      setFilteredProducts(products);
-    } else {
-      setFilteredProducts(products.filter(product => product.category_id === selectedCategoryId));
-    }
-  };
-
   const handleCategorySelect = (categoryId: string | null) => {
-    setSelectedCategoryId(categoryId);
+    // Esta função não faz mais nada aqui, pois o CategoryCarousel agora navega diretamente
   };
 
   if (loading) {
@@ -79,7 +65,7 @@ const ProductsSection = () => {
       {/* Category Carousel */}
       <CategoryCarousel 
         onCategorySelect={handleCategorySelect}
-        selectedCategoryId={selectedCategoryId}
+        selectedCategoryId={null}
       />
 
       {/* Products Section */}
@@ -88,20 +74,17 @@ const ProductsSection = () => {
           {/* Section Title */}
           <div className="text-center mb-16">
             <h2 className="font-playfair text-3xl md:text-4xl font-bold text-primary mb-4">
-              {selectedCategoryId ? 'Produtos Filtrados' : 'Coleção Premium'}
+              Coleção Premium
             </h2>
             <p className="font-inter text-muted-foreground text-lg font-light">
-              {selectedCategoryId 
-                ? `${filteredProducts.length} produto(s) encontrado(s)`
-                : 'Descobra nossa seleção exclusiva'
-              }
+              Descobra nossa seleção exclusiva
             </p>
           </div>
 
           {/* Products Grid */}
-          {filteredProducts.length > 0 ? (
+          {products.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredProducts.map((product, index) => (
+              {products.map((product, index) => (
                 <div
                   key={product.id}
                   className="animate-fade-in"
@@ -129,7 +112,7 @@ const ProductsSection = () => {
           ) : (
             <div className="text-center py-16">
               <p className="font-inter text-muted-foreground text-lg">
-                Nenhum produto encontrado nesta categoria.
+                Nenhum produto disponível no momento.
               </p>
             </div>
           )}
