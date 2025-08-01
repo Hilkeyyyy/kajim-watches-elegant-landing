@@ -1,14 +1,21 @@
 import React, { useState, useCallback } from "react";
-import { Search, ShoppingCart, Heart, Menu, X, User } from "lucide-react";
+import { Search, ShoppingCart, Heart, Menu, X, User, LogIn, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useOptimizedCart } from "@/hooks/useOptimizedCart";
 import { useOptimizedFavorites } from "@/hooks/useOptimizedFavorites";
+import { useAuth } from "@/contexts/AuthContext";
 import { CartSheet } from "@/components/CartSheet";
 import { IconBadge } from "@/components/IconBadge";
-import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "@/contexts/AppContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Header = React.memo(() => {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -16,6 +23,7 @@ const Header = React.memo(() => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { getTotalItems } = useOptimizedCart();
   const { getFavoritesCount } = useOptimizedFavorites();
+  const { user, signOut, isAdmin } = useAuth();
   const { isLoading } = useApp();
   const navigate = useNavigate();
   
@@ -24,7 +32,6 @@ const Header = React.memo(() => {
 
   const handleSearch = useCallback((e: React.FormEvent) => {
     e.preventDefault();
-    // Implement search functionality here
     console.log("Searching for:", searchQuery);
   }, [searchQuery]);
 
@@ -32,6 +39,21 @@ const Header = React.memo(() => {
   const handleCartClose = useCallback(() => setIsCartOpen(false), []);
   const handleFavoritesClick = useCallback(() => navigate("/favoritos"), [navigate]);
   const toggleMobileMenu = useCallback(() => setIsMobileMenuOpen(prev => !prev), []);
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
+
+  const handleAuthClick = () => {
+    navigate("/auth");
+    setIsMobileMenuOpen(false);
+  };
+
+  const handleAdminClick = () => {
+    navigate("/admin");
+    setIsMobileMenuOpen(false);
+  };
 
   return (
     <>
@@ -73,13 +95,41 @@ const Header = React.memo(() => {
                 Produtos salvos
               </Button>
               
-              <Button
-                variant="ghost"
-                className="font-medium hover:text-primary transition-colors"
-              >
-                <User className="w-4 h-4 mr-2" />
-                Login
-              </Button>
+              {/* User Menu */}
+              {user ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost">
+                      <User className="w-4 h-4 mr-2" />
+                      Conta
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem disabled>
+                      {user.email}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    {isAdmin && (
+                      <>
+                        <DropdownMenuItem onClick={handleAdminClick}>
+                          <Settings className="mr-2 h-4 w-4" />
+                          Painel Admin
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                      </>
+                    )}
+                    <DropdownMenuItem onClick={handleSignOut}>
+                      <LogIn className="mr-2 h-4 w-4" />
+                      Sair
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button variant="ghost" onClick={handleAuthClick}>
+                  <User className="w-4 h-4 mr-2" />
+                  Login
+                </Button>
+              )}
             </nav>
 
             {/* Right side - Search */}
@@ -150,15 +200,42 @@ const Header = React.memo(() => {
                     <Heart className="w-4 h-4 mr-2" />
                     Produtos salvos ({favoritesCount})
                   </Button>
-                  
-                  <Button
-                    variant="ghost"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="w-full justify-start"
-                  >
-                    <User className="w-4 h-4 mr-2" />
-                    Login
-                  </Button>
+
+                  {/* Mobile User Menu */}
+                  {user ? (
+                    <>
+                      <div className="px-4 py-2 border-t border-b">
+                        <p className="text-sm font-medium">{user.email}</p>
+                      </div>
+                      {isAdmin && (
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start"
+                          onClick={handleAdminClick}
+                        >
+                          <Settings className="mr-2 h-4 w-4" />
+                          Painel Admin
+                        </Button>
+                      )}
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start"
+                        onClick={handleSignOut}
+                      >
+                        <LogIn className="mr-2 h-4 w-4" />
+                        Sair
+                      </Button>
+                    </>
+                  ) : (
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start"
+                      onClick={handleAuthClick}
+                    >
+                      <LogIn className="mr-2 h-4 w-4" />
+                      Entrar / Cadastrar
+                    </Button>
+                  )}
                   
                   <Button
                     variant="outline"
