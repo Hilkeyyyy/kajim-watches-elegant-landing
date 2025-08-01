@@ -6,9 +6,13 @@ import { Separator } from "@/components/ui/separator";
 import { ProductImageGallery } from "@/components/ProductImageGallery";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { AddToCartButton } from "@/components/AddToCartButton";
-import { getProductById } from "@/data/products";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { useToast } from "@/hooks/use-toast";
 import { useOptimizedCart } from "@/hooks/useOptimizedCart";
+import { supabase } from "@/integrations/supabase/client";
+import { convertSupabaseToProduct } from "@/types/supabase-product";
+import { Product } from "@/types/product";
+import { useEffect, useState } from "react";
 import Header from "@/components/Header";
 
 const ProductDetail = () => {
@@ -16,18 +20,66 @@ const ProductDetail = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { addToCart } = useOptimizedCart();
-  
-  const product = id ? getProductById(id) : null;
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!id) {
+      setLoading(false);
+      return;
+    }
+
+    const fetchProduct = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('id', id)
+          .eq('is_visible', true)
+          .single();
+
+        if (error) {
+          console.error('Error fetching product:', error);
+          setProduct(null);
+        } else if (data) {
+          setProduct(convertSupabaseToProduct(data));
+        } else {
+          setProduct(null);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        setProduct(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="pt-20 flex items-center justify-center min-h-[50vh]">
+          <LoadingSpinner />
+        </div>
+      </div>
+    );
+  }
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-playfair mb-4">Produto não encontrado</h1>
-          <Button onClick={() => navigate("/")} variant="outline">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Voltar à página inicial
-          </Button>
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="pt-20 flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-playfair mb-4">Produto não encontrado</h1>
+            <Button onClick={() => navigate("/")} variant="outline">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Voltar à página inicial
+            </Button>
+          </div>
         </div>
       </div>
     );
