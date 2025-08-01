@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo, memo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,11 +6,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { X, Plus, ChevronDown, ChevronRight } from "lucide-react";
+import { X, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { MultipleImageUpload } from "@/components/MultipleImageUpload";
+import { CollapsibleSection } from "@/components/CollapsibleSection";
 
 interface ProductModalProps {
   isOpen: boolean;
@@ -119,17 +119,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
   const [newSpecialFeature, setNewSpecialFeature] = useState('');
   const { toast } = useToast();
 
-  useEffect(() => {
-    if (isOpen) {
-      if (productId) {
-        fetchProduct();
-      } else {
-        resetForm();
-      }
-    }
-  }, [isOpen, productId]);
-
-  const fetchProduct = async () => {
+  const fetchProduct = useCallback(async () => {
     if (!productId) return;
     
     try {
@@ -235,9 +225,9 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
         variant: "destructive"
       });
     }
-  };
+  }, [productId, toast]);
 
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     setFormData({
       name: '',
       brand: '',
@@ -314,7 +304,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
     setNewTag('');
     setNewComplication('');
     setNewSpecialFeature('');
-  };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -430,14 +420,14 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
     }
   };
 
-  const toggleSection = (section: keyof typeof expandedSections) => {
+  const toggleSection = useCallback((section: keyof typeof expandedSections) => {
     setExpandedSections(prev => ({
       ...prev,
       [section]: !prev[section]
     }));
-  };
+  }, []);
 
-  const addItem = (field: string, value: string, setter: (value: string) => void) => {
+  const addItem = useCallback((field: string, value: string, setter: (value: string) => void) => {
     const currentArray = formData[field as keyof typeof formData] as string[];
     if (value.trim() && Array.isArray(currentArray) && !currentArray.includes(value.trim())) {
       setFormData(prev => ({
@@ -446,44 +436,66 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
       }));
       setter('');
     }
-  };
+  }, [formData]);
 
-  const removeItem = (field: string, index: number) => {
+  const removeItem = useCallback((field: string, index: number) => {
     setFormData(prev => ({
       ...prev,
       [field]: (prev[field as keyof typeof formData] as string[]).filter((_, i) => i !== index)
     }));
-  };
+  }, []);
 
-  const addFeature = () => addItem('features', newFeature, setNewFeature);
-  const addBadge = () => addItem('badges', newBadge, setNewBadge);
-  const addTag = () => addItem('custom_tags', newTag, setNewTag);
-  const addComplication = () => addItem('complications', newComplication, setNewComplication);
-  const addSpecialFeature = () => addItem('special_features', newSpecialFeature, setNewSpecialFeature);
+  const addFeature = useCallback(() => addItem('features', newFeature, setNewFeature), [addItem, newFeature]);
+  const addBadge = useCallback(() => addItem('badges', newBadge, setNewBadge), [addItem, newBadge]);
+  const addTag = useCallback(() => addItem('custom_tags', newTag, setNewTag), [addItem, newTag]);
+  const addComplication = useCallback(() => addItem('complications', newComplication, setNewComplication), [addItem, newComplication]);
+  const addSpecialFeature = useCallback(() => addItem('special_features', newSpecialFeature, setNewSpecialFeature), [addItem, newSpecialFeature]);
 
-  const removeFeature = (index: number) => removeItem('features', index);
-  const removeBadge = (index: number) => removeItem('badges', index);
-  const removeTag = (index: number) => removeItem('custom_tags', index);
-  const removeComplication = (index: number) => removeItem('complications', index);
-  const removeSpecialFeature = (index: number) => removeItem('special_features', index);
+  const removeFeature = useCallback((index: number) => removeItem('features', index), [removeItem]);
+  const removeBadge = useCallback((index: number) => removeItem('badges', index), [removeItem]);
+  const removeTag = useCallback((index: number) => removeItem('custom_tags', index), [removeItem]);
+  const removeComplication = useCallback((index: number) => removeItem('complications', index), [removeItem]);
+  const removeSpecialFeature = useCallback((index: number) => removeItem('special_features', index), [removeItem]);
 
-  const CollapsibleSection = ({ title, section, children }: { 
-    title: string; 
-    section: keyof typeof expandedSections; 
-    children: React.ReactNode;
-  }) => (
-    <Collapsible open={expandedSections[section]} onOpenChange={() => toggleSection(section)}>
-      <CollapsibleTrigger asChild>
-        <Button variant="ghost" className="flex items-center justify-between w-full p-4 text-left">
-          <h3 className="text-lg font-semibold">{title}</h3>
-          {expandedSections[section] ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-        </Button>
-      </CollapsibleTrigger>
-      <CollapsibleContent className="px-4 pb-4">
-        {children}
-      </CollapsibleContent>
-    </Collapsible>
-  );
+  // Memoized handlers for optimized form updates
+  const updateFormField = useCallback((field: string, value: string | boolean) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  }, []);
+
+  // Memoized input change handlers
+  const inputHandlers = useMemo(() => {
+    const handlers: Record<string, (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void> = {};
+    
+    const fieldNames = [
+      'name', 'brand', 'model', 'price', 'description', 'collection', 'reference_number',
+      'limited_edition', 'production_year', 'movement', 'jewels', 'frequency', 'amplitude',
+      'beat_error', 'power_reserve', 'calendar_type', 'timezone_display', 'chronograph_type',
+      'subdials', 'case_size', 'material', 'thickness', 'weight', 'case_back', 'crown_type',
+      'pushers', 'bezel_type', 'lug_width', 'dial_color', 'hands_type', 'markers_type',
+      'glass_type', 'date_display', 'lume_type', 'luminosity', 'strap_material',
+      'bracelet_type', 'clasp_type', 'buckle_type', 'water_resistance', 'shock_resistance',
+      'anti_magnetic', 'operating_temperature', 'altitude_resistance', 'pressure_resistance',
+      'vibration_resistance', 'watch_type', 'certification', 'warranty', 'country_origin',
+      'stock_quantity'
+    ];
+
+    fieldNames.forEach(field => {
+      handlers[field] = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => 
+        updateFormField(field, e.target.value);
+    });
+
+    return handlers;
+  }, [updateFormField]);
+
+  useEffect(() => {
+    if (isOpen) {
+      if (productId) {
+        fetchProduct();
+      } else {
+        resetForm();
+      }
+    }
+  }, [isOpen, productId, fetchProduct, resetForm]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -496,14 +508,19 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Informações Básicas */}
-          <CollapsibleSection title="Informações Básicas" section="basic">
+          <CollapsibleSection 
+            title="Informações Básicas" 
+            section="basic"
+            isOpen={expandedSections.basic}
+            onToggle={() => toggleSection('basic')}
+          >
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Nome do Produto *</Label>
                 <Input
                   id="name"
                   value={formData.name}
-                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                  onChange={inputHandlers.name}
                   required
                 />
               </div>
@@ -513,7 +530,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="brand"
                   value={formData.brand}
-                  onChange={(e) => setFormData(prev => ({ ...prev, brand: e.target.value }))}
+                  onChange={inputHandlers.brand}
                   required
                 />
               </div>
@@ -523,7 +540,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="model"
                   value={formData.model}
-                  onChange={(e) => setFormData(prev => ({ ...prev, model: e.target.value }))}
+                  onChange={inputHandlers.model}
                 />
               </div>
 
@@ -534,7 +551,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                   type="number"
                   step="0.01"
                   value={formData.price}
-                  onChange={(e) => setFormData(prev => ({ ...prev, price: e.target.value }))}
+                  onChange={inputHandlers.price}
                   required
                 />
               </div>
@@ -544,7 +561,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="collection"
                   value={formData.collection}
-                  onChange={(e) => setFormData(prev => ({ ...prev, collection: e.target.value }))}
+                  onChange={inputHandlers.collection}
                 />
               </div>
 
@@ -553,7 +570,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="reference_number"
                   value={formData.reference_number}
-                  onChange={(e) => setFormData(prev => ({ ...prev, reference_number: e.target.value }))}
+                  onChange={inputHandlers.reference_number}
                 />
               </div>
 
@@ -562,7 +579,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="production_year"
                   value={formData.production_year}
-                  onChange={(e) => setFormData(prev => ({ ...prev, production_year: e.target.value }))}
+                  onChange={inputHandlers.production_year}
                 />
               </div>
 
@@ -571,7 +588,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="limited_edition"
                   value={formData.limited_edition}
-                  onChange={(e) => setFormData(prev => ({ ...prev, limited_edition: e.target.value }))}
+                  onChange={inputHandlers.limited_edition}
                   placeholder="Ex: 1000 unidades"
                 />
               </div>
@@ -582,7 +599,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                   id="stock_quantity"
                   type="number"
                   value={formData.stock_quantity}
-                  onChange={(e) => setFormData(prev => ({ ...prev, stock_quantity: e.target.value }))}
+                  onChange={inputHandlers.stock_quantity}
                 />
               </div>
             </div>
@@ -592,7 +609,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
               <Textarea
                 id="description"
                 value={formData.description}
-                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                onChange={inputHandlers.description}
                 rows={4}
                 className="min-h-[100px]"
               />
@@ -600,14 +617,19 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
           </CollapsibleSection>
 
           {/* Especificações do Movimento */}
-          <CollapsibleSection title="Especificações do Movimento" section="movement">
+          <CollapsibleSection 
+            title="Especificações do Movimento" 
+            section="movement"
+            isOpen={expandedSections.movement}
+            onToggle={() => toggleSection('movement')}
+          >
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="movement">Movimento</Label>
                 <Input
                   id="movement"
                   value={formData.movement}
-                  onChange={(e) => setFormData(prev => ({ ...prev, movement: e.target.value }))}
+                  onChange={inputHandlers.movement}
                   placeholder="Ex: Automático, Quartzo, Manual"
                 />
               </div>
@@ -617,7 +639,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="jewels"
                   value={formData.jewels}
-                  onChange={(e) => setFormData(prev => ({ ...prev, jewels: e.target.value }))}
+                  onChange={inputHandlers.jewels}
                   placeholder="Ex: 25 rubis"
                 />
               </div>
@@ -627,7 +649,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="frequency"
                   value={formData.frequency}
-                  onChange={(e) => setFormData(prev => ({ ...prev, frequency: e.target.value }))}
+                  onChange={inputHandlers.frequency}
                   placeholder="Ex: 28.800 vph"
                 />
               </div>
@@ -637,7 +659,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="amplitude"
                   value={formData.amplitude}
-                  onChange={(e) => setFormData(prev => ({ ...prev, amplitude: e.target.value }))}
+                  onChange={inputHandlers.amplitude}
                   placeholder="Ex: 285°"
                 />
               </div>
@@ -647,7 +669,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="beat_error"
                   value={formData.beat_error}
-                  onChange={(e) => setFormData(prev => ({ ...prev, beat_error: e.target.value }))}
+                  onChange={inputHandlers.beat_error}
                   placeholder="Ex: 0.3ms"
                 />
               </div>
@@ -657,7 +679,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="power_reserve"
                   value={formData.power_reserve}
-                  onChange={(e) => setFormData(prev => ({ ...prev, power_reserve: e.target.value }))}
+                  onChange={inputHandlers.power_reserve}
                   placeholder="Ex: 42 horas"
                 />
               </div>
@@ -667,7 +689,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="calendar_type"
                   value={formData.calendar_type}
-                  onChange={(e) => setFormData(prev => ({ ...prev, calendar_type: e.target.value }))}
+                  onChange={inputHandlers.calendar_type}
                   placeholder="Ex: Perpétuo, Anual, Simples"
                 />
               </div>
@@ -677,7 +699,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="timezone_display"
                   value={formData.timezone_display}
-                  onChange={(e) => setFormData(prev => ({ ...prev, timezone_display: e.target.value }))}
+                  onChange={inputHandlers.timezone_display}
                   placeholder="Ex: GMT, UTC, Dual Time"
                 />
               </div>
@@ -687,7 +709,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="chronograph_type"
                   value={formData.chronograph_type}
-                  onChange={(e) => setFormData(prev => ({ ...prev, chronograph_type: e.target.value }))}
+                  onChange={inputHandlers.chronograph_type}
                   placeholder="Ex: Mono-pusher, Bi-compax"
                 />
               </div>
@@ -697,7 +719,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="subdials"
                   value={formData.subdials}
-                  onChange={(e) => setFormData(prev => ({ ...prev, subdials: e.target.value }))}
+                  onChange={inputHandlers.subdials}
                   placeholder="Ex: 3 subesferas"
                 />
               </div>
@@ -731,14 +753,19 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
           </CollapsibleSection>
 
           {/* Especificações da Caixa */}
-          <CollapsibleSection title="Especificações da Caixa" section="case">
+          <CollapsibleSection 
+            title="Especificações da Caixa" 
+            section="case"
+            isOpen={expandedSections.case}
+            onToggle={() => toggleSection('case')}
+          >
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="case_size">Tamanho da Caixa</Label>
                 <Input
                   id="case_size"
                   value={formData.case_size}
-                  onChange={(e) => setFormData(prev => ({ ...prev, case_size: e.target.value }))}
+                  onChange={inputHandlers.case_size}
                   placeholder="Ex: 42mm"
                 />
               </div>
@@ -748,7 +775,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="material"
                   value={formData.material}
-                  onChange={(e) => setFormData(prev => ({ ...prev, material: e.target.value }))}
+                  onChange={inputHandlers.material}
                   placeholder="Ex: Aço Inoxidável, Ouro, Titânio"
                 />
               </div>
@@ -758,7 +785,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="thickness"
                   value={formData.thickness}
-                  onChange={(e) => setFormData(prev => ({ ...prev, thickness: e.target.value }))}
+                  onChange={inputHandlers.thickness}
                   placeholder="Ex: 12mm"
                 />
               </div>
@@ -768,7 +795,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="weight"
                   value={formData.weight}
-                  onChange={(e) => setFormData(prev => ({ ...prev, weight: e.target.value }))}
+                  onChange={inputHandlers.weight}
                   placeholder="Ex: 185g"
                 />
               </div>
@@ -778,7 +805,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="case_back"
                   value={formData.case_back}
-                  onChange={(e) => setFormData(prev => ({ ...prev, case_back: e.target.value }))}
+                  onChange={inputHandlers.case_back}
                   placeholder="Ex: Transparente, Fechado, Exhibition"
                 />
               </div>
@@ -788,7 +815,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="crown_type"
                   value={formData.crown_type}
-                  onChange={(e) => setFormData(prev => ({ ...prev, crown_type: e.target.value }))}
+                  onChange={inputHandlers.crown_type}
                   placeholder="Ex: Rosqueada, Push-pull"
                 />
               </div>
@@ -798,7 +825,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="pushers"
                   value={formData.pushers}
-                  onChange={(e) => setFormData(prev => ({ ...prev, pushers: e.target.value }))}
+                  onChange={inputHandlers.pushers}
                   placeholder="Ex: 2 pushers rosqueados"
                 />
               </div>
@@ -808,7 +835,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="bezel_type"
                   value={formData.bezel_type}
-                  onChange={(e) => setFormData(prev => ({ ...prev, bezel_type: e.target.value }))}
+                  onChange={inputHandlers.bezel_type}
                   placeholder="Ex: Unidirecional, Bidirecional, Fixa"
                 />
               </div>
@@ -818,7 +845,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="lug_width"
                   value={formData.lug_width}
-                  onChange={(e) => setFormData(prev => ({ ...prev, lug_width: e.target.value }))}
+                  onChange={inputHandlers.lug_width}
                   placeholder="Ex: 22mm"
                 />
               </div>
@@ -826,14 +853,19 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
           </CollapsibleSection>
 
           {/* Especificações do Display */}
-          <CollapsibleSection title="Especificações do Display" section="display">
+          <CollapsibleSection 
+            title="Especificações do Display" 
+            section="display"
+            isOpen={expandedSections.display}
+            onToggle={() => toggleSection('display')}
+          >
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="dial_color">Cor do Mostrador</Label>
                 <Input
                   id="dial_color"
                   value={formData.dial_color}
-                  onChange={(e) => setFormData(prev => ({ ...prev, dial_color: e.target.value }))}
+                  onChange={inputHandlers.dial_color}
                   placeholder="Ex: Preto, Branco, Azul"
                 />
               </div>
@@ -843,7 +875,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="hands_type"
                   value={formData.hands_type}
-                  onChange={(e) => setFormData(prev => ({ ...prev, hands_type: e.target.value }))}
+                  onChange={inputHandlers.hands_type}
                   placeholder="Ex: Dauphine, Baton, Sword"
                 />
               </div>
@@ -853,7 +885,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="markers_type"
                   value={formData.markers_type}
-                  onChange={(e) => setFormData(prev => ({ ...prev, markers_type: e.target.value }))}
+                  onChange={inputHandlers.markers_type}
                   placeholder="Ex: Aplicados, Impressos, Romanos"
                 />
               </div>
@@ -863,7 +895,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="glass_type"
                   value={formData.glass_type}
-                  onChange={(e) => setFormData(prev => ({ ...prev, glass_type: e.target.value }))}
+                  onChange={inputHandlers.glass_type}
                   placeholder="Ex: Safira, Mineral, Acrílico"
                 />
               </div>
@@ -873,7 +905,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="date_display"
                   value={formData.date_display}
-                  onChange={(e) => setFormData(prev => ({ ...prev, date_display: e.target.value }))}
+                  onChange={inputHandlers.date_display}
                   placeholder="Ex: 3h, 6h, Pointer Date"
                 />
               </div>
@@ -883,7 +915,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="lume_type"
                   value={formData.lume_type}
-                  onChange={(e) => setFormData(prev => ({ ...prev, lume_type: e.target.value }))}
+                  onChange={inputHandlers.lume_type}
                   placeholder="Ex: Super-LumiNova, Tritium"
                 />
               </div>
@@ -893,7 +925,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="luminosity"
                   value={formData.luminosity}
-                  onChange={(e) => setFormData(prev => ({ ...prev, luminosity: e.target.value }))}
+                  onChange={inputHandlers.luminosity}
                   placeholder="Ex: 8 horas"
                 />
               </div>
@@ -901,14 +933,19 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
           </CollapsibleSection>
 
           {/* Especificações da Pulseira/Bracelete */}
-          <CollapsibleSection title="Pulseira/Bracelete" section="strap">
+          <CollapsibleSection 
+            title="Pulseira/Bracelete" 
+            section="strap"
+            isOpen={expandedSections.strap}
+            onToggle={() => toggleSection('strap')}
+          >
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="strap_material">Material da Pulseira</Label>
                 <Input
                   id="strap_material"
                   value={formData.strap_material}
-                  onChange={(e) => setFormData(prev => ({ ...prev, strap_material: e.target.value }))}
+                  onChange={inputHandlers.strap_material}
                   placeholder="Ex: Couro, Aço, Borracha, NATO"
                 />
               </div>
@@ -918,7 +955,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="bracelet_type"
                   value={formData.bracelet_type}
-                  onChange={(e) => setFormData(prev => ({ ...prev, bracelet_type: e.target.value }))}
+                  onChange={inputHandlers.bracelet_type}
                   placeholder="Ex: Oyster, Jubilee, Milanese"
                 />
               </div>
@@ -928,7 +965,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="clasp_type"
                   value={formData.clasp_type}
-                  onChange={(e) => setFormData(prev => ({ ...prev, clasp_type: e.target.value }))}
+                  onChange={inputHandlers.clasp_type}
                   placeholder="Ex: Fivela, Borboleta, Deployment"
                 />
               </div>
@@ -938,7 +975,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="buckle_type"
                   value={formData.buckle_type}
-                  onChange={(e) => setFormData(prev => ({ ...prev, buckle_type: e.target.value }))}
+                  onChange={inputHandlers.buckle_type}
                   placeholder="Ex: Tang, Pin, Ardillon"
                 />
               </div>
@@ -946,14 +983,19 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
           </CollapsibleSection>
 
           {/* Especificações de Resistência */}
-          <CollapsibleSection title="Resistência e Durabilidade" section="resistance">
+          <CollapsibleSection 
+            title="Resistência e Durabilidade" 
+            section="resistance"
+            isOpen={expandedSections.resistance}
+            onToggle={() => toggleSection('resistance')}
+          >
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="water_resistance">Resistência à Água</Label>
                 <Input
                   id="water_resistance"
                   value={formData.water_resistance}
-                  onChange={(e) => setFormData(prev => ({ ...prev, water_resistance: e.target.value }))}
+                  onChange={inputHandlers.water_resistance}
                   placeholder="Ex: 100m, 300m, 500m"
                 />
               </div>
@@ -963,7 +1005,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="shock_resistance"
                   value={formData.shock_resistance}
-                  onChange={(e) => setFormData(prev => ({ ...prev, shock_resistance: e.target.value }))}
+                  onChange={inputHandlers.shock_resistance}
                   placeholder="Ex: ISO 1413, DIN 8319"
                 />
               </div>
@@ -973,7 +1015,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="anti_magnetic"
                   value={formData.anti_magnetic}
-                  onChange={(e) => setFormData(prev => ({ ...prev, anti_magnetic: e.target.value }))}
+                  onChange={inputHandlers.anti_magnetic}
                   placeholder="Ex: 15.000 Gauss, ISO 764"
                 />
               </div>
@@ -983,7 +1025,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="operating_temperature"
                   value={formData.operating_temperature}
-                  onChange={(e) => setFormData(prev => ({ ...prev, operating_temperature: e.target.value }))}
+                  onChange={inputHandlers.operating_temperature}
                   placeholder="Ex: -20°C a +60°C"
                 />
               </div>
@@ -993,7 +1035,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="altitude_resistance"
                   value={formData.altitude_resistance}
-                  onChange={(e) => setFormData(prev => ({ ...prev, altitude_resistance: e.target.value }))}
+                  onChange={inputHandlers.altitude_resistance}
                   placeholder="Ex: 4.000m acima do nível do mar"
                 />
               </div>
@@ -1003,7 +1045,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="pressure_resistance"
                   value={formData.pressure_resistance}
-                  onChange={(e) => setFormData(prev => ({ ...prev, pressure_resistance: e.target.value }))}
+                  onChange={inputHandlers.pressure_resistance}
                   placeholder="Ex: 30 bar, 300 ATM"
                 />
               </div>
@@ -1013,7 +1055,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="vibration_resistance"
                   value={formData.vibration_resistance}
-                  onChange={(e) => setFormData(prev => ({ ...prev, vibration_resistance: e.target.value }))}
+                  onChange={inputHandlers.vibration_resistance}
                   placeholder="Ex: ISO 3158"
                 />
               </div>
@@ -1021,7 +1063,12 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
           </CollapsibleSection>
 
           {/* Informações Adicionais */}
-          <CollapsibleSection title="Informações Adicionais" section="additional">
+          <CollapsibleSection 
+            title="Informações Adicionais" 
+            section="additional"
+            isOpen={expandedSections.additional}
+            onToggle={() => toggleSection('additional')}
+          >
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="watch_type">Tipo de Relógio</Label>
@@ -1051,7 +1098,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="certification"
                   value={formData.certification}
-                  onChange={(e) => setFormData(prev => ({ ...prev, certification: e.target.value }))}
+                  onChange={inputHandlers.certification}
                   placeholder="Ex: COSC, METAS, Observatory"
                 />
               </div>
@@ -1061,7 +1108,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="warranty"
                   value={formData.warranty}
-                  onChange={(e) => setFormData(prev => ({ ...prev, warranty: e.target.value }))}
+                  onChange={inputHandlers.warranty}
                   placeholder="Ex: 2 anos internacional"
                 />
               </div>
@@ -1071,7 +1118,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                 <Input
                   id="country_origin"
                   value={formData.country_origin}
-                  onChange={(e) => setFormData(prev => ({ ...prev, country_origin: e.target.value }))}
+                  onChange={inputHandlers.country_origin}
                   placeholder="Ex: Suíça, Japão, Alemanha"
                 />
               </div>
@@ -1145,7 +1192,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                     type="checkbox"
                     id="is_visible"
                     checked={formData.is_visible}
-                    onChange={(e) => setFormData(prev => ({ ...prev, is_visible: e.target.checked }))}
+                    onChange={(e) => updateFormField('is_visible', e.target.checked)}
                   />
                   <Label htmlFor="is_visible">Visível no site</Label>
                 </div>
@@ -1155,7 +1202,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
                     type="checkbox"
                     id="is_featured"
                     checked={formData.is_featured}
-                    onChange={(e) => setFormData(prev => ({ ...prev, is_featured: e.target.checked }))}
+                    onChange={(e) => updateFormField('is_featured', e.target.checked)}
                   />
                   <Label htmlFor="is_featured">Produto em destaque</Label>
                 </div>
@@ -1175,7 +1222,12 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
           </div>
 
           {/* Características, Badges e Tags */}
-          <CollapsibleSection title="Características, Badges e Tags" section="features">
+          <CollapsibleSection 
+            title="Características, Badges e Tags" 
+            section="features"
+            isOpen={expandedSections.features}
+            onToggle={() => toggleSection('features')}
+          >
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Características */}
               <div className="space-y-4">
