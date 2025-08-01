@@ -17,6 +17,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { ImageUpload } from '@/components/ImageUpload';
 
 interface Category {
   id: string;
@@ -248,16 +249,13 @@ const Categories = () => {
                     rows={3}
                   />
                 </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="image_url">URL da Imagem</Label>
-                  <Input
-                    id="image_url"
-                    value={formData.image_url}
-                    onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                    placeholder="https://exemplo.com/imagem.jpg"
-                    type="url"
-                  />
-                </div>
+                <ImageUpload
+                  bucket="category-images"
+                  currentImageUrl={formData.image_url}
+                  onImageUploaded={(url) => setFormData({ ...formData, image_url: url })}
+                  onImageRemoved={() => setFormData({ ...formData, image_url: '' })}
+                  maxSizeInMB={2}
+                />
               </div>
               <DialogFooter>
                 <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
