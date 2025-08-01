@@ -70,7 +70,7 @@ export const CategoryCarousel = () => {
             <div
               key={category.id}
               onClick={() => handleCategoryClick(category.id)}
-              className="category-card-modern"
+              className="category-card-modern group"
               style={{ animationDelay: `${index * 100}ms` }}
             >
               {/* Background Image */}
@@ -83,7 +83,7 @@ export const CategoryCarousel = () => {
               )}
               
               {/* Gradient Overlay */}
-              <div className="category-overlay" />
+              <div className="category-overlay group-hover:opacity-40" />
               
               {/* Category Title */}
               <div className="category-title">

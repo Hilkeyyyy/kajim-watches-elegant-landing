@@ -152,7 +152,7 @@ Typography: Playfair Display (serif), Inter (sans-serif)
   }
   
   .category-card-modern {
-    @apply relative overflow-hidden rounded-3xl h-80 group cursor-pointer;
+    @apply relative overflow-hidden rounded-3xl h-80 cursor-pointer;
     background: var(--gradient-glass);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.18);
@@ -166,7 +166,7 @@ Typography: Playfair Display (serif), Inter (sans-serif)
   }
   
   .category-overlay {
-    @apply absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500;
+    @apply absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-60 transition-opacity duration-500;
   }
   
   .category-title {
