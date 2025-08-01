@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Package, Tag, Users, TrendingUp } from 'lucide-react';
@@ -11,6 +12,7 @@ interface DashboardStats {
 }
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState<DashboardStats>({
     totalProducts: 0,
     totalCategories: 0,
@@ -147,13 +149,19 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <Card className="p-4 hover:bg-muted/50 cursor-pointer transition-colors">
+              <Card 
+                className="p-4 hover:bg-muted/50 cursor-pointer transition-colors hover-scale"
+                onClick={() => navigate('/admin/produtos')}
+              >
                 <div className="text-center">
                   <Package className="h-8 w-8 mx-auto mb-2 text-blue-600" />
                   <p className="font-medium">Adicionar Produto</p>
                 </div>
               </Card>
-              <Card className="p-4 hover:bg-muted/50 cursor-pointer transition-colors">
+              <Card 
+                className="p-4 hover:bg-muted/50 cursor-pointer transition-colors hover-scale"
+                onClick={() => navigate('/admin/categorias')}
+              >
                 <div className="text-center">
                   <Tag className="h-8 w-8 mx-auto mb-2 text-purple-600" />
                   <p className="font-medium">Nova Categoria</p>
