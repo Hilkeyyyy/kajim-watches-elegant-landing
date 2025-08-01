@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, ShoppingCart, Heart, Menu, X } from "lucide-react";
+import { Search, ShoppingCart, Heart, Menu, X, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCart } from "@/hooks/useCart";
@@ -30,19 +30,53 @@ const Header = () => {
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <div className="flex-shrink-0">
-              <button 
-                onClick={() => navigate("/")}
-                className="font-playfair text-2xl font-bold text-primary hover:text-primary/80 transition-colors"
-              >
-                KAJIM WATCHES
-              </button>
+            {/* Left side - Cart and Favorites Icons */}
+            <div className="flex items-center space-x-2">
+              <IconBadge
+                icon={<ShoppingCart className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />}
+                count={totalItems}
+                onClick={() => setIsCartOpen(true)}
+                className="group hover:bg-muted rounded-lg"
+              />
+              
+              <IconBadge
+                icon={<Heart className="w-5 h-5 text-muted-foreground group-hover:text-red-600 transition-colors" />}
+                count={favoritesCount}
+                onClick={() => navigate("/favoritos")}
+                className="group hover:bg-muted rounded-lg"
+              />
             </div>
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-6 flex-1 max-w-2xl mx-8">
-              <form onSubmit={handleSearch} className="flex-1">
+            {/* Center - Navigation Links */}
+            <nav className="hidden md:flex items-center space-x-8">
+              <Button
+                variant="ghost"
+                onClick={() => navigate("/")}
+                className="font-medium hover:text-primary transition-colors"
+              >
+                Ver produtos
+              </Button>
+              
+              <Button
+                variant="ghost"
+                onClick={() => navigate("/favoritos")}
+                className="font-medium hover:text-primary transition-colors"
+              >
+                Produtos salvos
+              </Button>
+              
+              <Button
+                variant="ghost"
+                className="font-medium hover:text-primary transition-colors"
+              >
+                <User className="w-4 h-4 mr-2" />
+                Login
+              </Button>
+            </nav>
+
+            {/* Right side - Search */}
+            <div className="hidden md:flex items-center max-w-xs">
+              <form onSubmit={handleSearch} className="w-full">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                   <Input
@@ -50,27 +84,10 @@ const Header = () => {
                     placeholder="Buscar relógios..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 bg-muted/50 border-border focus:bg-background"
+                    className="pl-10 bg-muted/50 border-border focus:bg-background w-full"
                   />
                 </div>
               </form>
-            </div>
-
-            {/* Desktop Actions */}
-            <div className="hidden md:flex items-center space-x-3">
-              <IconBadge
-                icon={<Heart className="w-5 h-5 text-muted-foreground group-hover:text-red-600 transition-colors" />}
-                count={favoritesCount}
-                onClick={() => navigate("/favoritos")}
-                className="group hover:bg-muted rounded-lg"
-              />
-              
-              <IconBadge
-                icon={<ShoppingCart className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />}
-                count={totalItems}
-                onClick={() => setIsCartOpen(true)}
-                className="group hover:bg-muted rounded-lg"
-              />
             </div>
 
             {/* Mobile Menu Button */}
@@ -102,40 +119,50 @@ const Header = () => {
                   </div>
                 </form>
                 
-                <div className="flex space-x-2">
-                  <div className="flex-1">
-                    <IconBadge
-                      icon={
-                        <div className="flex items-center w-full">
-                          <Heart className="w-5 h-5 mr-2" />
-                          <span>Favoritos</span>
-                        </div>
-                      }
-                      count={favoritesCount}
-                      onClick={() => {
-                        navigate("/favoritos");
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="w-full hover:bg-muted rounded-lg p-2 flex justify-start"
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      navigate("/");
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="w-full justify-start"
+                  >
+                    Ver produtos
+                  </Button>
                   
-                  <div className="flex-1">
-                    <IconBadge
-                      icon={
-                        <div className="flex items-center w-full">
-                          <ShoppingCart className="w-5 h-5 mr-2" />
-                          <span>Carrinho</span>
-                        </div>
-                      }
-                      count={totalItems}
-                      onClick={() => {
-                        setIsCartOpen(true);
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="w-full hover:bg-muted rounded-lg p-2 flex justify-start"
-                    />
-                  </div>
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      navigate("/favoritos");
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="w-full justify-start"
+                  >
+                    <Heart className="w-4 h-4 mr-2" />
+                    Produtos salvos ({favoritesCount})
+                  </Button>
+                  
+                  <Button
+                    variant="ghost"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="w-full justify-start"
+                  >
+                    <User className="w-4 h-4 mr-2" />
+                    Login
+                  </Button>
+                  
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setIsCartOpen(true);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="w-full justify-start"
+                  >
+                    <ShoppingCart className="w-4 h-4 mr-2" />
+                    Carrinho ({totalItems})
+                  </Button>
                 </div>
               </div>
             </div>

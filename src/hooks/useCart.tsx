@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { parsePrice, formatPrice, calculateItemTotal } from "@/utils/priceUtils";
 
 export interface CartItem {
   id: string;
@@ -77,6 +78,17 @@ export const useCart = () => {
     return cartItems.reduce((total, item) => total + item.quantity, 0);
   };
 
+  const getCartTotal = () => {
+    const total = cartItems.reduce((total, item) => {
+      return total + calculateItemTotal(item.price, item.quantity);
+    }, 0);
+    return formatPrice(total);
+  };
+
+  const getItemTotal = (priceString: string, quantity: number) => {
+    return formatPrice(calculateItemTotal(priceString, quantity));
+  };
+
   const sendCartToWhatsApp = () => {
     if (cartItems.length === 0) {
       toast({
@@ -110,6 +122,8 @@ export const useCart = () => {
     updateQuantity,
     clearCart,
     getTotalItems,
-    sendCartToWhatsApp
+    sendCartToWhatsApp,
+    getCartTotal,
+    getItemTotal
   };
 };

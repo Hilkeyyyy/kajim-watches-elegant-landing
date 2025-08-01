@@ -15,7 +15,7 @@ export const IconBadge = ({ icon, count, onClick, className = "" }: IconBadgePro
     >
       {icon}
       {count > 0 && (
-        <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1 border-2 border-background shadow-md transform scale-110">
+        <span className="absolute -top-1 -right-1 bg-muted-foreground text-white text-xs font-medium rounded-full min-w-[16px] h-4 flex items-center justify-center px-1 border border-background shadow-sm">
           {count > 99 ? "99+" : count}
         </span>
       )}
