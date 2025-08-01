@@ -6,6 +6,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Plus, Edit, Trash2, Eye } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { StockStatus } from '@/components/StockStatus';
+import { ProductBadge } from '@/components/ProductBadge';
 
 interface Product {
   id: string;
@@ -14,6 +16,9 @@ interface Product {
   brand: string;
   status: 'active' | 'inactive' | 'out_of_stock';
   stock_quantity: number;
+  stock_status: string;
+  badges: string[];
+  image_url: string;
   created_at: string;
   categories?: {
     name: string;
@@ -181,13 +186,36 @@ const Products = () => {
               </TableHeader>
               <TableBody>
                 {products.map((product) => (
-                  <TableRow key={product.id}>
-                    <TableCell className="font-medium">{product.name}</TableCell>
+                <TableRow key={product.id}>
+                    <TableCell>
+                      <div className="flex items-center space-x-3">
+                        {product.image_url && (
+                          <img
+                            src={product.image_url}
+                            alt={product.name}
+                            className="w-12 h-12 rounded-lg object-cover"
+                          />
+                        )}
+                        <div>
+                          <div className="font-medium">{product.name}</div>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {product.badges?.slice(0, 2).map((badge, index) => (
+                              <ProductBadge key={index} badge={badge} className="text-xs" />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </TableCell>
                     <TableCell>{product.brand}</TableCell>
                     <TableCell>{product.categories?.name || 'Sem categoria'}</TableCell>
                     <TableCell>{formatPrice(product.price)}</TableCell>
                     <TableCell>{getStatusBadge(product.status)}</TableCell>
-                    <TableCell>{product.stock_quantity}</TableCell>
+                    <TableCell>
+                      <StockStatus 
+                        stockStatus={product.stock_status as 'in_stock' | 'low_stock' | 'out_of_stock'}
+                        stockQuantity={product.stock_quantity}
+                      />
+                    </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end space-x-2">
                         <Button variant="ghost" size="sm">
