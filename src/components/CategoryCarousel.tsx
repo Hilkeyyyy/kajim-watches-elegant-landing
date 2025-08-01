@@ -2,6 +2,13 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 interface Category {
   id: string;
@@ -65,33 +72,47 @@ export const CategoryCarousel = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {categories.map((category, index) => (
-            <div
-              key={category.id}
-              onClick={() => handleCategoryClick(category.id)}
-              className="category-card-modern group"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              {/* Background Image */}
-              {category.image_url && (
-                <img
-                  src={category.image_url}
-                  alt={category.name}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-              )}
-              
-              {/* Gradient Overlay */}
-              <div className="category-overlay group-hover:opacity-40" />
-              
-              {/* Category Title */}
-              <div className="category-title">
-                <h3>{category.name}</h3>
-              </div>
-            </div>
-          ))}
-        </div>
+        <Carousel
+          opts={{
+            align: "start",
+            loop: true,
+          }}
+          className="w-full"
+        >
+          <CarouselContent className="-ml-2 md:-ml-4">
+            {categories.map((category, index) => (
+              <CarouselItem 
+                key={category.id} 
+                className="pl-2 md:pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"
+              >
+                <div
+                  onClick={() => handleCategoryClick(category.id)}
+                  className="category-card-modern group"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  {/* Background Image */}
+                  {category.image_url && (
+                    <img
+                      src={category.image_url}
+                      alt={category.name}
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                  )}
+                  
+                  {/* Gradient Overlay */}
+                  <div className="category-overlay group-hover:opacity-40" />
+                  
+                  {/* Category Title */}
+                  <div className="category-title">
+                    <h3>{category.name}</h3>
+                  </div>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="hidden md:flex -left-12 bg-card/80 backdrop-blur-sm border-border/50 hover:bg-primary hover:border-primary text-foreground hover:text-primary-foreground transition-all duration-300" />
+          <CarouselNext className="hidden md:flex -right-12 bg-card/80 backdrop-blur-sm border-border/50 hover:bg-primary hover:border-primary text-foreground hover:text-primary-foreground transition-all duration-300" />
+        </Carousel>
       </div>
     </section>
   );
