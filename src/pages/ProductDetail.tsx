@@ -8,14 +8,14 @@ import { FavoriteButton } from "@/components/FavoriteButton";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { getProductById } from "@/data/products";
 import { useToast } from "@/hooks/use-toast";
-import { useCart } from "@/hooks/useCart";
+import { useOptimizedCart } from "@/hooks/useOptimizedCart";
 import Header from "@/components/Header";
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { addToCart } = useCart();
+  const { addToCart } = useOptimizedCart();
   
   const product = id ? getProductById(id) : null;
 
@@ -35,7 +35,7 @@ const ProductDetail = () => {
 
   const handleWhatsApp = () => {
     const message = `Olá! Tenho interesse no ${product.name} (${product.price}). Poderia me fornecer mais informações?`;
-    const whatsappUrl = `https://wa.me/5511999999999?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/5586988388124?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, "_blank");
   };
 
@@ -50,7 +50,7 @@ Imagem: ${product.image}
 
 Data/Hora do pedido: ${currentDate}`;
 
-    const whatsappUrl = `https://wa.me/5511999999999?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/5586988388124?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
@@ -129,13 +129,13 @@ Data/Hora do pedido: ${currentDate}`;
                   price: product.price,
                   image: product.image
                 }}
-                variant="liquid-glass"
+                variant="default"
                 size="xl"
                 className="w-full font-inter font-semibold bg-primary text-primary-foreground hover:bg-primary/90"
               />
               
               <Button 
-                variant="liquid-glass" 
+                variant="default" 
                 size="xl"
                 className="w-full font-inter font-semibold bg-green-600 text-white hover:bg-green-700"
                 onClick={handleDirectPurchase}
