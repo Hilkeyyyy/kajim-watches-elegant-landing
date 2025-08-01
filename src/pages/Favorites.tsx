@@ -4,12 +4,12 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { products } from "@/data/products";
 import { ProductCard } from "@/components/ProductCard";
-import { useFavorites } from "@/hooks/useFavorites";
+import { useOptimizedFavorites } from "@/hooks/useOptimizedFavorites";
 import Header from "@/components/Header";
 
 const Favorites = () => {
   const [favoriteProducts, setFavoriteProducts] = useState<typeof products>([]);
-  const { favorites } = useFavorites();
+  const { favorites } = useOptimizedFavorites();
   const navigate = useNavigate();
 
   useEffect(() => {

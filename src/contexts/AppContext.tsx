@@ -263,22 +263,35 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return;
     }
 
-    const currentDate = new Date().toLocaleString('pt-BR');
-    let message = 'Olá, gostaria de saber mais sobre estes produtos:\n\n';
+    try {
+      const currentDate = new Date().toLocaleString('pt-BR');
+      let message = 'Olá, gostaria de saber mais sobre estes produtos:\n\n';
 
-    state.cart.forEach((item, index) => {
-      message += `${index + 1}. ${item.name}\n`;
-      message += `Quantidade: ${item.quantity}\n`;
-      message += `Preço: ${item.price}\n`;
-      message += `Total: ${getItemTotal(item.price, item.quantity)}\n\n`;
-    });
+      state.cart.forEach((item, index) => {
+        message += `${index + 1}. ${item.name}\n`;
+        message += `Quantidade: ${item.quantity}\n`;
+        message += `Preço: ${item.price}\n`;
+        message += `Total: ${getItemTotal(item.price, item.quantity)}\n\n`;
+      });
 
-    message += `Total do pedido: ${getCartTotal()}\n`;
-    message += `Data/Hora do pedido: ${currentDate}`;
+      message += `Total do pedido: ${getCartTotal()}\n`;
+      message += `Data/Hora do pedido: ${currentDate}`;
 
-    // CORRIGIDO: Número real do WhatsApp
-    const whatsappUrl = `https://wa.me/5586988388124?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
+      const whatsappUrl = `https://wa.me/5586988388124?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, '_blank');
+      
+      toast({
+        title: 'Pedido enviado',
+        description: 'Seu pedido foi enviado para o WhatsApp!',
+      });
+    } catch (error) {
+      console.error('Erro ao enviar pedido para WhatsApp:', error);
+      toast({
+        title: 'Erro',
+        description: 'Erro ao enviar pedido. Tente novamente.',
+        variant: 'destructive',
+      });
+    }
   }, [state.cart, toast, getItemTotal, getCartTotal]);
 
   const contextValue: AppContextType = {
