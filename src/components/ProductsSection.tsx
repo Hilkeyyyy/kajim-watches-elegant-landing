@@ -1,31 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { MessageCircle, ShoppingBag } from "lucide-react";
-import watchesCollection from "@/assets/watches-collection.jpg";
+import { useNavigate } from "react-router-dom";
+import { products } from "@/data/products";
 
 const ProductsSection = () => {
-  const products = [
-    {
-      id: 1,
-      name: "KAJIM Classic",
-      price: "R$ 899",
-      image: watchesCollection,
-      description: "Elegância atemporal em cada detalhe"
-    },
-    {
-      id: 2,
-      name: "KAJIM Sport",
-      price: "R$ 1.199",
-      image: watchesCollection,
-      description: "Performance e sofisticação"
-    },
-    {
-      id: 3,
-      name: "KAJIM Elite",
-      price: "R$ 1.599",
-      image: watchesCollection,
-      description: "Exclusividade em sua forma mais pura"
-    }
-  ];
+  const navigate = useNavigate();
 
   const handleWhatsApp = (productName: string) => {
     const message = `Olá! Tenho interesse no ${productName}. Gostaria de mais informações.`;
@@ -51,8 +30,9 @@ const ProductsSection = () => {
           {products.map((product, index) => (
             <div 
               key={product.id}
-              className="bg-card rounded-xl shadow-card overflow-hidden hover:shadow-elegant transition-all duration-500 animate-fade-in"
+              className="bg-card rounded-xl shadow-card overflow-hidden hover:shadow-elegant transition-all duration-500 animate-fade-in cursor-pointer"
               style={{ animationDelay: `${index * 200}ms` }}
+              onClick={() => navigate(`/produto/${product.id}`)}
             >
               {/* Product Image */}
               <div className="aspect-square w-full overflow-hidden">
@@ -76,14 +56,15 @@ const ProductsSection = () => {
                 </p>
                 
                 {/* Action Buttons */}
-                <div className="space-y-4">
+                <div className="space-y-4" onClick={(e) => e.stopPropagation()}>
                   <Button 
                     variant="luxury" 
                     size="lg"
                     className="w-full font-inter font-medium"
+                    onClick={() => navigate(`/produto/${product.id}`)}
                   >
                     <ShoppingBag className="w-5 h-5 mr-2" />
-                    Comprar Agora
+                    Ver Detalhes
                   </Button>
                   
                   <Button 
