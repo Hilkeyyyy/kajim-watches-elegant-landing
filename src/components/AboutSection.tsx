@@ -12,7 +12,7 @@ const AboutSection = () => {
           
           <p className="font-inter text-lg md:text-xl leading-relaxed font-light text-accent-foreground/90 mb-8">
             KAJIM WATCHES é a combinação entre precisão, elegância e acessibilidade. 
-            Clones premium A++ com garantia.
+            Relógios 100% originais com garantia.
           </p>
           
           <p className="font-inter text-base leading-relaxed font-light text-accent-foreground/80">
