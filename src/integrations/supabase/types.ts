@@ -49,117 +49,204 @@ export type Database = {
       }
       products: {
         Row: {
+          altitude_resistance: string | null
+          amplitude: string | null
+          anti_magnetic: string | null
           badges: string[] | null
+          beat_error: string | null
           bezel_type: string | null
+          bracelet_type: string | null
           brand: string
+          buckle_type: string | null
+          calendar_type: string | null
+          case_back: string | null
           case_size: string | null
           certification: string | null
+          chronograph_type: string | null
           clasp_type: string | null
+          collection: string | null
           complications: string[] | null
           country_origin: string | null
           created_at: string
+          crown_type: string | null
           custom_tags: string[] | null
+          date_display: string | null
           description: string | null
           dial_color: string | null
           features: string[] | null
+          frequency: string | null
           glass_type: string | null
+          hands_type: string | null
           id: string
           image_url: string | null
           images: string[] | null
           is_featured: boolean | null
           is_visible: boolean | null
+          jewels: string | null
+          limited_edition: string | null
           lug_width: string | null
+          lume_type: string | null
+          luminosity: string | null
+          markers_type: string | null
           material: string | null
           model: string | null
           movement: string | null
           name: string
+          operating_temperature: string | null
           power_reserve: string | null
+          pressure_resistance: string | null
           price: number
+          production_year: string | null
+          pushers: string | null
+          reference_number: string | null
+          shock_resistance: string | null
           sort_order: number | null
+          special_features: string[] | null
           status: Database["public"]["Enums"]["product_status"] | null
           stock_quantity: number | null
           stock_status: string | null
           strap_material: string | null
+          subdials: string | null
           thickness: string | null
+          timezone_display: string | null
           updated_at: string
+          vibration_resistance: string | null
           warranty: string | null
           watch_type: string | null
           water_resistance: string | null
           weight: string | null
         }
         Insert: {
+          altitude_resistance?: string | null
+          amplitude?: string | null
+          anti_magnetic?: string | null
           badges?: string[] | null
+          beat_error?: string | null
           bezel_type?: string | null
+          bracelet_type?: string | null
           brand: string
+          buckle_type?: string | null
+          calendar_type?: string | null
+          case_back?: string | null
           case_size?: string | null
           certification?: string | null
+          chronograph_type?: string | null
           clasp_type?: string | null
+          collection?: string | null
           complications?: string[] | null
           country_origin?: string | null
           created_at?: string
+          crown_type?: string | null
           custom_tags?: string[] | null
+          date_display?: string | null
           description?: string | null
           dial_color?: string | null
           features?: string[] | null
+          frequency?: string | null
           glass_type?: string | null
+          hands_type?: string | null
           id?: string
           image_url?: string | null
           images?: string[] | null
           is_featured?: boolean | null
           is_visible?: boolean | null
+          jewels?: string | null
+          limited_edition?: string | null
           lug_width?: string | null
+          lume_type?: string | null
+          luminosity?: string | null
+          markers_type?: string | null
           material?: string | null
           model?: string | null
           movement?: string | null
           name: string
+          operating_temperature?: string | null
           power_reserve?: string | null
+          pressure_resistance?: string | null
           price: number
+          production_year?: string | null
+          pushers?: string | null
+          reference_number?: string | null
+          shock_resistance?: string | null
           sort_order?: number | null
+          special_features?: string[] | null
           status?: Database["public"]["Enums"]["product_status"] | null
           stock_quantity?: number | null
           stock_status?: string | null
           strap_material?: string | null
+          subdials?: string | null
           thickness?: string | null
+          timezone_display?: string | null
           updated_at?: string
+          vibration_resistance?: string | null
           warranty?: string | null
           watch_type?: string | null
           water_resistance?: string | null
           weight?: string | null
         }
         Update: {
+          altitude_resistance?: string | null
+          amplitude?: string | null
+          anti_magnetic?: string | null
           badges?: string[] | null
+          beat_error?: string | null
           bezel_type?: string | null
+          bracelet_type?: string | null
           brand?: string
+          buckle_type?: string | null
+          calendar_type?: string | null
+          case_back?: string | null
           case_size?: string | null
           certification?: string | null
+          chronograph_type?: string | null
           clasp_type?: string | null
+          collection?: string | null
           complications?: string[] | null
           country_origin?: string | null
           created_at?: string
+          crown_type?: string | null
           custom_tags?: string[] | null
+          date_display?: string | null
           description?: string | null
           dial_color?: string | null
           features?: string[] | null
+          frequency?: string | null
           glass_type?: string | null
+          hands_type?: string | null
           id?: string
           image_url?: string | null
           images?: string[] | null
           is_featured?: boolean | null
           is_visible?: boolean | null
+          jewels?: string | null
+          limited_edition?: string | null
           lug_width?: string | null
+          lume_type?: string | null
+          luminosity?: string | null
+          markers_type?: string | null
           material?: string | null
           model?: string | null
           movement?: string | null
           name?: string
+          operating_temperature?: string | null
           power_reserve?: string | null
+          pressure_resistance?: string | null
           price?: number
+          production_year?: string | null
+          pushers?: string | null
+          reference_number?: string | null
+          shock_resistance?: string | null
           sort_order?: number | null
+          special_features?: string[] | null
           status?: Database["public"]["Enums"]["product_status"] | null
           stock_quantity?: number | null
           stock_status?: string | null
           strap_material?: string | null
+          subdials?: string | null
           thickness?: string | null
+          timezone_display?: string | null
           updated_at?: string
+          vibration_resistance?: string | null
           warranty?: string | null
           watch_type?: string | null
           water_resistance?: string | null
