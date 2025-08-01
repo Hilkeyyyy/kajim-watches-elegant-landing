@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, ShoppingCart, MessageCircle, Shield, Truck, RotateCcw } from "lucide-react";
+import { ArrowLeft, ShoppingCart, MessageCircle, Shield, Truck, RotateCcw, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -7,11 +7,14 @@ import { ProductImageGallery } from "@/components/ProductImageGallery";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { getProductById } from "@/data/products";
 import { useToast } from "@/hooks/use-toast";
+import { useCart } from "@/hooks/useCart";
+import Header from "@/components/Header";
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { addToCart } = useCart();
   
   const product = id ? getProductById(id) : null;
 
@@ -35,79 +38,106 @@ const ProductDetail = () => {
     window.open(whatsappUrl, "_blank");
   };
 
-  const handlePurchase = () => {
-    toast({
-      title: "Redirecionando para checkout",
-      description: `Preparando a compra do ${product.name}...`,
-    });
-    // Here you would integrate with your payment system
+  const handleDirectPurchase = () => {
+    const currentDate = new Date().toLocaleString('pt-BR');
+    const message = `Olá, gostaria de saber mais sobre estes produtos:
+
+1. ${product.name}
+Quantidade: 1
+Preço: ${product.price}
+Imagem: ${product.image}
+
+Data/Hora do pedido: ${currentDate}`;
+
+    const whatsappUrl = `https://wa.me/5511999999999?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
+  const handleAddToCart = () => {
+    if (product) {
+      addToCart({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.image
+      });
+    }
   };
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="container max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Button
-              variant="ghost"
-              onClick={() => navigate("/")}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Voltar
-            </Button>
-            
-            <div className="flex items-center gap-2">
-              <span className="font-playfair text-xl font-bold">KAJIM</span>
-            </div>
-            
-            <FavoriteButton productId={product.id} productName={product.name} />
-          </div>
+      <Header />
+      
+      {/* Back Button */}
+      <div className="pt-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto mb-6">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate("/")}
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="container max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Image Gallery */}
-          <div className="animate-fade-in">
-            <ProductImageGallery images={product.images} productName={product.name} />
+          <div className="space-y-4">
+            <ProductImageGallery 
+              images={product.images} 
+              productName={product.name}
+            />
           </div>
 
-          {/* Product Info */}
-          <div className="animate-slide-up space-y-6">
-            <div>
-              <h1 className="font-playfair text-3xl lg:text-4xl font-bold mb-2">
-                {product.name}
-              </h1>
-              <p className="text-muted-foreground text-lg mb-4">
+          {/* Product Information */}
+          <div className="space-y-8">
+            {/* Product Header */}
+            <div className="space-y-4">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <p className="font-inter text-sm text-muted-foreground mb-2">
+                    {product.details.brand}
+                  </p>
+                  <h1 className="font-playfair text-3xl md:text-4xl font-bold text-primary">
+                    {product.name}
+                  </h1>
+                </div>
+                <FavoriteButton productId={product.id} productName={product.name} />
+              </div>
+              
+              <p className="font-inter text-lg text-muted-foreground leading-relaxed">
                 {product.description}
               </p>
-              <div className="text-3xl font-bold text-primary">
-                {product.price}
+              <div className="flex items-center justify-between">
+                <p className="font-playfair text-4xl font-bold text-primary">
+                  {product.price}
+                </p>
               </div>
             </div>
 
             {/* Action Buttons */}
-            <div className="space-y-3">
+            <div className="space-y-4">
               <Button 
-                size="lg" 
-                className="w-full" 
-                onClick={handlePurchase}
+                variant="luxury" 
+                size="xl"
+                className="w-full font-inter font-semibold"
+                onClick={handleAddToCart}
               >
-                <ShoppingCart className="w-5 h-5 mr-2" />
-                Comprar Agora
+                <Plus className="w-6 h-6 mr-3" />
+                Adicionar ao Carrinho
               </Button>
               
               <Button 
                 variant="whatsapp" 
-                size="lg" 
-                className="w-full"
-                onClick={handleWhatsApp}
+                size="xl"
+                className="w-full font-inter font-semibold"
+                onClick={handleDirectPurchase}
               >
-                <MessageCircle className="w-5 h-5 mr-2" />
-                WhatsApp
+                <MessageCircle className="w-6 h-6 mr-3" />
+                Comprar
               </Button>
             </div>
 
