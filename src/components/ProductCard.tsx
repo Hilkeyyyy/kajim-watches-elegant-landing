@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FavoriteButton } from "@/components/FavoriteButton";
+import { AddToCartButton } from "@/components/AddToCartButton";
 import { useNavigate } from "react-router-dom";
 
 interface ProductCardProps {
@@ -47,20 +48,34 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           <p className="font-inter text-muted-foreground text-sm mb-3 line-clamp-2">
             {product.description}
           </p>
-          <p className="font-playfair text-2xl font-bold text-primary">
-            {product.price}
+          <p className="font-playfair text-2xl font-bold text-primary flex items-baseline justify-center">
+            <span className="text-lg mr-1">R$</span>
+            <span>{product.price.replace('R$ ', '')}</span>
           </p>
         </div>
         
-        {/* Ver Detalhes Button */}
-        <Button 
-          variant="luxury" 
-          size="lg"
-          className="w-full font-inter font-medium"
-          onClick={() => navigate(`/produto/${product.id}`)}
-        >
-          Ver Detalhes
-        </Button>
+        {/* Action Buttons */}
+        <div className="space-y-2">
+          <AddToCartButton 
+            product={{
+              id: product.id,
+              name: product.name,
+              price: product.price,
+              image: product.image
+            }}
+            size="lg"
+            className="w-full font-inter font-medium"
+          />
+          
+          <Button 
+            variant="outline" 
+            size="lg"
+            className="w-full font-inter font-medium"
+            onClick={() => navigate(`/produto/${product.id}`)}
+          >
+            Ver Detalhes
+          </Button>
+        </div>
       </div>
     </Card>
   );

@@ -71,6 +71,10 @@ export default {
 			boxShadow: {
 				'elegant': 'var(--shadow-elegant)',
 				'card': 'var(--shadow-card)',
+				'liquid-glass': 'var(--shadow-liquid-glass)',
+			},
+			backdropBlur: {
+				'glass': 'var(--glass-backdrop)',
 			},
 			transitionTimingFunction: {
 				'smooth': 'cubic-bezier(0.4, 0, 0.2, 1)',

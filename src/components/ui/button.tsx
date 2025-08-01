@@ -17,6 +17,7 @@ const buttonVariants = cva(
         whatsapp: "bg-green-600 text-white hover:bg-green-700 shadow-card",
         accent: "bg-accent text-accent-foreground hover:bg-accent/90 shadow-card",
         moss: "bg-moss text-moss-foreground hover:bg-moss/90 shadow-card",
+        "liquid-glass": "bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 hover:border-white/30 shadow-liquid-glass transition-all duration-300",
       },
       size: {
         default: "h-12 px-6 py-3 text-base",

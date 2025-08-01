@@ -4,17 +4,18 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { products } from "@/data/products";
 import { ProductCard } from "@/components/ProductCard";
+import { useFavorites } from "@/hooks/useFavorites";
 import Header from "@/components/Header";
 
 const Favorites = () => {
   const [favoriteProducts, setFavoriteProducts] = useState<typeof products>([]);
+  const { favorites } = useFavorites();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const favorites = JSON.parse(localStorage.getItem("kajim-favorites") || "[]");
     const favoriteItems = products.filter(product => favorites.includes(product.id));
     setFavoriteProducts(favoriteItems);
-  }, []);
+  }, [favorites]);
 
   return (
     <div className="min-h-screen bg-background">

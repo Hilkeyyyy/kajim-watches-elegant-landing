@@ -3,7 +3,9 @@ import { Search, ShoppingCart, Heart, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCart } from "@/hooks/useCart";
+import { useFavorites } from "@/hooks/useFavorites";
 import { CartSheet } from "@/components/CartSheet";
+import { IconBadge } from "@/components/IconBadge";
 import { useNavigate } from "react-router-dom";
 
 const Header = () => {
@@ -11,7 +13,11 @@ const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { getTotalItems } = useCart();
+  const { getFavoritesCount } = useFavorites();
   const navigate = useNavigate();
+  
+  const totalItems = getTotalItems();
+  const favoritesCount = getFavoritesCount();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,28 +58,19 @@ const Header = () => {
 
             {/* Desktop Actions */}
             <div className="hidden md:flex items-center space-x-3">
-              <Button
-                variant="ghost"
-                size="icon"
+              <IconBadge
+                icon={<Heart className="w-5 h-5 text-muted-foreground group-hover:text-red-600 transition-colors" />}
+                count={favoritesCount}
                 onClick={() => navigate("/favoritos")}
-                className="relative"
-              >
-                <Heart className="w-5 h-5" />
-              </Button>
+                className="group hover:bg-muted rounded-lg"
+              />
               
-              <Button
-                variant="ghost"
-                size="icon"
+              <IconBadge
+                icon={<ShoppingCart className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />}
+                count={totalItems}
                 onClick={() => setIsCartOpen(true)}
-                className="relative"
-              >
-                <ShoppingCart className="w-5 h-5" />
-                {getTotalItems() > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                    {getTotalItems()}
-                  </span>
-                )}
-              </Button>
+                className="group hover:bg-muted rounded-lg"
+              />
             </div>
 
             {/* Mobile Menu Button */}
@@ -106,34 +103,39 @@ const Header = () => {
                 </form>
                 
                 <div className="flex space-x-2">
-                  <Button
-                    variant="ghost"
-                    onClick={() => {
-                      navigate("/favoritos");
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="flex-1 justify-start"
-                  >
-                    <Heart className="w-5 h-5 mr-2" />
-                    Favoritos
-                  </Button>
+                  <div className="flex-1">
+                    <IconBadge
+                      icon={
+                        <div className="flex items-center w-full">
+                          <Heart className="w-5 h-5 mr-2" />
+                          <span>Favoritos</span>
+                        </div>
+                      }
+                      count={favoritesCount}
+                      onClick={() => {
+                        navigate("/favoritos");
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="w-full hover:bg-muted rounded-lg p-2 flex justify-start"
+                    />
+                  </div>
                   
-                  <Button
-                    variant="ghost"
-                    onClick={() => {
-                      setIsCartOpen(true);
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="flex-1 justify-start relative"
-                  >
-                    <ShoppingCart className="w-5 h-5 mr-2" />
-                    Carrinho
-                    {getTotalItems() > 0 && (
-                      <span className="ml-2 bg-primary text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                        {getTotalItems()}
-                      </span>
-                    )}
-                  </Button>
+                  <div className="flex-1">
+                    <IconBadge
+                      icon={
+                        <div className="flex items-center w-full">
+                          <ShoppingCart className="w-5 h-5 mr-2" />
+                          <span>Carrinho</span>
+                        </div>
+                      }
+                      count={totalItems}
+                      onClick={() => {
+                        setIsCartOpen(true);
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="w-full hover:bg-muted rounded-lg p-2 flex justify-start"
+                    />
+                  </div>
                 </div>
               </div>
             </div>

@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ProductImageGallery } from "@/components/ProductImageGallery";
 import { FavoriteButton } from "@/components/FavoriteButton";
+import { AddToCartButton } from "@/components/AddToCartButton";
 import { getProductById } from "@/data/products";
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/hooks/useCart";
@@ -112,28 +113,31 @@ Data/Hora do pedido: ${currentDate}`;
                 {product.description}
               </p>
               <div className="flex items-center justify-between">
-                <p className="font-playfair text-4xl font-bold text-primary">
-                  {product.price}
+                <p className="font-playfair text-4xl font-bold text-primary flex items-baseline">
+                  <span className="text-2xl mr-2">R$</span>
+                  <span>{product.price.replace('R$ ', '')}</span>
                 </p>
               </div>
             </div>
 
             {/* Action Buttons */}
             <div className="space-y-4">
-              <Button 
-                variant="luxury" 
+              <AddToCartButton 
+                product={{
+                  id: product.id,
+                  name: product.name,
+                  price: product.price,
+                  image: product.image
+                }}
+                variant="liquid-glass"
                 size="xl"
-                className="w-full font-inter font-semibold"
-                onClick={handleAddToCart}
-              >
-                <Plus className="w-6 h-6 mr-3" />
-                Adicionar ao Carrinho
-              </Button>
+                className="w-full font-inter font-semibold bg-primary text-primary-foreground hover:bg-primary/90"
+              />
               
               <Button 
-                variant="whatsapp" 
+                variant="liquid-glass" 
                 size="xl"
-                className="w-full font-inter font-semibold"
+                className="w-full font-inter font-semibold bg-green-600 text-white hover:bg-green-700"
                 onClick={handleDirectPurchase}
               >
                 <MessageCircle className="w-6 h-6 mr-3" />
