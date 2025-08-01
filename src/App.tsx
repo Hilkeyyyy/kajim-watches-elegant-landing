@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import ProductDetail from "./pages/ProductDetail";
+import CategoryPage from "./pages/CategoryPage";
 
 import Favorites from "./pages/Favorites";
 import Auth from "./pages/Auth";
@@ -31,6 +32,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/produto/:id" element={<ProductDetail />} />
+              <Route path="/categoria/:categoryId" element={<CategoryPage />} />
               
               <Route path="/favoritos" element={<Favorites />} />
               <Route path="/auth" element={<Auth />} />
