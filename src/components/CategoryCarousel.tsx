@@ -2,13 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 
 interface Category {
   id: string;
@@ -99,7 +92,6 @@ export const CategoryCarousel = () => {
             </div>
           ))}
         </div>
-        </Carousel>
       </div>
     </section>
   );

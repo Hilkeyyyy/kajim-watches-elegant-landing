@@ -24,7 +24,6 @@ interface ProductModalProps {
 
 export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductModalProps) => {
   const [loading, setLoading] = useState(false);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [formData, setFormData] = useState({
     name: '',
     brand: '',
@@ -36,6 +35,18 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
     material: '',
     water_resistance: '',
     warranty: '',
+    watch_type: '',
+    bezel_type: '',
+    glass_type: '',
+    clasp_type: '',
+    certification: '',
+    power_reserve: '',
+    dial_color: '',
+    strap_material: '',
+    weight: '',
+    thickness: '',
+    lug_width: '',
+    country_origin: '',
     stock_quantity: '',
     stock_status: 'in_stock',
     status: 'active',
@@ -45,17 +56,18 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
     images: [] as string[],
     features: [] as string[],
     badges: [] as string[],
-    custom_tags: [] as string[]
+    custom_tags: [] as string[],
+    complications: [] as string[]
   });
   
   const [newFeature, setNewFeature] = useState('');
   const [newBadge, setNewBadge] = useState('');
   const [newTag, setNewTag] = useState('');
+  const [newComplication, setNewComplication] = useState('');
   const { toast } = useToast();
 
   useEffect(() => {
     if (isOpen) {
-      fetchCategories();
       if (productId) {
         fetchProduct();
       } else {
@@ -64,19 +76,6 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
     }
   }, [isOpen, productId]);
 
-  const fetchCategories = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('categories')
-        .select('id, name')
-        .order('name');
-      
-      if (error) throw error;
-      setCategories(data || []);
-    } catch (error) {
-      console.error('Erro ao buscar categorias:', error);
-    }
-  };
 
   const fetchProduct = async () => {
     if (!productId) return;
@@ -96,12 +95,23 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
         model: data.model || '',
         price: data.price?.toString() || '',
         description: data.description || '',
-        
         movement: data.movement || '',
         case_size: data.case_size || '',
         material: data.material || '',
         water_resistance: data.water_resistance || '',
         warranty: data.warranty || '',
+        watch_type: data.watch_type || '',
+        bezel_type: data.bezel_type || '',
+        glass_type: data.glass_type || '',
+        clasp_type: data.clasp_type || '',
+        certification: data.certification || '',
+        power_reserve: data.power_reserve || '',
+        dial_color: data.dial_color || '',
+        strap_material: data.strap_material || '',
+        weight: data.weight || '',
+        thickness: data.thickness || '',
+        lug_width: data.lug_width || '',
+        country_origin: data.country_origin || '',
         stock_quantity: data.stock_quantity?.toString() || '',
         stock_status: data.stock_status || 'in_stock',
         status: data.status || 'active',
@@ -111,7 +121,8 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
         images: data.images || [],
         features: data.features || [],
         badges: data.badges || [],
-        custom_tags: data.custom_tags || []
+        custom_tags: data.custom_tags || [],
+        complications: data.complications || []
       });
     } catch (error) {
       console.error('Erro ao buscar produto:', error);
@@ -130,12 +141,23 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
       model: '',
       price: '',
       description: '',
-      
       movement: '',
       case_size: '',
       material: '',
       water_resistance: '',
       warranty: '',
+      watch_type: '',
+      bezel_type: '',
+      glass_type: '',
+      clasp_type: '',
+      certification: '',
+      power_reserve: '',
+      dial_color: '',
+      strap_material: '',
+      weight: '',
+      thickness: '',
+      lug_width: '',
+      country_origin: '',
       stock_quantity: '',
       stock_status: 'in_stock',
       status: 'active',
@@ -145,7 +167,8 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
       images: [],
       features: [],
       badges: [],
-      custom_tags: []
+      custom_tags: [],
+      complications: []
     });
     setNewFeature('');
     setNewBadge('');
