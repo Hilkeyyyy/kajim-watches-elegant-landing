@@ -6,21 +6,11 @@ import { ProductBadge } from "@/components/ProductBadge";
 import { StockStatus } from "@/components/StockStatus";
 import { useNavigate } from "react-router-dom";
 
+import { Product } from "@/types/product";
+
 interface ProductCardProps {
-  product: {
-    id: string;
-    name: string;
-    price: string;
-    image: string;
-    description: string;
-    badges?: string[];
-    custom_tags?: string[];
-    stock_status?: 'in_stock' | 'low_stock' | 'out_of_stock';
-    stock_quantity?: number;
-    details: {
-      brand: string;
-    };
-  };
+  product: Product;
+  onProductClick?: (id: string) => void;
 }
 
 export const ProductCard = ({ product }: ProductCardProps) => {
@@ -68,12 +58,12 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         <div className="text-center mb-4">
           <div className="flex items-center justify-center mb-2">
             <p className="font-inter text-sm text-muted-foreground">
-              {product.details.brand}
+              {product.brand}
             </p>
             {product.stock_status && (
               <div className="ml-2">
                 <StockStatus 
-                  stockStatus={product.stock_status} 
+                  stockStatus={product.stock_status as any} 
                   stockQuantity={product.stock_quantity}
                 />
               </div>

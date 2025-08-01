@@ -1,26 +1,15 @@
 import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Product } from "@/types/product";
+import { SupabaseProduct, convertSupabaseToProduct } from "@/types/supabase-product";
 import { ProductCard } from "@/components/ProductCard";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
-import { supabase } from "@/integrations/supabase/client";
-
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  image_url: string;
-  description: string;
-  brand: string;
-  badges: string[];
-  custom_tags: string[];
-  stock_status: string;
-  stock_quantity: number;
-  category_id: string;
-  is_visible: boolean;
-}
+import { useNavigate } from "react-router-dom";
 
 const ProductsSection = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchProducts();
@@ -38,7 +27,8 @@ const ProductsSection = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setProducts(data || []);
+      const products = (data as SupabaseProduct[] || []).map(convertSupabaseToProduct);
+      setProducts(products);
     } catch (error) {
       console.error('Erro ao buscar produtos:', error);
     } finally {
@@ -46,6 +36,9 @@ const ProductsSection = () => {
     }
   };
 
+  const handleProductClick = (id: string) => {
+    navigate(`/produto/${id}`);
+  };
 
   if (loading) {
     return (
@@ -80,20 +73,8 @@ const ProductsSection = () => {
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 <ProductCard 
-                  product={{
-                    id: product.id,
-                    name: product.name,
-                    price: `R$ ${product.price.toFixed(2).replace('.', ',')}`,
-                    image: product.image_url || '/placeholder.svg',
-                    description: product.description,
-                    badges: product.badges,
-                    custom_tags: product.custom_tags,
-                    stock_status: product.stock_status as 'in_stock' | 'low_stock' | 'out_of_stock',
-                    stock_quantity: product.stock_quantity,
-                    details: {
-                      brand: product.brand
-                    }
-                  }}
+                  product={product}
+                  onProductClick={handleProductClick}
                 />
               </div>
             ))}

@@ -5,19 +5,37 @@ export interface Product {
   image: string;
   images: string[];
   description: string;
-  details: {
-    brand: string;
-    model: string;
-    movement: string;
-    caseSize: string;
-    material: string;
-    waterResistance: string;
-    warranty: string;
-  };
+  brand: string;
+  model?: string;
+  movement?: string;
+  case_size?: string;
+  material?: string;
+  water_resistance?: string;
+  warranty?: string;
+  watch_type?: string;
+  bezel_type?: string;
+  glass_type?: string;
+  clasp_type?: string;
+  certification?: string;
+  power_reserve?: string;
+  complications?: string[];
+  dial_color?: string;
+  strap_material?: string;
+  weight?: string;
+  thickness?: string;
+  lug_width?: string;
+  country_origin?: string;
   features: string[];
+  badges?: string[];
+  custom_tags?: string[];
+  stock_quantity?: number;
+  stock_status?: string;
+  status?: string;
+  is_visible?: boolean;
+  is_featured?: boolean;
 }
 
 export interface ProductCardProps {
-  product: Omit<Product, 'images' | 'details' | 'features'>;
+  product: Omit<Product, 'images' | 'features'>;
   onProductClick: (id: string) => void;
 }

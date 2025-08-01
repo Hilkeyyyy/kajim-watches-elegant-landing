@@ -31,7 +31,6 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
     model: '',
     price: '',
     description: '',
-    category_id: '',
     movement: '',
     case_size: '',
     material: '',
@@ -97,7 +96,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
         model: data.model || '',
         price: data.price?.toString() || '',
         description: data.description || '',
-        category_id: data.category_id || '',
+        
         movement: data.movement || '',
         case_size: data.case_size || '',
         material: data.material || '',
@@ -131,7 +130,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
       model: '',
       price: '',
       description: '',
-      category_id: '',
+      
       movement: '',
       case_size: '',
       material: '',
@@ -164,7 +163,7 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
         model: formData.model || null,
         price: parseFloat(formData.price),
         description: formData.description || null,
-        category_id: formData.category_id || null,
+        
         movement: formData.movement || null,
         case_size: formData.case_size || null,
         material: formData.material || null,
@@ -319,24 +318,6 @@ export const ProductModal = ({ isOpen, onClose, onSuccess, productId }: ProductM
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="category">Categoria</Label>
-              <Select
-                value={formData.category_id}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, category_id: value }))}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione uma categoria" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem key={category.id} value={category.id}>
-                      {category.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
 
             <div className="space-y-2">
               <Label htmlFor="stock_quantity">Quantidade em Estoque</Label>

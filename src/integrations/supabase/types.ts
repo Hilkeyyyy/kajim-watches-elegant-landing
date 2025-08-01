@@ -50,94 +50,122 @@ export type Database = {
       products: {
         Row: {
           badges: string[] | null
+          bezel_type: string | null
           brand: string
           case_size: string | null
-          category_id: string | null
+          certification: string | null
+          clasp_type: string | null
+          complications: string[] | null
+          country_origin: string | null
           created_at: string
           custom_tags: string[] | null
           description: string | null
+          dial_color: string | null
           features: string[] | null
+          glass_type: string | null
           id: string
           image_url: string | null
           images: string[] | null
           is_featured: boolean | null
           is_visible: boolean | null
+          lug_width: string | null
           material: string | null
           model: string | null
           movement: string | null
           name: string
+          power_reserve: string | null
           price: number
           sort_order: number | null
           status: Database["public"]["Enums"]["product_status"] | null
           stock_quantity: number | null
           stock_status: string | null
+          strap_material: string | null
+          thickness: string | null
           updated_at: string
           warranty: string | null
+          watch_type: string | null
           water_resistance: string | null
+          weight: string | null
         }
         Insert: {
           badges?: string[] | null
+          bezel_type?: string | null
           brand: string
           case_size?: string | null
-          category_id?: string | null
+          certification?: string | null
+          clasp_type?: string | null
+          complications?: string[] | null
+          country_origin?: string | null
           created_at?: string
           custom_tags?: string[] | null
           description?: string | null
+          dial_color?: string | null
           features?: string[] | null
+          glass_type?: string | null
           id?: string
           image_url?: string | null
           images?: string[] | null
           is_featured?: boolean | null
           is_visible?: boolean | null
+          lug_width?: string | null
           material?: string | null
           model?: string | null
           movement?: string | null
           name: string
+          power_reserve?: string | null
           price: number
           sort_order?: number | null
           status?: Database["public"]["Enums"]["product_status"] | null
           stock_quantity?: number | null
           stock_status?: string | null
+          strap_material?: string | null
+          thickness?: string | null
           updated_at?: string
           warranty?: string | null
+          watch_type?: string | null
           water_resistance?: string | null
+          weight?: string | null
         }
         Update: {
           badges?: string[] | null
+          bezel_type?: string | null
           brand?: string
           case_size?: string | null
-          category_id?: string | null
+          certification?: string | null
+          clasp_type?: string | null
+          complications?: string[] | null
+          country_origin?: string | null
           created_at?: string
           custom_tags?: string[] | null
           description?: string | null
+          dial_color?: string | null
           features?: string[] | null
+          glass_type?: string | null
           id?: string
           image_url?: string | null
           images?: string[] | null
           is_featured?: boolean | null
           is_visible?: boolean | null
+          lug_width?: string | null
           material?: string | null
           model?: string | null
           movement?: string | null
           name?: string
+          power_reserve?: string | null
           price?: number
           sort_order?: number | null
           status?: Database["public"]["Enums"]["product_status"] | null
           stock_quantity?: number | null
           stock_status?: string | null
+          strap_material?: string | null
+          thickness?: string | null
           updated_at?: string
           warranty?: string | null
+          watch_type?: string | null
           water_resistance?: string | null
+          weight?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "products_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "categories"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       profiles: {
         Row: {

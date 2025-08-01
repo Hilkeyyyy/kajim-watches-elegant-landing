@@ -41,12 +41,7 @@ const Products = () => {
     try {
       const { data, error } = await supabase
         .from('products')
-        .select(`
-          *,
-          categories (
-            name
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;

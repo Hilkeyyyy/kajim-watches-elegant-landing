@@ -100,7 +100,7 @@ Data/Hora do pedido: ${currentDate}`;
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <p className="font-inter text-sm text-muted-foreground mb-2">
-                    {product.details.brand}
+                    {product.brand}
                   </p>
                   <h1 className="font-playfair text-3xl md:text-4xl font-bold text-primary">
                     {product.name}
@@ -166,12 +166,22 @@ Data/Hora do pedido: ${currentDate}`;
                 Especificações Técnicas
               </h3>
               <div className="space-y-3">
-                {Object.entries(product.details).map(([key, value]) => (
-                  <div key={key} className="flex justify-between items-center">
-                    <span className="text-muted-foreground capitalize">
-                      {key.replace(/([A-Z])/g, ' $1').toLowerCase()}:
+                {[
+                  { label: 'Marca', value: product.brand },
+                  { label: 'Modelo', value: product.model },
+                  { label: 'Movimento', value: product.movement },
+                  { label: 'Tamanho da Caixa', value: product.case_size },
+                  { label: 'Material', value: product.material },
+                  { label: 'Resistência à Água', value: product.water_resistance },
+                  { label: 'Garantia', value: product.warranty },
+                  { label: 'Tipo', value: product.watch_type },
+                  { label: 'Vidro', value: product.glass_type }
+                ].filter(item => item.value).map((item) => (
+                  <div key={item.label} className="flex justify-between items-center">
+                    <span className="text-muted-foreground">
+                      {item.label}:
                     </span>
-                    <span className="font-medium">{value}</span>
+                    <span className="font-medium">{item.value}</span>
                   </div>
                 ))}
               </div>
