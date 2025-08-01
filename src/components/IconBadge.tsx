@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 
 interface IconBadgeProps {
   icon: ReactNode;
@@ -7,7 +7,7 @@ interface IconBadgeProps {
   className?: string;
 }
 
-export const IconBadge = ({ icon, count, onClick, className = "" }: IconBadgeProps) => {
+export const IconBadge = React.memo(({ icon, count, onClick, className = "" }: IconBadgeProps) => {
   return (
     <button
       onClick={onClick}
@@ -21,4 +21,4 @@ export const IconBadge = ({ icon, count, onClick, className = "" }: IconBadgePro
       )}
     </button>
   );
-};
+});

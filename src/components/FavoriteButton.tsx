@@ -1,19 +1,20 @@
+import React from "react";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useFavorites } from "@/hooks/useFavorites";
+import { useOptimizedFavorites } from "@/hooks/useOptimizedFavorites";
 
 interface FavoriteButtonProps {
   productId: string;
   productName: string;
 }
 
-export const FavoriteButton = ({ productId, productName }: FavoriteButtonProps) => {
-  const { toggleFavorite, isFavorite } = useFavorites();
+export const FavoriteButton = React.memo(({ productId, productName }: FavoriteButtonProps) => {
+  const { toggleFavorite, isFavorite } = useOptimizedFavorites();
   const isProductFavorite = isFavorite(productId);
 
-  const handleToggle = () => {
+  const handleToggle = React.useCallback(() => {
     toggleFavorite(productId, productName);
-  };
+  }, [toggleFavorite, productId, productName]);
 
   return (
     <Button
@@ -33,4 +34,4 @@ export const FavoriteButton = ({ productId, productName }: FavoriteButtonProps) 
       />
     </Button>
   );
-};
+});

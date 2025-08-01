@@ -1,3 +1,4 @@
+import React from "react";
 import { Minus, Plus, Trash2, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,15 +8,18 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { useCart } from "@/hooks/useCart";
+import { useOptimizedCart } from "@/hooks/useOptimizedCart";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { useApp } from "@/contexts/AppContext";
 
 interface CartSheetProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const CartSheet = ({ isOpen, onClose }: CartSheetProps) => {
-  const { cartItems, updateQuantity, removeFromCart, clearCart, sendCartToWhatsApp, getCartTotal, getItemTotal } = useCart();
+export const CartSheet = React.memo(({ isOpen, onClose }: CartSheetProps) => {
+  const { cartItems, updateQuantity, removeFromCart, clearCart, sendCartToWhatsApp, getCartTotal, getItemTotal } = useOptimizedCart();
+  const { isLoading } = useApp();
 
   if (cartItems.length === 0) {
     return (
@@ -154,4 +158,4 @@ export const CartSheet = ({ isOpen, onClose }: CartSheetProps) => {
       </SheetContent>
     </Sheet>
   );
-};
+});

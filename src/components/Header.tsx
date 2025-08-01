@@ -1,29 +1,37 @@
-import { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Search, ShoppingCart, Heart, Menu, X, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useCart } from "@/hooks/useCart";
-import { useFavorites } from "@/hooks/useFavorites";
+import { useOptimizedCart } from "@/hooks/useOptimizedCart";
+import { useOptimizedFavorites } from "@/hooks/useOptimizedFavorites";
 import { CartSheet } from "@/components/CartSheet";
 import { IconBadge } from "@/components/IconBadge";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { useNavigate } from "react-router-dom";
+import { useApp } from "@/contexts/AppContext";
 
-const Header = () => {
+const Header = React.memo(() => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { getTotalItems } = useCart();
-  const { getFavoritesCount } = useFavorites();
+  const { getTotalItems } = useOptimizedCart();
+  const { getFavoritesCount } = useOptimizedFavorites();
+  const { isLoading } = useApp();
   const navigate = useNavigate();
   
   const totalItems = getTotalItems();
   const favoritesCount = getFavoritesCount();
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     // Implement search functionality here
     console.log("Searching for:", searchQuery);
-  };
+  }, [searchQuery]);
+
+  const handleCartOpen = useCallback(() => setIsCartOpen(true), []);
+  const handleCartClose = useCallback(() => setIsCartOpen(false), []);
+  const handleFavoritesClick = useCallback(() => navigate("/favoritos"), [navigate]);
+  const toggleMobileMenu = useCallback(() => setIsMobileMenuOpen(prev => !prev), []);
 
   return (
     <>
@@ -35,14 +43,14 @@ const Header = () => {
               <IconBadge
                 icon={<ShoppingCart className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />}
                 count={totalItems}
-                onClick={() => setIsCartOpen(true)}
+                onClick={handleCartOpen}
                 className="group hover:bg-muted rounded-lg"
               />
               
               <IconBadge
                 icon={<Heart className="w-5 h-5 text-muted-foreground group-hover:text-red-600 transition-colors" />}
                 count={favoritesCount}
-                onClick={() => navigate("/favoritos")}
+                onClick={handleFavoritesClick}
                 className="group hover:bg-muted rounded-lg"
               />
             </div>
@@ -95,7 +103,7 @@ const Header = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                onClick={toggleMobileMenu}
               >
                 {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </Button>
@@ -170,9 +178,9 @@ const Header = () => {
         </div>
       </header>
 
-      <CartSheet isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      <CartSheet isOpen={isCartOpen} onClose={handleCartClose} />
     </>
   );
-};
+});
 
 export default Header;
