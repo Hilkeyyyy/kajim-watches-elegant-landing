@@ -24,8 +24,8 @@ export const NewProductsCarousel = () => {
           .select('*')
           .eq('is_visible', true)
           .eq('status', 'active')
-          .gte('created_at', thirtyDaysAgo.toISOString())
-          .order('created_at', { ascending: false })
+          .contains('badges', ['Novidade'])
+          .order('updated_at', { ascending: false })
           .limit(10);
 
         if (error) {
