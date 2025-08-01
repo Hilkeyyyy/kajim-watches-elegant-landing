@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { getBadgeVariant } from "@/utils/badgeUtils";
 
 interface ProductBadgeProps {
   badge: string;
@@ -6,25 +7,6 @@ interface ProductBadgeProps {
 }
 
 export const ProductBadge = ({ badge, className }: ProductBadgeProps) => {
-  const getBadgeVariant = (badge: string) => {
-    switch (badge.toLowerCase()) {
-      case 'novo':
-      case 'new':
-        return 'default';
-      case 'oferta':
-      case 'sale':
-        return 'destructive';
-      case 'limitado':
-      case 'limited':
-        return 'secondary';
-      case 'destaque':
-      case 'featured':
-        return 'outline';
-      default:
-        return 'outline';
-    }
-  };
-
   return (
     <Badge 
       variant={getBadgeVariant(badge)} 

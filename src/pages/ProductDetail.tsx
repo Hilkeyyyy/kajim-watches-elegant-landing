@@ -3,11 +3,13 @@ import { ArrowLeft, ShoppingCart, MessageCircle, Shield, Truck, RotateCcw, Plus 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { ProductBadge } from "@/components/ProductBadge";
 import { ProductImageGallery } from "@/components/ProductImageGallery";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { useToast } from "@/hooks/use-toast";
+import { getAllBadges } from "@/utils/badgeUtils";
 import { useOptimizedCart } from "@/hooks/useOptimizedCart";
 import { supabase } from "@/integrations/supabase/client";
 import { convertSupabaseToProduct } from "@/types/supabase-product";
@@ -157,6 +159,18 @@ Data/Hora do pedido: ${currentDate}`;
                   <h1 className="font-playfair text-3xl md:text-4xl font-bold text-primary">
                     {product.name}
                   </h1>
+                  
+                  {/* All Badges in Detail Page */}
+                  {(() => {
+                    const allBadges = getAllBadges(product);
+                    return allBadges.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mt-3">
+                        {allBadges.map((badge, index) => (
+                          <ProductBadge key={index} badge={badge} />
+                        ))}
+                      </div>
+                    );
+                  })()}
                 </div>
                 <FavoriteButton productId={product.id} productName={product.name} />
               </div>

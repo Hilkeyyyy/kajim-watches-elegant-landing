@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { ProductBadge } from "@/components/ProductBadge";
+import { getDisplayBadges } from "@/utils/badgeUtils";
 import { StockStatus } from "@/components/StockStatus";
 import { useNavigate } from "react-router-dom";
 
@@ -39,13 +40,16 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         )}
 
         {/* Badges */}
-        {product.badges && product.badges.length > 0 && (
-          <div className="absolute top-3 left-3 flex flex-col gap-1">
-            {product.badges.slice(0, 2).map((badge, index) => (
-              <ProductBadge key={index} badge={badge} />
-            ))}
-          </div>
-        )}
+        {(() => {
+          const displayBadges = getDisplayBadges(product, 2);
+          return displayBadges.length > 0 && (
+            <div className="absolute top-3 left-3 flex flex-col gap-1">
+              {displayBadges.map((badge, index) => (
+                <ProductBadge key={index} badge={badge} />
+              ))}
+            </div>
+          );
+        })()}
         
         {/* Favorite Button */}
         <div className="absolute top-3 right-3 z-10">
