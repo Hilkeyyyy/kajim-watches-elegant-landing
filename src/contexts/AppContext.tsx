@@ -2,6 +2,7 @@ import React, { createContext, useContext, useReducer, useEffect, useCallback, u
 import { storage, type CartItem } from '@/utils/storage';
 import { useToast } from '@/hooks/use-toast';
 import { parsePrice, formatPrice, calculateItemTotal } from '@/utils/priceUtils';
+import { logCartAction, logFavoriteAction, logStorageAction } from '@/utils/auditLogger';
 
 // Estados da aplicação
 interface AppState {
@@ -191,6 +192,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Ações do carrinho (memoizadas)
   const addToCart = useCallback((product: Omit<CartItem, 'quantity'>, quantity: number = 1) => {
     dispatch({ type: 'ADD_TO_CART', payload: { product, quantity } });
+    logCartAction('add', product.id, quantity);
     toast({
       title: 'Adicionado ao carrinho',
       description: `${product.name} foi adicionado ao carrinho.`,
@@ -199,20 +201,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const removeFromCart = useCallback((productId: string) => {
     dispatch({ type: 'REMOVE_FROM_CART', payload: productId });
+    logCartAction('remove', productId);
   }, []);
 
   const updateQuantity = useCallback((productId: string, quantity: number) => {
     dispatch({ type: 'UPDATE_QUANTITY', payload: { id: productId, quantity } });
+    logCartAction('update_quantity', productId, quantity);
   }, []);
 
   const clearCart = useCallback(() => {
     dispatch({ type: 'CLEAR_CART' });
+    logCartAction('clear');
   }, []);
 
   // Ações dos favoritos (memoizadas)
   const toggleFavorite = useCallback((productId: string, productName: string) => {
     const isCurrentlyFavorite = state.favorites.includes(productId);
     dispatch({ type: 'TOGGLE_FAVORITE', payload: { productId, productName } });
+    logFavoriteAction(isCurrentlyFavorite ? 'remove' : 'add', productId);
     
     toast({
       title: isCurrentlyFavorite ? 'Removido dos favoritos' : 'Adicionado aos favoritos',

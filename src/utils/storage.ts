@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { logStorageAction, logSecurityEvent } from './auditLogger';
 
 // Schemas de validação
 const CartItemSchema = z.object({
@@ -44,20 +45,27 @@ class OptimizedStorage {
   private async safeGet<T>(key: string, schema: z.ZodSchema<T>): Promise<T | null> {
     try {
       const stored = localStorage.getItem(key);
-      if (!stored) return null;
+      if (!stored) {
+        logStorageAction('get_empty', key, true);
+        return null;
+      }
 
       const parsed = JSON.parse(stored) as StorageItem<T>;
       
       // Validar versão e dados
       if (parsed.version !== this.STORAGE_VERSION) {
         localStorage.removeItem(key);
+        logSecurityEvent('version_mismatch', { key, version: parsed.version });
         return null;
       }
 
-      return this.validate(parsed.data, schema);
+      const result = this.validate(parsed.data, schema);
+      logStorageAction('get', key, result !== null);
+      return result;
     } catch (error) {
       console.warn(`Erro ao recuperar ${key} do localStorage:`, error);
       localStorage.removeItem(key);
+      logSecurityEvent('storage_corruption', { key, error: error?.toString() });
       return null;
     }
   }
@@ -71,11 +79,13 @@ class OptimizedStorage {
       };
       
       localStorage.setItem(key, JSON.stringify(storageItem));
+      logStorageAction('set', key, true);
       
       // Notificar outras abas
       window.dispatchEvent(new CustomEvent(`storage-${key}`, { detail: data }));
     } catch (error) {
       console.error(`Erro ao salvar ${key} no localStorage:`, error);
+      logStorageAction('set', key, false);
     }
   }
 
