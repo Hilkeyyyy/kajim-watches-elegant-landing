@@ -1,26 +1,56 @@
-import { useApp } from '@/contexts/AppContext';
 
-// Hook otimizado que mantém compatibilidade com a API anterior
+import { useApp } from '@/contexts/AppContext';
+import { useEffect, useCallback } from 'react';
+
+// Hook otimizado com logs de debug para resolver problemas de contagem
 export const useOptimizedFavorites = () => {
   const {
     favorites,
     toggleFavorite,
     isFavorite,
     getFavoritesCount,
+    isLoading,
   } = useApp();
 
-  // Funções individuais para compatibilidade
-  const addToFavorites = (productId: string, productName: string) => {
+  // Debug log para monitorar estado dos favoritos
+  useEffect(() => {
+    console.log('🔄 useOptimizedFavorites - Estado dos favoritos:', {
+      favorites: favorites,
+      count: favorites.length,
+      isLoading: isLoading,
+      timestamp: new Date().toISOString()
+    });
+  }, [favorites, isLoading]);
+
+  // Funções individuais para compatibilidade com memoização adequada
+  const addToFavorites = useCallback((productId: string, productName: string) => {
+    console.log('➕ Adicionando aos favoritos:', { productId, productName });
     if (!isFavorite(productId)) {
       toggleFavorite(productId, productName);
+    } else {
+      console.log('⚠️ Produto já está nos favoritos:', productId);
     }
-  };
+  }, [isFavorite, toggleFavorite]);
 
-  const removeFromFavorites = (productId: string, productName: string) => {
+  const removeFromFavorites = useCallback((productId: string, productName: string) => {
+    console.log('➖ Removendo dos favoritos:', { productId, productName });
     if (isFavorite(productId)) {
       toggleFavorite(productId, productName);
+    } else {
+      console.log('⚠️ Produto não está nos favoritos:', productId);
     }
-  };
+  }, [isFavorite, toggleFavorite]);
+
+  // Função de contagem melhorada com logs
+  const getCount = useCallback(() => {
+    const count = getFavoritesCount();
+    console.log('📊 Contagem de favoritos:', {
+      count,
+      favoritesArray: favorites,
+      arrayLength: favorites.length
+    });
+    return count;
+  }, [getFavoritesCount, favorites]);
 
   return {
     favorites,
@@ -28,7 +58,8 @@ export const useOptimizedFavorites = () => {
     removeFromFavorites,
     toggleFavorite,
     isFavorite,
-    getFavoritesCount,
+    getFavoritesCount: getCount,
+    isLoading,
   };
 };
 

@@ -1,3 +1,4 @@
+
 import { useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -34,17 +35,20 @@ const AdminLayout = () => {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
-        {/* Header with global trigger */}
-        <header className="fixed top-0 left-0 right-0 h-12 xs:h-14 flex items-center border-b bg-background z-50 px-2 xs:px-4">
-          <SidebarTrigger className="mr-2 xs:mr-3" />
-          <h1 className="text-sm xs:text-base sm:text-lg font-semibold truncate">
-            <span className="hidden sm:inline">Painel Administrativo - </span>KAJIM Store
+        {/* Fixed Header */}
+        <header className="fixed top-0 left-0 right-0 h-14 flex items-center border-b bg-background z-40 px-4">
+          <SidebarTrigger className="mr-3" />
+          <h1 className="text-lg font-semibold truncate">
+            <span className="hidden sm:inline">Painel Administrativo - </span>
+            KAJIM Store
           </h1>
         </header>
 
+        {/* Sidebar */}
         <AdminSidebar />
 
-        <main className="flex-1 pt-12 xs:pt-14 p-3 xs:p-4 sm:p-6">
+        {/* Main Content */}
+        <main className="flex-1 pt-14 p-6">
           <Outlet />
         </main>
       </div>

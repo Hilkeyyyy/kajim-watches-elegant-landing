@@ -1,4 +1,5 @@
-import { NavLink, useLocation } from "react-router-dom";
+
+import { NavLink } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Sidebar,
@@ -9,7 +10,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { 
@@ -34,32 +34,31 @@ export function AdminSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const { signOut, user } = useAuth();
-  const location = useLocation();
-  const currentPath = location.pathname;
 
-  const isActive = (path: string) => {
-    if (path === "/admin") {
-      return currentPath === "/admin";
-    }
-    return currentPath.startsWith(path);
-  };
-
-  const getNavCls = ({ isActive }: { isActive: boolean }) =>
-    isActive ? "bg-primary text-primary-foreground font-medium" : "hover:bg-muted/50";
+  const getNavCls = (isActive: boolean) =>
+    isActive 
+      ? "bg-primary text-primary-foreground font-medium" 
+      : "hover:bg-muted/50 text-muted-foreground";
 
   const handleSignOut = async () => {
-    await signOut();
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+    }
   };
 
   return (
     <Sidebar
-      className={collapsed ? "w-12 xs:w-14" : "w-56 xs:w-60"}
+      className={collapsed ? "w-14" : "w-60"}
       collapsible="icon"
     >
-
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Painel Administrativo</SidebarGroupLabel>
+          <SidebarGroupLabel>
+            {!collapsed && "Painel Administrativo"}
+          </SidebarGroupLabel>
+          
           <SidebarGroupContent>
             <SidebarMenu>
               {adminItems.map((item) => (
@@ -68,10 +67,10 @@ export function AdminSidebar() {
                     <NavLink 
                       to={item.url} 
                       end={item.url === "/admin"}
-                      className={({ isActive }) => getNavCls({ isActive: isActive || (item.url === "/admin" && currentPath === "/admin") })}
+                      className={({ isActive }) => getNavCls(isActive)}
                     >
-                      <item.icon className="mr-2 h-4 w-4" />
-                      {!collapsed && <span>{item.title}</span>}
+                      <item.icon className="h-4 w-4 shrink-0" />
+                      {!collapsed && <span className="ml-2">{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -80,11 +79,11 @@ export function AdminSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* User Info and Logout */}
+        {/* User Info and Logout - Fixed at bottom */}
         <div className="mt-auto p-4 border-t">
-          {!collapsed && (
-            <div className="mb-2 text-sm text-muted-foreground">
-              {user?.email}
+          {!collapsed && user?.email && (
+            <div className="mb-2 text-sm text-muted-foreground truncate">
+              {user.email}
             </div>
           )}
           <Button
