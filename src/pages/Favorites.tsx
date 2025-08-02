@@ -5,33 +5,19 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { products } from "@/data/products";
 import { ProductCard } from "@/components/ProductCard";
-import { useOptimizedFavorites } from "@/hooks/useOptimizedFavorites";
+import { useFavorites } from "@/hooks/useFavorites";
 import Header from "@/components/Header";
 
 const Favorites = () => {
   const [favoriteProducts, setFavoriteProducts] = useState<typeof products>([]);
-  const { favorites, isLoading } = useOptimizedFavorites();
+  const { favorites, isLoading } = useFavorites();
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log('📄 Favorites page - Estado dos favoritos:', {
-      favorites,
-      isLoading,
-      productsLength: products.length
-    });
-
     if (!isLoading && favorites.length >= 0) {
-      const favoriteItems = products.filter(product => {
-        const isFavorite = favorites.includes(product.id);
-        console.log(`🔍 Checking product ${product.id} (${product.name}): ${isFavorite ? 'IS' : 'NOT'} favorite`);
-        return isFavorite;
-      });
-      
-      console.log('✅ Produtos favoritos encontrados:', {
-        count: favoriteItems.length,
-        products: favoriteItems.map(p => ({ id: p.id, name: p.name }))
-      });
-      
+      const favoriteItems = products.filter(product => 
+        favorites.includes(product.id)
+      );
       setFavoriteProducts(favoriteItems);
     }
   }, [favorites, isLoading]);

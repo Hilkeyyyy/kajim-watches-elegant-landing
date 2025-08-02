@@ -35,25 +35,19 @@ const initialState: AppState = {
   lastUpdated: Date.now(),
 };
 
-// Reducer otimizado com logs
+// Reducer otimizado
 function appReducer(state: AppState, action: AppAction): AppState {
-  console.log('🔄 AppReducer - Ação:', action.type, action);
-  
   switch (action.type) {
     case 'SET_CART':
-      console.log('📦 SET_CART - Novo carrinho:', action.payload);
       return { ...state, cart: action.payload, lastUpdated: Date.now() };
     
     case 'SET_FAVORITES':
-      console.log('❤️ SET_FAVORITES - Novos favoritos:', action.payload);
       return { ...state, favorites: action.payload, lastUpdated: Date.now() };
     
     case 'SET_LOADING':
-      console.log('⏳ SET_LOADING:', action.payload);
       return { ...state, isLoading: action.payload };
     
     case 'SET_DATA_LOADED':
-      console.log('✅ SET_DATA_LOADED:', action.payload);
       return { ...state, dataLoaded: action.payload };
     
     case 'UPDATE_TIMESTAMP':
@@ -74,13 +68,11 @@ function appReducer(state: AppState, action: AppAction): AppState {
         newCart = [...state.cart, { ...product, quantity }];
       }
       
-      console.log('🛒 ADD_TO_CART - Produto adicionado:', { product: product.name, quantity, newCartLength: newCart.length });
       return { ...state, cart: newCart, lastUpdated: Date.now() };
     }
 
     case 'REMOVE_FROM_CART': {
       const newCart = state.cart.filter(item => item.id !== action.payload);
-      console.log('🗑️ REMOVE_FROM_CART - Produto removido:', action.payload);
       return { ...state, cart: newCart, lastUpdated: Date.now() };
     }
 
@@ -88,19 +80,16 @@ function appReducer(state: AppState, action: AppAction): AppState {
       const { id, quantity } = action.payload;
       if (quantity <= 0) {
         const newCart = state.cart.filter(item => item.id !== id);
-        console.log('📉 UPDATE_QUANTITY - Quantidade zerada, removendo:', id);
         return { ...state, cart: newCart, lastUpdated: Date.now() };
       }
       
       const newCart = state.cart.map(item =>
         item.id === id ? { ...item, quantity } : item
       );
-      console.log('🔢 UPDATE_QUANTITY - Quantidade atualizada:', { id, quantity });
       return { ...state, cart: newCart, lastUpdated: Date.now() };
     }
 
     case 'CLEAR_CART':
-      console.log('🧹 CLEAR_CART - Carrinho limpo');
       return { ...state, cart: [], lastUpdated: Date.now() };
 
     case 'TOGGLE_FAVORITE': {
@@ -109,13 +98,6 @@ function appReducer(state: AppState, action: AppAction): AppState {
       const newFavorites = isCurrentlyFavorite
         ? state.favorites.filter(id => id !== productId)
         : [...state.favorites, productId];
-      
-      console.log('💝 TOGGLE_FAVORITE:', {
-        productId,
-        wasAlreadyFavorite: isCurrentlyFavorite,
-        newFavoritesCount: newFavorites.length,
-        newFavorites
-      });
       
       return { ...state, favorites: newFavorites, lastUpdated: Date.now() };
     }
@@ -160,33 +142,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [state, dispatch] = useReducer(appReducer, initialState);
   const { toast } = useToast();
 
-  // Carregar dados iniciais com melhor tratamento de erros
+  // Carregar dados iniciais
   useEffect(() => {
     const loadInitialData = async () => {
       try {
-        console.log('🚀 Carregando dados iniciais...');
         const [cart, favorites] = await Promise.all([
           storage.getCart(),
           storage.getFavorites()
         ]);
         
-        console.log('📊 Dados carregados:', {
-          cart: cart.length + ' itens no carrinho',
-          favorites: favorites.length + ' favoritos',
-          favoritesArray: favorites
-        });
-        
         dispatch({ type: 'SET_CART', payload: cart });
         dispatch({ type: 'SET_FAVORITES', payload: favorites });
         dispatch({ type: 'SET_DATA_LOADED', payload: true });
       } catch (error) {
-        console.error('❌ Erro ao carregar dados:', error);
+        console.error('Erro ao carregar dados:', error);
         toast({
           title: 'Erro',
           description: 'Erro ao carregar dados salvos. Usando dados padrão.',
           variant: 'destructive',
         });
-        // Mesmo com erro, marcar como carregado para não travar a UI
         dispatch({ type: 'SET_DATA_LOADED', payload: true });
       } finally {
         dispatch({ type: 'SET_LOADING', payload: false });
@@ -196,17 +170,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     loadInitialData();
   }, [toast]);
 
-  // Sincronizar com localStorage quando state muda (apenas após carregamento inicial)
+  // Sincronizar com localStorage
   useEffect(() => {
     if (state.dataLoaded && !state.isLoading) {
-      console.log('💾 Salvando carrinho no localStorage:', state.cart.length + ' itens');
       storage.setCart(state.cart);
     }
   }, [state.cart, state.isLoading, state.dataLoaded]);
 
   useEffect(() => {
     if (state.dataLoaded && !state.isLoading) {
-      console.log('💾 Salvando favoritos no localStorage:', state.favorites.length + ' itens', state.favorites);
       storage.setFavorites(state.favorites);
     }
   }, [state.favorites, state.isLoading, state.dataLoaded]);
@@ -265,9 +237,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [state.favorites, toast]);
 
   const isFavorite = useCallback((productId: string) => {
-    const result = state.favorites.includes(productId);
-    console.log('🔍 isFavorite check:', { productId, result, favorites: state.favorites });
-    return result;
+    return state.favorites.includes(productId);
   }, [state.favorites]);
 
   // Totais memoizados com logs
@@ -288,18 +258,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return formatPrice(calculateItemTotal(priceString, quantity));
   }, []);
 
-  const getFavoritesCount = useMemo(() => {
-    return () => {
-      const count = state.favorites.length;
-      console.log('📊 getFavoritesCount called:', {
-        count,
-        favorites: state.favorites,
-        dataLoaded: state.dataLoaded,
-        isLoading: state.isLoading
-      });
-      return count;
-    };
-  }, [state.favorites, state.dataLoaded, state.isLoading]);
+  const getFavoritesCount = useCallback(() => {
+    return state.favorites.length;
+  }, [state.favorites]);
 
   // WhatsApp (mantém código existente)
   const sendCartToWhatsApp = useCallback(() => {

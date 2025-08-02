@@ -2,7 +2,7 @@
 import React from "react";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useOptimizedFavorites } from "@/hooks/useOptimizedFavorites";
+import { useFavorites } from "@/hooks/useFavorites";
 
 interface FavoriteButtonProps {
   productId: string;
@@ -10,34 +10,17 @@ interface FavoriteButtonProps {
 }
 
 export const FavoriteButton = React.memo(({ productId, productName }: FavoriteButtonProps) => {
-  const { toggleFavorite, isFavorite, isLoading } = useOptimizedFavorites();
+  const { toggleFavorite, isFavorite, isLoading } = useFavorites();
   const isProductFavorite = isFavorite(productId);
 
   const handleToggle = React.useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
-    console.log('💖 FavoriteButton clicked:', {
-      productId,
-      productName,
-      currentlyFavorite: isProductFavorite,
-      isLoading
-    });
-
     if (!isLoading) {
       toggleFavorite(productId, productName);
     }
-  }, [toggleFavorite, productId, productName, isProductFavorite, isLoading]);
-
-  // Log do estado atual para debug
-  React.useEffect(() => {
-    console.log('❤️ FavoriteButton render:', {
-      productId,
-      productName,
-      isProductFavorite,
-      isLoading
-    });
-  }, [productId, productName, isProductFavorite, isLoading]);
+  }, [toggleFavorite, productId, productName, isLoading]);
 
   return (
     <Button

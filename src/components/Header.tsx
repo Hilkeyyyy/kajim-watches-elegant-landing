@@ -3,7 +3,7 @@ import { Search, ShoppingCart, Heart, Menu, X, User, LogIn, Settings } from "luc
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useOptimizedCart } from "@/hooks/useOptimizedCart";
-import { useOptimizedFavorites } from "@/hooks/useOptimizedFavorites";
+import { useFavorites } from "@/hooks/useFavorites";
 import { useAuth } from "@/contexts/AuthContext";
 import { CartSheet } from "@/components/CartSheet";
 import { IconBadge } from "@/components/IconBadge";
@@ -22,13 +22,13 @@ const Header = React.memo(() => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { getTotalItems } = useOptimizedCart();
-  const { getFavoritesCount } = useOptimizedFavorites();
+  const { count: favoritesCount } = useFavorites();
   const { user, signOut, isAdmin } = useAuth();
   const { isLoading } = useApp();
   const navigate = useNavigate();
   
   const totalItems = getTotalItems();
-  const favoritesCount = getFavoritesCount();
+  
 
   const handleSearch = useCallback((e: React.FormEvent) => {
     e.preventDefault();

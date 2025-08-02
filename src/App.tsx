@@ -12,7 +12,7 @@ import CategoryPage from "./pages/CategoryPage";
 
 import Favorites from "./pages/Favorites";
 import Auth from "./pages/Auth";
-import AdminLayout from "./layouts/AdminLayout";
+import AdminLayoutNew from "./layouts/AdminLayoutNew";
 import Dashboard from "./pages/admin/Dashboard";
 import Products from "./pages/admin/Products";
 import Categories from "./pages/admin/Categories";
@@ -38,7 +38,7 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               
               {/* Admin Routes */}
-              <Route path="/admin" element={<AdminLayout />}>
+              <Route path="/admin" element={<AdminLayoutNew />}>
                 <Route index element={<Dashboard />} />
                 <Route path="produtos" element={<Products />} />
                 <Route path="categorias" element={<Categories />} />
