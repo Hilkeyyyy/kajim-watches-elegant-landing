@@ -56,7 +56,7 @@ interface ProductFormTabsProps {
 
 export const MainInfoTab = ({ form }: { form: UseFormReturn<ProductFormData> }) => (
   <div className="space-y-6">
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <FormField
         control={form.control}
         name="name"
@@ -86,7 +86,7 @@ export const MainInfoTab = ({ form }: { form: UseFormReturn<ProductFormData> }) 
       />
     </div>
 
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <FormField
         control={form.control}
         name="brand"
@@ -140,7 +140,7 @@ export const BadgesTab = ({ badges, addBadge, removeBadge }: { badges: string[],
   <div className="space-y-6">
     <div>
       <h3 className="text-lg font-medium mb-4">Badges Disponíveis</h3>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
         {AVAILABLE_BADGES.map((badge) => (
           <Button
             key={badge}
@@ -187,7 +187,7 @@ export const BadgesTab = ({ badges, addBadge, removeBadge }: { badges: string[],
 
 export const SpecificationsTab = ({ form }: { form: UseFormReturn<ProductFormData> }) => (
   <div className="space-y-6">
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <FormField
         control={form.control}
         name="movement"
@@ -217,7 +217,7 @@ export const SpecificationsTab = ({ form }: { form: UseFormReturn<ProductFormDat
       />
     </div>
 
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <FormField
         control={form.control}
         name="material"
@@ -247,7 +247,7 @@ export const SpecificationsTab = ({ form }: { form: UseFormReturn<ProductFormDat
       />
     </div>
 
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <FormField
         control={form.control}
         name="dial_color"
@@ -281,7 +281,7 @@ export const SpecificationsTab = ({ form }: { form: UseFormReturn<ProductFormDat
 
 export const OtherInfoTab = ({ form, images, setImages }: { form: UseFormReturn<ProductFormData>, images: ImageItem[], setImages: (images: ImageItem[]) => void }) => (
   <div className="space-y-6">
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <FormField
         control={form.control}
         name="stock_quantity"
@@ -325,7 +325,7 @@ export const OtherInfoTab = ({ form, images, setImages }: { form: UseFormReturn<
       />
     </div>
 
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <FormField
         control={form.control}
         name="is_visible"

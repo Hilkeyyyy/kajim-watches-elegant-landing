@@ -55,17 +55,18 @@ export const FeaturedCarousel = () => {
   }
 
   return (
-    <div className="mb-16">
-      <h2 className="text-3xl font-bold text-center mb-8">Produtos em Destaque</h2>
+    <div className="mb-12 xs:mb-16 px-4">
+      <h2 className="text-2xl xs:text-3xl font-bold text-center mb-6 xs:mb-8">Produtos em Destaque</h2>
       <Carousel
         opts={{
           align: "start",
+          loop: true,
         }}
-        className="w-full max-w-sm sm:max-w-md md:max-w-2xl lg:max-w-4xl xl:max-w-6xl mx-auto"
+        className="w-full max-w-[280px] xs:max-w-sm sm:max-w-md md:max-w-2xl lg:max-w-4xl xl:max-w-6xl mx-auto"
       >
-        <CarouselContent>
+        <CarouselContent className="-ml-2 md:-ml-4">
           {products.map((product) => (
-            <CarouselItem key={product.id} className="md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
+            <CarouselItem key={product.id} className="pl-2 md:pl-4 basis-[85%] xs:basis-[80%] sm:basis-1/2 md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
               <div className="p-1">
                 <ProductCard
                   product={product}
@@ -75,8 +76,8 @@ export const FeaturedCarousel = () => {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
+        <CarouselPrevious className="hidden xs:flex -left-4 lg:-left-12" />
+        <CarouselNext className="hidden xs:flex -right-4 lg:-right-12" />
       </Carousel>
     </div>
   );

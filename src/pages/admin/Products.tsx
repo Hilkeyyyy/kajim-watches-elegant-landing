@@ -8,7 +8,7 @@ import { Plus, Edit, Trash2, Eye } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { StockStatus } from '@/components/StockStatus';
 import { ProductBadge } from '@/components/ProductBadge';
-import { ProductModal } from '@/components/ProductModal';
+import { ProductModal } from '@/components/admin/ProductModal';
 
 interface Product {
   id: string;

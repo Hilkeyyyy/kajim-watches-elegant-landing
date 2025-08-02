@@ -90,8 +90,8 @@ export const NewProductsCarousel = () => {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="hidden md:flex" />
-        <CarouselNext className="hidden md:flex" />
+        <CarouselPrevious className="hidden xs:flex" />
+        <CarouselNext className="hidden xs:flex" />
       </Carousel>
     </section>
   );

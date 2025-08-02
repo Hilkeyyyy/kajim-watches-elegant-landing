@@ -58,22 +58,22 @@ const Header = React.memo(() => {
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+        <div className="max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-14 xs:h-16">
             {/* Left side - Cart and Favorites Icons */}
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1 xs:space-x-2">
               <IconBadge
-                icon={<ShoppingCart className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />}
+                icon={<ShoppingCart className="w-4 h-4 xs:w-5 xs:h-5 text-muted-foreground group-hover:text-primary transition-colors" />}
                 count={totalItems}
                 onClick={handleCartOpen}
-                className="group hover:bg-muted rounded-lg"
+                className="group hover:bg-muted rounded-lg p-1.5 xs:p-2"
               />
               
               <IconBadge
-                icon={<Heart className="w-5 h-5 text-muted-foreground group-hover:text-red-600 transition-colors" />}
+                icon={<Heart className="w-4 h-4 xs:w-5 xs:h-5 text-muted-foreground group-hover:text-red-600 transition-colors" />}
                 count={favoritesCount}
                 onClick={handleFavoritesClick}
-                className="group hover:bg-muted rounded-lg"
+                className="group hover:bg-muted rounded-lg p-1.5 xs:p-2"
               />
             </div>
 
@@ -160,10 +160,10 @@ const Header = React.memo(() => {
             </div>
           </div>
 
-          {/* Mobile Menu */}
+            {/* Mobile Menu */}
           {isMobileMenuOpen && (
-            <div className="md:hidden border-t border-border">
-              <div className="px-2 pt-2 pb-3 space-y-3">
+            <div className="md:hidden border-t border-border bg-background/95 backdrop-blur-sm">
+              <div className="px-3 xs:px-4 pt-3 pb-4 space-y-3">
                 <form onSubmit={handleSearch}>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />

@@ -35,14 +35,16 @@ const AdminLayout = () => {
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
         {/* Header with global trigger */}
-        <header className="fixed top-0 left-0 right-0 h-12 flex items-center border-b bg-background z-50">
-          <SidebarTrigger className="ml-2" />
-          <h1 className="ml-4 text-lg font-semibold">Painel Administrativo - KAJIM Store</h1>
+        <header className="fixed top-0 left-0 right-0 h-12 xs:h-14 flex items-center border-b bg-background z-50 px-2 xs:px-4">
+          <SidebarTrigger className="mr-2 xs:mr-3" />
+          <h1 className="text-sm xs:text-base sm:text-lg font-semibold truncate">
+            <span className="hidden sm:inline">Painel Administrativo - </span>KAJIM Store
+          </h1>
         </header>
 
         <AdminSidebar />
 
-        <main className="flex-1 pt-12 p-6">
+        <main className="flex-1 pt-12 xs:pt-14 p-3 xs:p-4 sm:p-6">
           <Outlet />
         </main>
       </div>
