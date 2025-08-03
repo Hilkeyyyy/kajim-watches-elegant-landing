@@ -1,75 +1,36 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AppProvider } from "@/contexts/AppContext";
-import { AuthProvider } from "@/contexts/AuthContext";
-import ErrorBoundary from "@/components/ErrorBoundary";
-import { PerformanceOptimizer } from "@/components/PerformanceOptimizer";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import ProductDetail from "./pages/ProductDetail";
-import CategoryPage from "./pages/CategoryPage";
 
-import Favorites from "./pages/Favorites";
-import Auth from "./pages/Auth";
-import AdminLayout from "./layouts/AdminLayout";
-import Dashboard from "./pages/admin/Dashboard";
-import Products from "./pages/admin/Products";
-import Categories from "./pages/admin/Categories";
-import Users from "./pages/admin/Users";
-import ProductCreate from "./pages/admin/ProductCreate";
-import ProductEdit from "./pages/admin/ProductEdit";
-import Reports from "./pages/admin/Reports";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HomePage } from '@/pages/HomePage';
+import { ProductDetailPage } from '@/pages/ProductDetailPage';
+import { CartPage } from '@/pages/CartPage';
+import { FavoritesPage } from '@/pages/FavoritesPage';
+import { LoginPage } from '@/pages/LoginPage';
+import { AdminLayout } from '@/components/admin/AdminLayout';
+import { AdminDashboard } from '@/pages/admin/AdminDashboard';
+import { AdminProducts } from '@/pages/admin/AdminProducts';
+import { AdminProductCreate } from '@/pages/admin/AdminProductCreate';
+import { AdminProductEdit } from '@/pages/admin/AdminProductEdit';
 
-const queryClient = new QueryClient();
-
-const App = () => {
-  console.log('App - Initializing application');
-  
+export default function App() {
   return (
-    <ErrorBoundary>
-      <PerformanceOptimizer>
-        <QueryClientProvider client={queryClient}>
-          <AuthProvider>
-            <AppProvider>
-              <TooltipProvider>
-                <Toaster />
-                <Sonner />
-                <BrowserRouter>
-                <ErrorBoundary>
-                  <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/produto/:id" element={<ProductDetail />} />
-                    <Route path="/categoria/:categoryId" element={<CategoryPage />} />
-                    
-                    <Route path="/favoritos" element={<Favorites />} />
-                    <Route path="/auth" element={<Auth />} />
-                    
-                    {/* Admin Routes */}
-                    <Route path="/admin" element={<AdminLayout />}>
-                      <Route index element={<Dashboard />} />
-                      <Route path="produtos" element={<Products />} />
-                      <Route path="produtos/criar" element={<ProductCreate />} />
-                      <Route path="produtos/:id/editar" element={<ProductEdit />} />
-                      <Route path="categorias" element={<Categories />} />
-                      <Route path="usuarios" element={<Users />} />
-                      <Route path="relatorios" element={<Reports />} />
-                    </Route>
-                    
-                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </ErrorBoundary>
-              </BrowserRouter>
-            </TooltipProvider>
-          </AppProvider>
-        </AuthProvider>
-      </QueryClientProvider>
-      </PerformanceOptimizer>
-    </ErrorBoundary>
+    <Router>
+      <Routes>
+        {/* Páginas Públicas */}
+        <Route path="/" element={<HomePage />} />
+        <Route path="/produto/:id" element={<ProductDetailPage />} />
+        <Route path="/carrinho" element={<CartPage />} />
+        <Route path="/favoritos" element={<FavoritesPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        
+        {/* Área Administrativa */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="produtos" element={<AdminProducts />} />
+          <Route path="produtos/criar" element={<AdminProductCreate />} />
+          <Route path="produtos/:id/editar" element={<AdminProductEdit />} />
+        </Route>
+      </Routes>
+    </Router>
   );
-};
-
-export default App;
+}

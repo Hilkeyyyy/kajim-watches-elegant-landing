@@ -1,141 +1,90 @@
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { FavoriteButton } from "@/components/FavoriteButton";
-import { AddToCartButton } from "@/components/AddToCartButton";
-import { ProductBadge } from "@/components/ProductBadge";
-import { getDisplayBadges } from "@/utils/badgeUtils";
-import { StockStatus } from "@/components/StockStatus";
-import { useNavigate } from "react-router-dom";
 
-import { Product } from "@/types/product";
+import React from 'react';
+import { Heart, ShoppingCart } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent } from '@/components/ui/Card';
+import { Product } from '@/types';
+import { useCart } from '@/hooks/useCart';
+import { useFavorites } from '@/hooks/useFavorites';
 
 interface ProductCardProps {
   product: Product;
-  onProductClick?: (id: string) => void;
+  onClick?: () => void;
 }
 
-export const ProductCard = ({ product }: ProductCardProps) => {
-  const navigate = useNavigate();
-  const isOutOfStock = product.stock_status === 'out_of_stock';
+export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
+  const { addToCart } = useCart();
+  const { toggleFavorite, isFavorite } = useFavorites();
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    addToCart(product);
+  };
+
+  const handleToggleFavorite = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    toggleFavorite(product.id);
+  };
+
+  const mainImage = product.image_url || product.images[0] || '';
 
   return (
-    <Card className="group bg-card rounded-xl shadow-card overflow-hidden hover:shadow-elegant transition-all duration-500 animate-fade-in relative">
-      {/* Product Image */}
-      <div className="relative aspect-square w-full overflow-hidden">
-        <img 
-          src={product.image} 
+    <Card className="group cursor-pointer transition-all hover:shadow-lg" onClick={onClick}>
+      <div className="relative overflow-hidden rounded-t-lg">
+        <img
+          src={mainImage}
           alt={product.name}
-          className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ${
-            isOutOfStock ? 'grayscale opacity-60' : ''
-          }`}
+          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
         />
-        
-        {/* Out of Stock Overlay */}
-        {isOutOfStock && (
-          <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
-            <div className="bg-destructive text-destructive-foreground px-4 py-2 rounded-lg font-bold text-lg">
-              ESGOTADO
-            </div>
-          </div>
-        )}
-
-        {/* Badges */}
-        {(() => {
-          const displayBadges = getDisplayBadges(product, 2);
-          return displayBadges.length > 0 && (
-            <div className="absolute top-3 left-3 flex flex-col gap-1">
-              {displayBadges.map((badge, index) => (
-                <ProductBadge key={index} badge={badge} />
-              ))}
-            </div>
-          );
-        })()}
-        
-        {/* Favorite Button */}
-        <div className="absolute top-3 right-3 z-10">
-          <FavoriteButton productId={product.id} productName={product.name} />
-        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="absolute top-2 right-2 bg-white/90 hover:bg-white"
+          onClick={handleToggleFavorite}
+        >
+          <Heart
+            className={`w-4 h-4 ${
+              isFavorite(product.id) ? 'fill-red-500 text-red-500' : 'text-gray-600'
+            }`}
+          />
+        </Button>
       </div>
-      
-      {/* Product Info */}
-      <div className="p-6">
-        <div className="text-center mb-4">
-          <div className="flex items-center justify-center mb-2">
-            <p className="font-inter text-sm text-muted-foreground">
-              {product.brand}
-            </p>
-            {product.stock_status && (
-              <div className="ml-2">
-                <StockStatus 
-                  stockStatus={product.stock_status as any} 
-                  stockQuantity={product.stock_quantity}
-                />
-              </div>
+
+      <CardContent className="p-4">
+        <div className="space-y-2">
+          <div>
+            <p className="text-sm text-muted-foreground">{product.brand}</p>
+            <h3 className="font-medium text-foreground line-clamp-2">{product.name}</h3>
+          </div>
+
+          <div className="space-y-1">
+            {product.movement && (
+              <p className="text-xs text-muted-foreground">Movimento: {product.movement}</p>
+            )}
+            {product.case_diameter && (
+              <p className="text-xs text-muted-foreground">Diâmetro: {product.case_diameter}</p>
+            )}
+            {product.case_material && (
+              <p className="text-xs text-muted-foreground">Material: {product.case_material}</p>
+            )}
+            {product.water_resistance && (
+              <p className="text-xs text-muted-foreground">Resistência: {product.water_resistance}</p>
             )}
           </div>
-          
-          <h3 className="font-playfair text-xl font-semibold text-primary mb-2">
-            {product.name}
-          </h3>
-          
-          <p className="font-inter text-muted-foreground text-sm mb-3 line-clamp-2">
-            {product.description}
-          </p>
 
-          {/* Custom Tags */}
-          {product.custom_tags && product.custom_tags.length > 0 && (
-            <div className="flex flex-wrap justify-center gap-1 mb-3">
-              {product.custom_tags.slice(0, 3).map((tag, index) => (
-                <span 
-                  key={index}
-                  className="text-xs bg-muted text-muted-foreground px-2 py-1 rounded-full"
-                >
-                  {tag}
-                </span>
-              ))}
+          <div className="flex items-center justify-between pt-2">
+            <div>
+              <p className="text-lg font-bold text-primary">
+                R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              </p>
             </div>
-          )}
-          
-          <p className="font-playfair text-2xl font-bold text-primary flex items-baseline justify-center">
-            <span className="text-lg mr-1">R$</span>
-            <span>{product.price.replace('R$ ', '')}</span>
-          </p>
-        </div>
-        
-        {/* Action Buttons */}
-        <div className="space-y-2">
-          {!isOutOfStock ? (
-            <AddToCartButton 
-              product={{
-                id: product.id,
-                name: product.name,
-                price: product.price,
-                image: product.image
-              }}
-              size="lg"
-              className="w-full font-inter font-medium"
-            />
-          ) : (
-            <Button 
-              size="lg"
-              className="w-full font-inter font-medium opacity-50 cursor-not-allowed"
-              disabled
-              variant="outline"
-            >
-              Produto Esgotado
+            <Button size="sm" onClick={handleAddToCart}>
+              <ShoppingCart className="w-4 h-4 mr-1" />
+              Adicionar
             </Button>
-          )}
-          
-          <Button 
-            variant="outline" 
-            size="lg"
-            className="w-full font-inter font-medium"
-            onClick={() => navigate(`/produto/${product.id}`)}
-          >
-            Ver Detalhes
-          </Button>
+          </div>
         </div>
-      </div>
+      </CardContent>
     </Card>
   );
 };
