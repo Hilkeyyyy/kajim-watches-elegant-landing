@@ -4,28 +4,29 @@ import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/comp
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 
-interface ProductFormMainProps {
+interface ProductFormCommercialProps {
   form: UseFormReturn<any>;
 }
 
-export const ProductFormMain: React.FC<ProductFormMainProps> = ({ form }) => {
+export const ProductFormCommercial: React.FC<ProductFormCommercialProps> = ({ form }) => {
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Informações Básicas</CardTitle>
+          <CardTitle>Informações Comerciais</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
-              name="name"
+              name="msrp"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nome do Produto *</FormLabel>
+                  <FormLabel>MSRP (Preço Sugerido)</FormLabel>
                   <FormControl>
-                    <Input placeholder="Nome do relógio" {...field} />
+                    <Input placeholder="Ex: R$ 15.000,00..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -34,12 +35,12 @@ export const ProductFormMain: React.FC<ProductFormMainProps> = ({ form }) => {
 
             <FormField
               control={form.control}
-              name="brand"
+              name="availability_status"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Marca *</FormLabel>
+                  <FormLabel>Status de Disponibilidade</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ex: Rolex, Omega, Casio..." {...field} />
+                    <Input placeholder="Ex: Em produção, Descontinuado..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -48,12 +49,30 @@ export const ProductFormMain: React.FC<ProductFormMainProps> = ({ form }) => {
 
             <FormField
               control={form.control}
-              name="model"
+              name="replacement_model"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Modelo</FormLabel>
+                  <FormLabel>Modelo Substituto</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ex: Submariner, Speedmaster..." {...field} />
+                    <Input placeholder="Ex: Ref. 126610LV..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <Separator />
+
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="box_type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tipo de Caixa/Embalagem</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Ex: Caixa de madeira, Estojo de couro..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -62,15 +81,14 @@ export const ProductFormMain: React.FC<ProductFormMainProps> = ({ form }) => {
 
             <FormField
               control={form.control}
-              name="price"
+              name="documentation"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Preço *</FormLabel>
+                  <FormLabel>Documentação Incluída</FormLabel>
                   <FormControl>
-                    <Input 
-                      type="number" 
-                      step="0.01" 
-                      placeholder="0.00" 
+                    <Textarea 
+                      placeholder="Ex: Certificado de garantia, manual de instruções, cartão de autenticidade..."
+                      className="min-h-[80px]"
                       {...field} 
                     />
                   </FormControl>
@@ -79,31 +97,6 @@ export const ProductFormMain: React.FC<ProductFormMainProps> = ({ form }) => {
               )}
             />
           </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Descrição</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Descrição do Produto</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Descreva as características principais do relógio..."
-                    className="min-h-[120px]"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
         </CardContent>
       </Card>
     </div>
