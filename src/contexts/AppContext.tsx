@@ -141,6 +141,13 @@ const AppContext = createContext<AppContextType | null>(null);
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
   const { toast } = useToast();
+  
+  console.log('AppProvider - State:', { 
+    cartItems: state.cart.length, 
+    favorites: state.favorites.length,
+    isLoading: state.isLoading,
+    dataLoaded: state.dataLoaded
+  });
 
   // Carregar dados iniciais
   useEffect(() => {

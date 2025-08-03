@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -51,6 +51,8 @@ interface Category {
 }
 
 const Categories = () => {
+  console.log('Categories - Component mounting');
+  
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -68,16 +70,22 @@ const Categories = () => {
 
   const fetchCategories = async () => {
     try {
+      console.log('Categories - Fetching categories from Supabase');
       setLoading(true);
       const { data, error } = await supabase
         .from('categories')
         .select('*')
         .order('sort_order', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Categories - Error fetching categories:', error);
+        throw error;
+      }
+      
+      console.log('Categories - Successfully fetched categories:', data?.length || 0);
       setCategories(data || []);
     } catch (error) {
-      console.error('Erro ao buscar categorias:', error);
+      console.error('Categories - Error in fetchCategories:', error);
       toast({
         title: "Erro",
         description: "Erro ao carregar categorias",
@@ -222,6 +230,7 @@ const Categories = () => {
   };
 
   useEffect(() => {
+    console.log('Categories - Component mounted, fetching data');
     fetchCategories();
   }, []);
 

@@ -12,6 +12,8 @@ const AdminLayout = () => {
   const { user, loading, isAdmin } = useAuth();
   const navigate = useNavigate();
 
+  console.log('AdminLayout - Auth State:', { user: !!user, loading, isAdmin });
+
   // Loading state
   if (loading) {
     return (
@@ -26,11 +28,13 @@ const AdminLayout = () => {
 
   // Authentication check
   if (!user) {
+    console.warn('AdminLayout - No user, redirecting to auth');
     navigate('/auth');
     return null;
   }
 
   if (!isAdmin) {
+    console.warn('AdminLayout - User is not admin, redirecting to home');
     navigate('/');
     return null;
   }
