@@ -193,7 +193,7 @@ class ApiService {
         id: data.user.id,
         email: data.user.email!,
         name: profile?.name,
-        role: profile?.role || 'user',
+        role: (profile?.role as 'user' | 'admin') || 'user',
         created_at: data.user.created_at
       };
 
@@ -248,7 +248,7 @@ class ApiService {
         id: user.id,
         email: user.email!,
         name: profile?.name,
-        role: profile?.role || 'user',
+        role: (profile?.role as 'user' | 'admin') || 'user',
         created_at: user.created_at
       };
 

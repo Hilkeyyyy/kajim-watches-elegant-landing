@@ -6,6 +6,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive';
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
+  asChild?: boolean;
   children: React.ReactNode;
 }
 
@@ -13,6 +14,7 @@ export const Button: React.FC<ButtonProps> = ({
   variant = 'primary',
   size = 'md',
   loading = false,
+  asChild = false,
   className,
   children,
   disabled,
@@ -33,6 +35,21 @@ export const Button: React.FC<ButtonProps> = ({
     md: 'h-10 px-4 py-2 rounded-md',
     lg: 'h-11 px-8 rounded-md'
   };
+
+  if (asChild) {
+    return (
+      <div
+        className={cn(
+          baseClasses,
+          variants[variant],
+          sizes[size],
+          className
+        )}
+      >
+        {children}
+      </div>
+    );
+  }
 
   return (
     <button

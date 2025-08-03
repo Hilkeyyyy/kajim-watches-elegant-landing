@@ -5,7 +5,7 @@ import { HomePage } from '@/pages/HomePage';
 import { ProductDetailPage } from '@/pages/ProductDetailPage';
 import { CartPage } from '@/pages/CartPage';
 import { FavoritesPage } from '@/pages/FavoritesPage';
-import { Auth } from '@/pages/Auth';
+import Auth from '@/pages/Auth';
 
 export default function App() {
   return (

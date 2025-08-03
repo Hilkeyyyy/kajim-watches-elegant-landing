@@ -1,3 +1,4 @@
+
 export interface Product {
   id: string;
   name: string;
@@ -102,6 +103,10 @@ export interface Product {
   status?: string;
   is_visible?: boolean;
   is_featured?: boolean;
+  
+  // Campos obrigatórios que estavam faltando
+  created_at: string;
+  updated_at: string;
 }
 
 export interface ProductCardProps {

@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 interface UseFavoritesReturn {
   favorites: string[];
   loading: boolean;
+  isLoading: boolean; // Adicionar alias para compatibilidade
   addToFavorites: (productId: string) => void;
   removeFromFavorites: (productId: string) => void;
   toggleFavorite: (productId: string) => void;
@@ -65,6 +66,7 @@ export const useFavorites = (): UseFavoritesReturn => {
   return {
     favorites,
     loading,
+    isLoading: loading, // Alias para compatibilidade
     addToFavorites,
     removeFromFavorites,
     toggleFavorite,

@@ -1,3 +1,4 @@
+
 import { Product } from "@/types/product";
 import heroWatch from "@/assets/hero-watch.jpg";
 import watchDetails from "@/assets/watch-details.jpg";
@@ -26,7 +27,9 @@ export const products: Product[] = [
       "Pulseira em aço inoxidável premium",
       "Resistente à água até 100 metros",
       "Garantia internacional de 2 anos"
-    ]
+    ],
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
   },
   {
     id: "2", 
@@ -50,7 +53,9 @@ export const products: Product[] = [
       "Pulseira em couro premium",
       "Resistente à água",
       "Embalagem premium inclusa"
-    ]
+    ],
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
   },
   {
     id: "3",
@@ -74,7 +79,9 @@ export const products: Product[] = [
       "Resistência extrema à água",
       "Pulseira esportiva premium",
       "Certificação ISO para mergulho"
-    ]
+    ],
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
   }
 ];
 
