@@ -402,8 +402,9 @@ const Categories = () => {
                 <Label>Imagem da Categoria</Label>
                 <ImageUpload
                   bucket="category-images"
-                  onImageUpload={(url) => setFormData(prev => ({ ...prev, image_url: url }))}
-                  currentImage={formData.image_url}
+                  onImageUploaded={(url) => setFormData(prev => ({ ...prev, image_url: url }))}
+                  onImageRemoved={() => setFormData(prev => ({ ...prev, image_url: '' }))}
+                  currentImageUrl={formData.image_url}
                 />
               </div>
             </div>
