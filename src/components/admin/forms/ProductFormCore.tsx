@@ -15,6 +15,7 @@ import { ProductFormColors } from "./ProductFormColors";
 import { ProductFormAdvancedSpecs } from "./ProductFormAdvancedSpecs";
 import { ProductFormCommercial } from "./ProductFormCommercial";
 import { ProductFormMetadata } from "./ProductFormMetadata";
+import { ProductFormFeatures } from "./ProductFormFeatures";
 import { useToast } from "@/hooks/use-toast";
 
 interface ImageItem {
@@ -107,6 +108,9 @@ const productSchema = z.object({
   box_type: z.string().optional(),
   documentation: z.string().optional(),
   
+  // Características
+  features: z.array(z.string()).optional(),
+
   // Status do produto
   stock_quantity: z.number().min(0, "Quantidade deve ser positiva").optional(),
   is_visible: z.boolean().optional(),
@@ -229,6 +233,9 @@ export const ProductFormCore: React.FC<ProductFormCoreProps> = ({
       box_type: product?.box_type || "",
       documentation: product?.documentation || "",
       
+      // Características
+      features: product?.features || [],
+
       // Status do produto
       stock_quantity: product?.stock_quantity || 0,
       is_visible: product?.is_visible ?? true,
@@ -269,19 +276,20 @@ export const ProductFormCore: React.FC<ProductFormCoreProps> = ({
     setBadges(prev => prev.filter(badge => badge !== badgeToRemove));
   }, []);
 
-  const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 9));
+  const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 10));
   const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
 
   const steps = [
     { id: 1, title: "Básico", description: "Nome, preço e descrição" },
     { id: 2, title: "Imagens", description: "Fotos e badges" },
-    { id: 3, title: "Especificações", description: "Movimento e calibre" },
-    { id: 4, title: "Dimensões", description: "Medidas e tamanhos" },
-    { id: 5, title: "Materiais", description: "Caixa, pulseira, cristal" },
-    { id: 6, title: "Cores", description: "Mostrador e acabamentos" },
-    { id: 7, title: "Avançado", description: "Resistências e certificações" },
-    { id: 8, title: "Comercial", description: "Preços e embalagem" },
-    { id: 9, title: "Status", description: "Estoque e visibilidade" }
+    { id: 3, title: "Características", description: "Funcionalidades do produto" },
+    { id: 4, title: "Especificações", description: "Movimento e calibre" },
+    { id: 5, title: "Dimensões", description: "Medidas e tamanhos" },
+    { id: 6, title: "Materiais", description: "Caixa, pulseira, cristal" },
+    { id: 7, title: "Cores", description: "Mostrador e acabamentos" },
+    { id: 8, title: "Avançado", description: "Resistências e certificações" },
+    { id: 9, title: "Comercial", description: "Preços e embalagem" },
+    { id: 10, title: "Status", description: "Estoque e visibilidade" }
   ];
 
   return (
@@ -309,7 +317,7 @@ export const ProductFormCore: React.FC<ProductFormCoreProps> = ({
       </div>
 
       {/* Progress Steps */}
-      <div className="grid grid-cols-3 lg:grid-cols-9 gap-1 lg:gap-2">
+      <div className="grid grid-cols-5 lg:grid-cols-10 gap-1 lg:gap-2">
         {steps.map((step) => (
           <div
             key={step.id}
@@ -347,30 +355,34 @@ export const ProductFormCore: React.FC<ProductFormCoreProps> = ({
               )}
               
               {currentStep === 3 && (
-                <ProductFormBasicSpecs form={form} />
+                <ProductFormFeatures form={form} />
               )}
               
               {currentStep === 4 && (
-                <ProductFormDimensions form={form} />
+                <ProductFormBasicSpecs form={form} />
               )}
               
               {currentStep === 5 && (
-                <ProductFormMaterials form={form} />
+                <ProductFormDimensions form={form} />
               )}
               
               {currentStep === 6 && (
-                <ProductFormColors form={form} />
+                <ProductFormMaterials form={form} />
               )}
               
               {currentStep === 7 && (
-                <ProductFormAdvancedSpecs form={form} />
+                <ProductFormColors form={form} />
               )}
               
               {currentStep === 8 && (
-                <ProductFormCommercial form={form} />
+                <ProductFormAdvancedSpecs form={form} />
               )}
               
               {currentStep === 9 && (
+                <ProductFormCommercial form={form} />
+              )}
+              
+              {currentStep === 10 && (
                 <ProductFormMetadata form={form} />
               )}
 
@@ -382,7 +394,7 @@ export const ProductFormCore: React.FC<ProductFormCoreProps> = ({
                       Anterior
                     </Button>
                   )}
-                  {currentStep < 9 && (
+                  {currentStep < 10 && (
                     <Button type="button" onClick={nextStep}>
                       Próximo
                     </Button>

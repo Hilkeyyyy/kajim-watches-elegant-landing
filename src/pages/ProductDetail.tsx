@@ -226,32 +226,196 @@ Data/Hora do pedido: ${currentDate}`;
               </ul>
             </Card>
 
-            {/* Technical Details */}
-            <Card className="p-6">
-              <h3 className="font-playfair text-xl font-semibold mb-4">
-                Especificações Técnicas
-              </h3>
-              <div className="space-y-3">
-                {[
-                  { label: 'Marca', value: product.brand },
-                  { label: 'Modelo', value: product.model },
-                  { label: 'Movimento', value: product.movement },
-                  { label: 'Tamanho da Caixa', value: product.case_size },
-                  { label: 'Material', value: product.material },
-                  { label: 'Resistência à Água', value: product.water_resistance },
-                  { label: 'Garantia', value: product.warranty },
-                  { label: 'Tipo', value: product.watch_type },
-                  { label: 'Vidro', value: product.glass_type }
-                ].filter(item => item.value).map((item) => (
-                  <div key={item.label} className="flex justify-between items-center">
-                    <span className="text-muted-foreground">
-                      {item.label}:
-                    </span>
-                    <span className="font-medium">{item.value}</span>
+            {/* Technical Specifications - Reorganized */}
+            <div className="space-y-6">
+              {/* Basic Specifications */}
+              <Card className="p-6">
+                <h3 className="font-playfair text-xl font-semibold mb-4">
+                  Informações Básicas
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {[
+                    { label: 'Marca', value: product.brand },
+                    { label: 'Modelo', value: product.model },
+                    { label: 'Coleção', value: product.collection },
+                    { label: 'Número de Referência', value: product.reference_number },
+                    { label: 'Ano de Produção', value: product.production_year },
+                    { label: 'País de Origem', value: product.country_origin },
+                    { label: 'Edição Limitada', value: product.limited_edition },
+                    { label: 'Certificação', value: product.certification },
+                    { label: 'Garantia', value: product.warranty }
+                  ].filter(item => item.value).map((item) => (
+                    <div key={item.label} className="flex justify-between">
+                      <span className="text-muted-foreground">{item.label}:</span>
+                      <span className="font-medium text-right">{item.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              {/* Movement & Technical */}
+              <Card className="p-6">
+                <h3 className="font-playfair text-xl font-semibold mb-4">
+                  Movimento e Especificações
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {[
+                    { label: 'Movimento', value: product.movement },
+                    { label: 'Calibre', value: product.caliber },
+                    { label: 'Tipo de Relógio', value: product.watch_type },
+                    { label: 'Rubis', value: product.jewels_count },
+                    { label: 'Frequência', value: product.frequency_hz },
+                    { label: 'Reserva de Marcha', value: product.power_reserve },
+                    { label: 'Amplitude', value: product.amplitude_degrees },
+                    { label: 'Erro de Batida', value: product.beat_error_ms }
+                  ].filter(item => item.value).map((item) => (
+                    <div key={item.label} className="flex justify-between">
+                      <span className="text-muted-foreground">{item.label}:</span>
+                      <span className="font-medium text-right">{item.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              {/* Dimensions */}
+              <Card className="p-6">
+                <h3 className="font-playfair text-xl font-semibold mb-4">
+                  Dimensões e Medidas
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {[
+                    { label: 'Diâmetro da Caixa', value: product.case_diameter || product.case_size },
+                    { label: 'Altura da Caixa', value: product.case_height },
+                    { label: 'Espessura', value: product.case_thickness || product.thickness },
+                    { label: 'Distância Lugs', value: product.lug_to_lug },
+                    { label: 'Largura das Lugs', value: product.lug_width_mm || product.lug_width },
+                    { label: 'Peso', value: product.weight },
+                    { label: 'Diâmetro da Coroa', value: product.crown_diameter },
+                    { label: 'Diâmetro do Cristal', value: product.crystal_diameter },
+                    { label: 'Largura da Pulseira', value: product.bracelet_width },
+                    { label: 'Comprimento da Pulseira', value: product.bracelet_length }
+                  ].filter(item => item.value).map((item) => (
+                    <div key={item.label} className="flex justify-between">
+                      <span className="text-muted-foreground">{item.label}:</span>
+                      <span className="font-medium text-right">{item.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              {/* Materials */}
+              <Card className="p-6">
+                <h3 className="font-playfair text-xl font-semibold mb-4">
+                  Materiais e Construção
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {[
+                    { label: 'Material da Caixa', value: product.case_material || product.material },
+                    { label: 'Material do Bisel', value: product.bezel_material },
+                    { label: 'Cristal/Vidro', value: product.crystal || product.glass_type },
+                    { label: 'Material do Mostrador', value: product.dial_material },
+                    { label: 'Material dos Ponteiros', value: product.hands_material },
+                    { label: 'Material da Coroa', value: product.crown_material },
+                    { label: 'Material do Fundo', value: product.caseback_material },
+                    { label: 'Material da Pulseira', value: product.strap_material },
+                    { label: 'Material do Bracelete', value: product.bracelet_material },
+                    { label: 'Material do Fecho', value: product.clasp_material },
+                    { label: 'Material dos Índices', value: product.indices_material }
+                  ].filter(item => item.value).map((item) => (
+                    <div key={item.label} className="flex justify-between">
+                      <span className="text-muted-foreground">{item.label}:</span>
+                      <span className="font-medium text-right">{item.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              {/* Colors and Finishes */}
+              {(product.dial_color || product.case_color || product.bezel_color || product.hands_color) && (
+                <Card className="p-6">
+                  <h3 className="font-playfair text-xl font-semibold mb-4">
+                    Cores e Acabamentos
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {[
+                      { label: 'Cor do Mostrador', value: product.dial_color },
+                      { label: 'Cor da Caixa', value: product.case_color },
+                      { label: 'Cor do Bisel', value: product.bezel_color },
+                      { label: 'Cor dos Ponteiros', value: product.hands_color },
+                      { label: 'Cor dos Marcadores', value: product.markers_color },
+                      { label: 'Cor da Pulseira', value: product.strap_color },
+                      { label: 'Padrão do Mostrador', value: product.dial_pattern },
+                      { label: 'Acabamento do Mostrador', value: product.dial_finish }
+                    ].filter(item => item.value).map((item) => (
+                      <div key={item.label} className="flex justify-between">
+                        <span className="text-muted-foreground">{item.label}:</span>
+                        <span className="font-medium text-right">{item.value}</span>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </Card>
+                  {product.dial_colors && product.dial_colors.length > 0 && (
+                    <div className="mt-4">
+                      <span className="text-muted-foreground">Cores Disponíveis:</span>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {product.dial_colors.map((color: string, index: number) => (
+                          <span key={index} className="px-2 py-1 bg-secondary text-secondary-foreground rounded text-sm">
+                            {color}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </Card>
+              )}
+
+              {/* Resistance and Protection */}
+              <Card className="p-6">
+                <h3 className="font-playfair text-xl font-semibold mb-4">
+                  Resistências e Proteções
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {[
+                    { label: 'Resistência à Água (metros)', value: product.water_resistance_meters || product.water_resistance },
+                    { label: 'Resistência à Água (ATM)', value: product.water_resistance_atm },
+                    { label: 'Resistência Antimagnética', value: product.anti_magnetic_resistance },
+                    { label: 'Resistente a Choques', value: product.shock_resistant ? 'Sim' : null },
+                    { label: 'Resistência à Temperatura', value: product.temperature_resistance }
+                  ].filter(item => item.value).map((item) => (
+                    <div key={item.label} className="flex justify-between">
+                      <span className="text-muted-foreground">{item.label}:</span>
+                      <span className="font-medium text-right">{item.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              {/* Design Elements */}
+              {(product.indices_type || product.numerals_type || product.hands_type) && (
+                <Card className="p-6">
+                  <h3 className="font-playfair text-xl font-semibold mb-4">
+                    Elementos de Design
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {[
+                      { label: 'Tipo de Índices', value: product.indices_type },
+                      { label: 'Tipo de Numerais', value: product.numerals_type },
+                      { label: 'Tipo de Ponteiros', value: product.hands_type },
+                      { label: 'Tipo de Luminosidade', value: product.lume_type },
+                      { label: 'Tipo de Coroa', value: product.crown_type },
+                      { label: 'Fundo da Caixa', value: product.case_back },
+                      { label: 'Tipo de Bisel', value: product.bezel_type },
+                      { label: 'Tipo de Fecho', value: product.clasp_type },
+                      { label: 'Tipo de Fivela', value: product.buckle_type }
+                    ].filter(item => item.value).map((item) => (
+                      <div key={item.label} className="flex justify-between">
+                        <span className="text-muted-foreground">{item.label}:</span>
+                        <span className="font-medium text-right">{item.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              )}
+            </div>
 
             {/* Trust Indicators */}
             <div className="grid grid-cols-3 gap-4">
