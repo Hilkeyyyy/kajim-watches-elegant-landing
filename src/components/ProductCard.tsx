@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Heart, ShoppingCart } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Product } from '@/types';
 import { useCart } from '@/hooks/useCart';

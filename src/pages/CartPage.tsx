@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, Minus, Plus, Trash2 } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { Button } from '@/components/ui/Button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCart } from '@/hooks/useCart';
 
 export const CartPage: React.FC = () => {

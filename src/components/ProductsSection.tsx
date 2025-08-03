@@ -20,7 +20,7 @@ const ProductsSection = () => {
     try {
       const { data, error } = await supabase
         .from('products')
-        .select('*')
+        .select('*, image_url')
         .eq('is_visible', true)
         .eq('status', 'active')
         .eq('is_featured', true)
@@ -28,7 +28,7 @@ const ProductsSection = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      const products = (data as SupabaseProduct[] || []).map(convertSupabaseToProduct);
+      const products = (data || []).map(convertSupabaseToProduct);
       setProducts(products);
     } catch (error) {
       console.error('Erro ao buscar produtos:', error);

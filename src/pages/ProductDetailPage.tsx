@@ -4,7 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Heart, ShoppingCart } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { Button } from '@/components/ui/Button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Product } from '@/types';
 import { apiService } from '@/services/api';
 import { useCart } from '@/hooks/useCart';
@@ -88,7 +88,7 @@ export const ProductDetailPage: React.FC = () => {
     );
   }
 
-  const images = product.images.length > 0 ? product.images : [product.image_url].filter(Boolean);
+  const images = product.images.length > 0 ? product.images : [product.image].filter(Boolean);
 
   return (
     <div className="min-h-screen bg-background">
@@ -145,7 +145,7 @@ export const ProductDetailPage: React.FC = () => {
               
               <div className="flex items-center space-x-4 mb-6">
                 <span className="text-3xl font-bold text-primary">
-                  R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  {typeof product.price === 'string' ? product.price : `R$ ${product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
                 </span>
               </div>
 

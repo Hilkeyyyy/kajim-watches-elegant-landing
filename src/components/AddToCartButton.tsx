@@ -1,7 +1,7 @@
 
 import React from "react";
 import { ShoppingCart, Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { useCart } from "@/hooks/useCart";
 import { useButtonStates } from "@/hooks/useButtonStates";
 import { Product } from "@/types";
@@ -58,8 +58,8 @@ export const AddToCartButton = React.memo(({
   }, [addToCart, product, triggerButtonFeedback, buttonId]);
 
   // Map variants and sizes to match shadcn/ui button
-  const mappedVariant = variant === "liquid-glass" ? "outline" : "default";
-  const mappedSize = size === "default" ? "default" : size;
+  const mappedVariant = variant === "liquid-glass" ? "outline" : "primary";
+  const mappedSize = size === "default" ? "md" : size === "xl" ? "lg" : size;
 
   return (
     <Button

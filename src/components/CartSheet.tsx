@@ -1,6 +1,6 @@
 import React from "react";
 import { Minus, Plus, Trash2, MessageCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import {
   Sheet,
   SheetContent,
@@ -164,9 +164,9 @@ export const CartSheet = React.memo(({ isOpen, onClose }: CartSheetProps) => {
             </div>
             
             <Button
-              variant="whatsapp"
+              variant="primary"
               size="lg"
-              className="w-full"
+              className="w-full bg-green-600 hover:bg-green-700"
               onClick={sendCartToWhatsApp}
             >
               <MessageCircle className="w-5 h-5 mr-2" />

@@ -2,8 +2,8 @@
 export interface SupabaseProduct {
   id: string;
   name: string;
-  price: string;
-  image: string;
+  price: number;
+  image_url: string;
   images: string[];
   description: string;
   brand: string;
@@ -110,7 +110,9 @@ export interface SupabaseProduct {
 export const convertSupabaseToProduct = (supabaseProduct: SupabaseProduct) => {
   return {
     ...supabaseProduct,
-    // Garantir que sempre tenham created_at e updated_at
+    image: supabaseProduct.image_url || '',
+    price: supabaseProduct.price.toString(),
+    status: (supabaseProduct.status || 'active') as 'active' | 'inactive' | 'out_of_stock',
     created_at: supabaseProduct.created_at || new Date().toISOString(),
     updated_at: supabaseProduct.updated_at || new Date().toISOString(),
   };
