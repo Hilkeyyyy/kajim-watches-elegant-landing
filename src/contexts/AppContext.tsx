@@ -209,13 +209,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   
   // Ações do carrinho (memoizadas)
   const addToCart = useCallback((product: Omit<CartItem, 'quantity'>, quantity: number = 1) => {
-    dispatch({ type: 'ADD_TO_CART', payload: { product, quantity } });
-    logCartAction('add', product.id, quantity);
-    toast({
-      title: 'Adicionado ao carrinho',
-      description: `${product.name} foi adicionado ao carrinho.`,
-    });
-  }, [toast]);
+    console.log('AppContext.addToCart - INICIANDO', { product, quantity, currentCartLength: state.cart.length });
+    try {
+      dispatch({ type: 'ADD_TO_CART', payload: { product, quantity } });
+      logCartAction('add', product.id, quantity);
+      console.log('AppContext.addToCart - SUCESSO', { productId: product.id, newCartLength: state.cart.length + 1 });
+      toast({
+        title: 'Adicionado ao carrinho',
+        description: `${product.name} foi adicionado ao carrinho.`,
+      });
+    } catch (error) {
+      console.error('AppContext.addToCart - ERRO', error);
+      toast({
+        title: 'Erro',
+        description: 'Erro ao adicionar produto ao carrinho.',
+        variant: 'destructive',
+      });
+    }
+  }, [toast, state.cart.length]);
 
   const removeFromCart = useCallback((productId: string) => {
     dispatch({ type: 'REMOVE_FROM_CART', payload: productId });
@@ -250,7 +261,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Totais memoizados com logs
   const getTotalItems = useMemo(() => {
-    return () => state.cart.reduce((total, item) => total + item.quantity, 0);
+    return () => {
+      const total = state.cart.reduce((total, item) => total + item.quantity, 0);
+      console.log('AppContext.getTotalItems', { cartItems: state.cart.length, totalQuantity: total });
+      return total;
+    };
   }, [state.cart]);
 
   const getCartTotal = useMemo(() => {

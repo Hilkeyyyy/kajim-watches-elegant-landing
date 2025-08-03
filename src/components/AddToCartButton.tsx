@@ -29,13 +29,19 @@ export const AddToCartButton = React.memo(({
   const isAdded = getButtonState(buttonId);
 
   const handleAddToCart = React.useCallback(() => {
-    console.log('AddToCartButton - Adding to cart:', { productId: product.id });
+    console.log('AddToCartButton - INICIANDO add to cart:', { 
+      productId: product.id, 
+      productName: product.name,
+      buttonId 
+    });
     try {
+      console.log('AddToCartButton - Chamando addToCart...');
       addToCart(product);
+      console.log('AddToCartButton - addToCart chamado, triggerando feedback...');
       triggerButtonFeedback(buttonId, 1500);
-      console.log('AddToCartButton - Successfully added to cart');
+      console.log('AddToCartButton - SUCESSO completo');
     } catch (error) {
-      console.error('AddToCartButton - Error adding to cart:', error);
+      console.error('AddToCartButton - ERRO:', error);
     }
   }, [addToCart, product, triggerButtonFeedback, buttonId]);
 

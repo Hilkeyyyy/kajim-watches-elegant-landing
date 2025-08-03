@@ -18,6 +18,12 @@ export const useCart = () => {
     isLoading,
   } = useApp();
 
+  console.log('useCart - Hook chamado', { 
+    cartItemsLength: cartItems.length, 
+    totalItems: getTotalItems(),
+    isLoading 
+  });
+
   return {
     cartItems,
     addToCart,
