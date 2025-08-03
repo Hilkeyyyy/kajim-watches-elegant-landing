@@ -4,20 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table';
-import { 
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { 
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -29,8 +15,12 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
-import { ProductModal } from '@/components/admin/ProductModal';
-import { Plus, MoreHorizontal, Eye, Edit, Trash2, Package } from 'lucide-react';
+
+import { Plus, Package } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import AdminBreadcrumb from '@/components/admin/AdminBreadcrumb';
+import { useIsMobile } from '@/hooks/use-mobile';
+import ResponsiveTable from '@/components/admin/ResponsiveTable';
 
 interface Product {
   id: string;
@@ -50,11 +40,10 @@ interface Product {
 const Products = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editingProductId, setEditingProductId] = useState<string | undefined>();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   const fetchProducts = async () => {
     try {
@@ -148,21 +137,6 @@ const Products = () => {
     }).format(price);
   };
 
-  const handleModalSuccess = () => {
-    fetchProducts();
-    setModalOpen(false);
-    setEditingProductId(undefined);
-  };
-
-  const openCreateModal = () => {
-    setEditingProductId(undefined);
-    setModalOpen(true);
-  };
-
-  const openEditModal = (productId: string) => {
-    setEditingProductId(productId);
-    setModalOpen(true);
-  };
 
   useEffect(() => {
     fetchProducts();
@@ -205,16 +179,20 @@ const Products = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <AdminBreadcrumb />
+      
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold">Produtos</h1>
           <p className="text-muted-foreground">
             Gerencie seu catálogo de produtos
           </p>
         </div>
-        <Button onClick={openCreateModal} className="gap-2">
-          <Plus className="h-4 w-4" />
-          Adicionar Produto
+        <Button asChild className="gap-2 w-full sm:w-auto">
+          <Link to="/admin/produtos/criar">
+            <Plus className="h-4 w-4" />
+            {isMobile ? "Adicionar" : "Adicionar Produto"}
+          </Link>
         </Button>
       </div>
 
@@ -233,114 +211,25 @@ const Products = () => {
               <p className="text-muted-foreground mb-4">
                 Comece adicionando seu primeiro produto
               </p>
-              <Button onClick={openCreateModal} className="gap-2">
-                <Plus className="h-4 w-4" />
-                Adicionar Primeiro Produto
+              <Button asChild className="gap-2">
+                <Link to="/admin/produtos/criar">
+                  <Plus className="h-4 w-4" />
+                  Adicionar Primeiro Produto
+                </Link>
               </Button>
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Produto</TableHead>
-                  <TableHead>Marca</TableHead>
-                  <TableHead>Preço</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Estoque</TableHead>
-                  <TableHead>Badges</TableHead>
-                  <TableHead className="text-right">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {products.map((product) => (
-                  <TableRow key={product.id}>
-                    <TableCell>
-                      <div className="flex items-center space-x-3">
-                        {product.image_url ? (
-                          <img
-                            src={product.image_url}
-                            alt={product.name}
-                            className="h-10 w-10 rounded object-cover"
-                          />
-                        ) : (
-                          <div className="h-10 w-10 bg-muted rounded flex items-center justify-center">
-                            <Package className="h-5 w-5 text-muted-foreground" />
-                          </div>
-                        )}
-                        <div>
-                          <div className="font-medium">{product.name}</div>
-                          <div className="text-sm text-muted-foreground">
-                            {product.is_featured && "⭐ Destaque • "}
-                            {product.is_visible ? "Visível" : "Oculto"}
-                          </div>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-medium">{product.brand}</TableCell>
-                    <TableCell>{formatPrice(product.price)}</TableCell>
-                    <TableCell>{getStatusBadge(product.status)}</TableCell>
-                    <TableCell>
-                      {getStockBadge(product.stock_status, product.stock_quantity)}
-                      <div className="text-sm text-muted-foreground mt-1">
-                        Qtd: {product.stock_quantity}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-wrap gap-1">
-                        {product.badges?.map((badge, index) => (
-                          <Badge key={index} variant="outline" className="text-xs">
-                            {badge}
-                          </Badge>
-                        ))}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            onClick={() => window.open(`/produto/${product.id}`, '_blank')}
-                          >
-                            <Eye className="h-4 w-4 mr-2" />
-                            Visualizar
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => openEditModal(product.id)}
-                          >
-                            <Edit className="h-4 w-4 mr-2" />
-                            Editar
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => handleDeleteClick(product)}
-                            className="text-destructive"
-                          >
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Excluir
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
+            <ResponsiveTable
+              products={products}
+              onDeleteClick={handleDeleteClick}
+              formatPrice={formatPrice}
+              getStatusBadge={getStatusBadge}
+              getStockBadge={getStockBadge}
+            />
+            )}
         </CardContent>
       </Card>
 
-      <ProductModal
-        isOpen={modalOpen}
-        onClose={() => {
-          setModalOpen(false);
-          setEditingProductId(undefined);
-        }}
-        onSuccess={handleModalSuccess}
-        productId={editingProductId}
-      />
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>

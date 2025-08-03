@@ -51,12 +51,6 @@ const adminItems = [
     icon: Users,
     description: "Gerenciar usuários"
   },
-  { 
-    title: "Configurações", 
-    url: "/admin/configuracoes", 
-    icon: Settings,
-    description: "Sistema"
-  },
 ];
 
 export function AdminSidebar() {

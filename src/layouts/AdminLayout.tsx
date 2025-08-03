@@ -7,10 +7,12 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const AdminLayout = () => {
   const { user, loading, isAdmin } = useAuth();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   console.log('AdminLayout - Auth State:', { user: !!user, loading, isAdmin });
 
@@ -41,12 +43,12 @@ const AdminLayout = () => {
 
   return (
     <ErrorBoundary>
-      <SidebarProvider defaultOpen={true}>
+      <SidebarProvider defaultOpen={!isMobile}>
         <div className="min-h-screen flex w-full bg-background">
           <AdminSidebar />
           <SidebarInset>
             <AdminHeader />
-            <main className="flex-1 p-6">
+            <main className="flex-1 p-3 sm:p-6 overflow-x-auto">
               <ErrorBoundary>
                 <Outlet />
               </ErrorBoundary>

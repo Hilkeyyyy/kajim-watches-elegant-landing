@@ -18,7 +18,8 @@ import Dashboard from "./pages/admin/Dashboard";
 import Products from "./pages/admin/Products";
 import Categories from "./pages/admin/Categories";
 import Users from "./pages/admin/Users";
-import Settings from "./pages/admin/Settings";
+import ProductCreate from "./pages/admin/ProductCreate";
+import ProductEdit from "./pages/admin/ProductEdit";
 
 const queryClient = new QueryClient();
 
@@ -47,9 +48,10 @@ const App = () => {
                     <Route path="/admin" element={<AdminLayout />}>
                       <Route index element={<Dashboard />} />
                       <Route path="produtos" element={<Products />} />
+                      <Route path="produtos/criar" element={<ProductCreate />} />
+                      <Route path="produtos/:id/editar" element={<ProductEdit />} />
                       <Route path="categorias" element={<Categories />} />
                       <Route path="usuarios" element={<Users />} />
-                      <Route path="configuracoes" element={<Settings />} />
                     </Route>
                     
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
