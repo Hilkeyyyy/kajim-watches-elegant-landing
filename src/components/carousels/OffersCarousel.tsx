@@ -20,7 +20,7 @@ export const OffersCarousel = () => {
           .select('*')
           .eq('is_visible', true)
           .eq('status', 'active')
-          .overlaps('badges', ['Oferta'])
+          .overlaps('badges', ['OFERTA'])
           .order('created_at', { ascending: false })
           .limit(10);
 
@@ -55,7 +55,18 @@ export const OffersCarousel = () => {
   }
 
   if (products.length === 0) {
-    return null; // Não exibe a seção se não há ofertas
+    return (
+      <section className="container mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-playfair font-semibold mb-3 text-foreground">Ofertas Especiais</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">Produtos com preços promocionais</p>
+        </div>
+        <div className="text-center py-8 text-muted-foreground">
+          <p>Nenhuma oferta disponível no momento.</p>
+          <p className="text-sm mt-2">Acompanhe nossas promoções!</p>
+        </div>
+      </section>
+    );
   }
 
   return (

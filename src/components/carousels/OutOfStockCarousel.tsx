@@ -20,7 +20,7 @@ export const OutOfStockCarousel = () => {
           .select('*')
           .eq('is_visible', true)
           .eq('status', 'active')
-          .or('stock_status.eq.out_of_stock,badges.ov.{Limitado}')
+          .or('stock_status.eq.out_of_stock,badges.ov.{LIMITADO}')
           .order('updated_at', { ascending: false })
           .limit(10);
 
@@ -55,7 +55,18 @@ export const OutOfStockCarousel = () => {
   }
 
   if (products.length === 0) {
-    return null; // Não exibe a seção se não há produtos esgotados
+    return (
+      <section className="container mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-playfair font-semibold mb-3 text-foreground">Edições Limitadas</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">Peças exclusivas em quantidade limitada</p>
+        </div>
+        <div className="text-center py-8 text-muted-foreground">
+          <p>Todas as edições limitadas estão disponíveis.</p>
+          <p className="text-sm mt-2">Confira nossa coleção regular!</p>
+        </div>
+      </section>
+    );
   }
 
   return (

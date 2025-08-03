@@ -24,7 +24,7 @@ export const NewProductsCarousel = () => {
           .select('*')
           .eq('is_visible', true)
           .eq('status', 'active')
-          .overlaps('badges', ['Novidade'])
+          .overlaps('badges', ['NOVIDADE'])
           .order('updated_at', { ascending: false })
           .limit(10);
 
@@ -59,7 +59,18 @@ export const NewProductsCarousel = () => {
   }
 
   if (products.length === 0) {
-    return null; // Não exibe a seção se não há produtos novos
+    return (
+      <section className="container mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-playfair font-semibold mb-3 text-foreground">Novidades</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">Os lançamentos mais recentes</p>
+        </div>
+        <div className="text-center py-8 text-muted-foreground">
+          <p>Nenhuma novidade disponível no momento.</p>
+          <p className="text-sm mt-2">Fique atento aos próximos lançamentos!</p>
+        </div>
+      </section>
+    );
   }
 
   return (

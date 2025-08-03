@@ -2,37 +2,22 @@ import { Product } from "@/types/product";
 import { BadgeType, BadgeInfo, BADGE_CONFIG } from "@/types/badge";
 
 export const getBadgeVariant = (badge: string): 'default' | 'destructive' | 'secondary' | 'outline' => {
-  // Verifica se é um badge pré-configurado
-  const badgeConfig = Object.values(BADGE_CONFIG).find(config => 
-    config.text.toLowerCase() === badge.toLowerCase()
-  );
+  // Normaliza para uppercase para comparação
+  const normalizedBadge = badge.toUpperCase();
   
-  if (badgeConfig) {
-    return badgeConfig.variant;
-  }
+  // Mapeia badges do banco (uppercase) para variantes
+  const badgeMappings: Record<string, 'default' | 'destructive' | 'secondary' | 'outline'> = {
+    'NOVIDADE': 'default',
+    'DESTAQUE': 'outline',
+    'OFERTA': 'destructive', 
+    'LIMITADO': 'secondary',
+    'ESGOTADO': 'secondary',
+    'PROMOCAO': 'destructive',
+    'EXCLUSIVO': 'outline',
+    'LUXO': 'outline'
+  };
 
-  // Fallback para badges legados
-  switch (badge.toLowerCase()) {
-    case 'novo':
-    case 'new':
-      return 'default';
-    case 'oferta':
-    case 'sale':
-      return 'destructive';
-    case 'limitado':
-    case 'limited':
-    case 'esgotado':
-    case 'out_of_stock':
-      return 'secondary';
-    case 'destaque':
-    case 'featured':
-      return 'outline';
-    case 'exclusivo':
-    case 'exclusive':
-      return 'outline';
-    default:
-      return 'outline';
-  }
+  return badgeMappings[normalizedBadge] || 'outline';
 };
 
 export const generateAutoBadges = (product: Product): BadgeInfo[] => {

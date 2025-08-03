@@ -19,7 +19,7 @@ export const FeaturedCarousel = () => {
         .select('*')
         .eq('is_visible', true)
         .eq('status', 'active')
-        .overlaps('badges', ['Destaque'])
+        .overlaps('badges', ['DESTAQUE'])
         .order('updated_at', { ascending: false })
         .limit(10);
 
@@ -51,7 +51,15 @@ export const FeaturedCarousel = () => {
   }
 
   if (products.length === 0) {
-    return null;
+    return (
+      <div className="mb-12 xs:mb-16 px-4">
+        <h2 className="text-2xl xs:text-3xl font-bold text-center mb-6 xs:mb-8">Produtos em Destaque</h2>
+        <div className="text-center py-8 text-muted-foreground">
+          <p>Nenhum produto em destaque disponível no momento.</p>
+          <p className="text-sm mt-2">Novos produtos serão adicionados em breve!</p>
+        </div>
+      </div>
+    );
   }
 
   return (

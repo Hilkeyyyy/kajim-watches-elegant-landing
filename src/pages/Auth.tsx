@@ -20,7 +20,10 @@ const Auth = () => {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Auth page - Starting sign in process');
+    
     if (!email || !password) {
+      console.log('Auth page - Missing credentials');
       toast({
         title: "Campos obrigatórios",
         description: "Por favor, preencha email e senha.",
@@ -30,22 +33,34 @@ const Auth = () => {
     }
 
     setLoading(true);
-    const { error } = await signIn(email, password);
-    
-    if (error) {
+    try {
+      console.log('Auth page - Calling signIn');
+      const { error } = await signIn(email, password);
+      
+      if (error) {
+        console.error('Auth page - Sign in error:', error);
+        toast({
+          title: "Erro no login",
+          description: error.message === "Invalid login credentials" 
+            ? "Email ou senha incorretos." 
+            : error.message || "Ocorreu um erro ao fazer login.",
+          variant: "destructive",
+        });
+      } else {
+        console.log('Auth page - Sign in successful, redirecting');
+        toast({
+          title: "Login realizado com sucesso!",
+          description: "Redirecionando...",
+        });
+        navigate('/');
+      }
+    } catch (exception) {
+      console.error('Auth page - Sign in exception:', exception);
       toast({
-        title: "Erro no login",
-        description: error.message === "Invalid login credentials" 
-          ? "Email ou senha incorretos." 
-          : "Ocorreu um erro ao fazer login.",
+        title: "Erro inesperado",
+        description: "Ocorreu um erro inesperado. Tente novamente.",
         variant: "destructive",
       });
-    } else {
-      toast({
-        title: "Login realizado com sucesso!",
-        description: "Redirecionando...",
-      });
-      navigate('/');
     }
     setLoading(false);
   };
