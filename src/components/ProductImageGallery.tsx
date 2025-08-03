@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 
 interface ProductImageGalleryProps {
   images: string[];
@@ -50,7 +50,7 @@ export const ProductImageGallery = ({ images, productName }: ProductImageGallery
                 <>
                   <Button
                     variant="ghost"
-                    size="icon"
+                    size="sm"
                     className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white hover:bg-black/70"
                     onClick={prevImage}
                   >
@@ -59,7 +59,7 @@ export const ProductImageGallery = ({ images, productName }: ProductImageGallery
                   
                   <Button
                     variant="ghost"
-                    size="icon"
+                    size="sm"
                     className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white hover:bg-black/70"
                     onClick={nextImage}
                   >
@@ -76,7 +76,7 @@ export const ProductImageGallery = ({ images, productName }: ProductImageGallery
           <>
             <Button
               variant="ghost"
-              size="icon"
+              size="sm"
               className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
               onClick={prevImage}
             >
@@ -85,7 +85,7 @@ export const ProductImageGallery = ({ images, productName }: ProductImageGallery
             
             <Button
               variant="ghost"
-              size="icon"
+              size="sm"
               className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
               onClick={nextImage}
             >

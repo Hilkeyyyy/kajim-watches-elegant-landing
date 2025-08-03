@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import heroWatch from "@/assets/hero-watch.jpg";
 
 const HeroSection = () => {
@@ -37,8 +37,8 @@ const HeroSection = () => {
         
         {/* CTA Button */}
         <Button 
-          variant="luxury" 
-          size="xl"
+          variant="primary" 
+          size="lg"
           onClick={scrollToProducts}
           className="font-inter font-medium tracking-wide hover:scale-105 transition-all duration-300 text-sm sm:text-base w-auto min-w-[200px]"
         >

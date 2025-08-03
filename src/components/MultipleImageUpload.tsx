@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/Button";
 import { Badge } from '@/components/ui/badge';
 import { Upload, X, Star, ArrowUp, ArrowDown } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';

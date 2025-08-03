@@ -8,8 +8,8 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/badge";
 import { Plus, X } from "lucide-react";
 
@@ -59,7 +59,7 @@ export const ProductFormFeatures: React.FC<ProductFormFeaturesProps> = ({ form }
             <Button
               type="button"
               variant="outline"
-              size="icon"
+              size="sm"
               onClick={addFeature}
               disabled={!newFeature.trim()}
             >

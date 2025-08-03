@@ -11,7 +11,7 @@ import {
   Store,
   BarChart3
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import {
   Sidebar,
   SidebarContent,
@@ -124,7 +124,7 @@ export function AdminSidebar() {
         
         <Button
           variant="ghost"
-          size={state === "collapsed" ? "icon" : "default"}
+          size={state === "collapsed" ? "sm" : "md"}
           className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10"
           onClick={handleSignOut}
         >

@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Label } from "@/components/ui/label";
 import { Upload, X, Image as ImageIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -124,7 +124,7 @@ export const ImageUpload = ({
             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
               <Button
                 type="button"
-                variant="default"
+                variant="destructive"
                 size="sm"
                 onClick={handleRemoveImage}
                 className="h-8 w-8 p-0 bg-red-500 hover:bg-red-600 text-white"

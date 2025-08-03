@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -78,7 +78,7 @@ export const ProductFormColors: React.FC<ProductFormColorsProps> = ({ form }) =>
                 onChange={(e) => setNewDialColor(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addDialColor())}
               />
-              <Button type="button" onClick={addDialColor} size="icon" variant="outline">
+              <Button type="button" onClick={addDialColor} size="sm" variant="outline">
                 <Plus className="h-4 w-4" />
               </Button>
             </div>
