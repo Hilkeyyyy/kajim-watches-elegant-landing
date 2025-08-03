@@ -1,8 +1,10 @@
+
 import React from "react";
 import { ShoppingCart, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/useCart";
 import { useButtonStates } from "@/hooks/useButtonStates";
+import { Product } from "@/types";
 
 interface AddToCartButtonProps {
   product: {
@@ -30,7 +32,24 @@ export const AddToCartButton = React.memo(({
 
   const handleAddToCart = React.useCallback(() => {
     try {
-      addToCart(product);
+      // Converter para o formato Product completo
+      const fullProduct: Product = {
+        id: product.id,
+        name: product.name,
+        brand: 'Unknown',
+        price: parseFloat(product.price.replace(/[R$\s.]/g, '').replace(',', '.')),
+        image_url: product.image,
+        images: [product.image],
+        features: [],
+        status: 'active',
+        is_visible: true,
+        is_featured: false,
+        stock_quantity: 1,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      
+      addToCart(fullProduct);
       triggerButtonFeedback(buttonId, 1500);
     } catch (error) {
       console.error('AddToCartButton - ERRO:', error);

@@ -1,44 +1,74 @@
-import { useCallback } from 'react';
-import { useApp } from '@/contexts/AppContext';
 
-/**
- * Hook otimizado para gerenciar favoritos com sincronização correta
- * Corrige problemas de contagem e sincronização entre componentes
- */
-export const useFavorites = () => {
-  const {
-    favorites,
-    toggleFavorite,
-    isFavorite,
-    getFavoritesCount,
-    isLoading,
-  } = useApp();
+import { useState, useEffect, useCallback } from 'react';
 
-  // Função para adicionar aos favoritos
-  const addToFavorites = useCallback((productId: string, productName: string) => {
-    if (!isFavorite(productId)) {
-      toggleFavorite(productId, productName);
+interface UseFavoritesReturn {
+  favorites: string[];
+  loading: boolean;
+  addToFavorites: (productId: string) => void;
+  removeFromFavorites: (productId: string) => void;
+  toggleFavorite: (productId: string) => void;
+  isFavorite: (productId: string) => boolean;
+  count: number;
+}
+
+export const useFavorites = (): UseFavoritesReturn => {
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  // Carregar favoritos do localStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('kajim-favorites');
+      if (saved) {
+        setFavorites(JSON.parse(saved));
+      }
+    } catch (error) {
+      console.error('Erro ao carregar favoritos:', error);
+      setFavorites([]);
     }
-  }, [isFavorite, toggleFavorite]);
+  }, []);
 
-  // Função para remover dos favoritos
-  const removeFromFavorites = useCallback((productId: string, productName: string) => {
-    if (isFavorite(productId)) {
-      toggleFavorite(productId, productName);
+  // Salvar no localStorage sempre que favorites mudar
+  useEffect(() => {
+    try {
+      localStorage.setItem('kajim-favorites', JSON.stringify(favorites));
+    } catch (error) {
+      console.error('Erro ao salvar favoritos:', error);
     }
-  }, [isFavorite, toggleFavorite]);
+  }, [favorites]);
 
-  // Contagem sincronizada diretamente do array
-  const count = favorites.length;
+  const addToFavorites = useCallback((productId: string) => {
+    setFavorites(current => {
+      if (current.includes(productId)) return current;
+      return [...current, productId];
+    });
+  }, []);
+
+  const removeFromFavorites = useCallback((productId: string) => {
+    setFavorites(current => current.filter(id => id !== productId));
+  }, []);
+
+  const toggleFavorite = useCallback((productId: string) => {
+    setFavorites(current => {
+      if (current.includes(productId)) {
+        return current.filter(id => id !== productId);
+      } else {
+        return [...current, productId];
+      }
+    });
+  }, []);
+
+  const isFavorite = useCallback((productId: string) => {
+    return favorites.includes(productId);
+  }, [favorites]);
 
   return {
     favorites,
+    loading,
     addToFavorites,
     removeFromFavorites,
     toggleFavorite,
     isFavorite,
-    getFavoritesCount: () => count,
-    count,
-    isLoading,
+    count: favorites.length,
   };
 };

@@ -29,9 +29,9 @@ export const CartPage: React.FC = () => {
             <p className="text-muted-foreground mb-8">
               Adicione produtos ao carrinho para continuar sua compra.
             </p>
-            <Button asChild>
-              <Link to="/">Continuar Comprando</Link>
-            </Button>
+            <Link to="/">
+              <Button>Continuar Comprando</Button>
+            </Link>
           </div>
         </div>
       </div>
@@ -45,12 +45,12 @@ export const CartPage: React.FC = () => {
       <div className="container mx-auto px-4 py-8">
         {/* Breadcrumb */}
         <div className="flex items-center justify-between mb-6">
-          <Button variant="ghost" size="sm" asChild>
-            <Link to="/">
+          <Link to="/">
+            <Button variant="ghost" size="sm">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Continuar Comprando
-            </Link>
-          </Button>
+            </Button>
+          </Link>
           
           <Button variant="outline" size="sm" onClick={clearCart}>
             Limpar Carrinho
@@ -153,9 +153,11 @@ export const CartPage: React.FC = () => {
                     Finalizar Compra
                   </Button>
                   
-                  <Button variant="outline" size="lg" className="w-full" asChild>
-                    <Link to="/">Continuar Comprando</Link>
-                  </Button>
+                  <Link to="/">
+                    <Button variant="outline" size="lg" className="w-full">
+                      Continuar Comprando
+                    </Button>
+                  </Link>
                 </div>
               </CardContent>
             </Card>

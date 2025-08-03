@@ -10,29 +10,29 @@ interface FavoriteButtonProps {
 }
 
 export const FavoriteButton = React.memo(({ productId, productName }: FavoriteButtonProps) => {
-  const { toggleFavorite, isFavorite, isLoading } = useFavorites();
+  const { toggleFavorite, isFavorite, loading } = useFavorites();
   const isProductFavorite = isFavorite(productId);
 
   const handleToggle = React.useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
-    if (!isLoading) {
-      toggleFavorite(productId, productName);
+    if (!loading) {
+      toggleFavorite(productId);
     }
-  }, [toggleFavorite, productId, productName, isLoading]);
+  }, [toggleFavorite, productId, loading]);
 
   return (
     <Button
       variant="ghost"
-      size="icon"
+      size="sm"
       onClick={handleToggle}
-      disabled={isLoading}
+      disabled={loading}
       className={`transition-all duration-300 transform hover:scale-105 ${
         isProductFavorite 
           ? "text-red-600 hover:text-red-700" 
           : "text-muted-foreground hover:text-red-600"
-      } ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+      } ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
     >
       <Heart 
         className={`w-6 h-6 transition-all duration-300 ${
