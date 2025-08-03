@@ -1,7 +1,7 @@
 
 import React from "react";
 import { ShoppingCart, Check } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/useCart";
 import { useButtonStates } from "@/hooks/useButtonStates";
 import { Product } from "@/types";
@@ -37,9 +37,10 @@ export const AddToCartButton = React.memo(({
         id: product.id,
         name: product.name,
         brand: 'Unknown',
-        price: parseFloat(product.price.replace(/[R$\s.]/g, '').replace(',', '.')),
-        image_url: product.image,
+        price: product.price,
+        image: product.image,
         images: [product.image],
+        description: '',
         features: [],
         status: 'active',
         is_visible: true,
@@ -56,10 +57,14 @@ export const AddToCartButton = React.memo(({
     }
   }, [addToCart, product, triggerButtonFeedback, buttonId]);
 
+  // Map variants and sizes to match shadcn/ui button
+  const mappedVariant = variant === "liquid-glass" ? "outline" : "default";
+  const mappedSize = size === "default" ? "default" : size;
+
   return (
     <Button
-      variant={variant}
-      size={size}
+      variant={mappedVariant}
+      size={mappedSize}
       onClick={handleAddToCart}
       className={`transition-all duration-300 ${isAdded ? "scale-95" : "hover:scale-105"} ${className}`}
     >

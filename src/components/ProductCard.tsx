@@ -1,11 +1,12 @@
 
 import React from 'react';
 import { Heart, ShoppingCart } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { Card, CardContent } from '@/components/ui/Card';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { Product } from '@/types';
 import { useCart } from '@/hooks/useCart';
 import { useFavorites } from '@/hooks/useFavorites';
+import { parsePrice, formatPrice } from '@/utils/priceUtils';
 
 interface ProductCardProps {
   product: Product;
@@ -36,9 +37,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
   };
 
   const mainImage = product.image || product.images[0] || '';
+  
+  // Garantir que o preço seja tratado corretamente
   const priceDisplay = typeof product.price === 'string' 
     ? product.price 
-    : `R$ ${product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+    : formatPrice(product.price);
 
   return (
     <Card className="group cursor-pointer transition-all hover:shadow-lg" onClick={handleClick}>

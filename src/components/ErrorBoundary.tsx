@@ -1,8 +1,7 @@
-
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw, Home, Bug } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface Props {
   children: ReactNode;
@@ -121,7 +120,6 @@ URL: ${window.location.href}
                 <Button 
                   onClick={this.handleRetry} 
                   className="flex-1 gap-2"
-                  variant="default"
                 >
                   <RefreshCw className="h-4 w-4" />
                   Tentar Novamente

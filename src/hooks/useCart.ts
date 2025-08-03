@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { CartItem, Product } from '@/types';
+import { parsePrice } from '@/utils/priceUtils';
 
 export const useCart = () => {
   const [items, setItems] = useState<CartItem[]>([]);
@@ -40,13 +41,17 @@ export const useCart = () => {
             : item
         );
       } else {
-        // Adicionar novo item
+        // Adicionar novo item - converter preço string para number
+        const priceAsNumber = typeof product.price === 'string' 
+          ? parsePrice(product.price) 
+          : product.price;
+          
         const newItem: CartItem = {
           id: `cart_${Date.now()}`,
           product_id: product.id,
           name: product.name,
-          price: product.price,
-          image_url: product.image_url || product.images[0] || '',
+          price: priceAsNumber,
+          image_url: product.image || product.images[0] || '',
           quantity
         };
         return [...currentItems, newItem];
