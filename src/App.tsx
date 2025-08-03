@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppProvider } from "@/contexts/AppContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { PerformanceOptimizer } from "@/components/PerformanceOptimizer";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import ProductDetail from "./pages/ProductDetail";
@@ -29,13 +30,14 @@ const App = () => {
   
   return (
     <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <AppProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
+      <PerformanceOptimizer>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <AppProvider>
+              <TooltipProvider>
+                <Toaster />
+                <Sonner />
+                <BrowserRouter>
                 <ErrorBoundary>
                   <Routes>
                     <Route path="/" element={<Index />} />
@@ -65,6 +67,7 @@ const App = () => {
           </AppProvider>
         </AuthProvider>
       </QueryClientProvider>
+      </PerformanceOptimizer>
     </ErrorBoundary>
   );
 };

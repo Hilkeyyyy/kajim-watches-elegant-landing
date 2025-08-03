@@ -8,7 +8,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { useOptimizedCart } from "@/hooks/useOptimizedCart";
+import { useCart } from "@/hooks/useCart";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { useApp } from "@/contexts/AppContext";
 
@@ -18,7 +18,7 @@ interface CartSheetProps {
 }
 
 export const CartSheet = React.memo(({ isOpen, onClose }: CartSheetProps) => {
-  const { cartItems, updateQuantity, removeFromCart, clearCart, sendCartToWhatsApp, getCartTotal, getItemTotal } = useOptimizedCart();
+  const { cartItems, updateQuantity, removeFromCart, clearCart, sendCartToWhatsApp, getCartTotal, getItemTotal } = useCart();
   const { isLoading } = useApp();
 
   if (cartItems.length === 0) {

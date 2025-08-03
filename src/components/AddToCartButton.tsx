@@ -1,7 +1,7 @@
 import React from "react";
 import { ShoppingCart, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useOptimizedCart } from "@/hooks/useOptimizedCart";
+import { useCart } from "@/hooks/useCart";
 import { useButtonStates } from "@/hooks/useButtonStates";
 
 interface AddToCartButtonProps {
@@ -22,7 +22,7 @@ export const AddToCartButton = React.memo(({
   size = "default",
   className = "" 
 }: AddToCartButtonProps) => {
-  const { addToCart } = useOptimizedCart();
+  const { addToCart } = useCart();
   const { getButtonState, triggerButtonFeedback } = useButtonStates();
   
   const buttonId = `cart-${product.id}`;

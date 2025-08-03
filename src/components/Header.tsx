@@ -2,13 +2,14 @@ import React, { useState, useCallback } from "react";
 import { Search, ShoppingCart, Heart, Menu, X, User, LogIn, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useOptimizedCart } from "@/hooks/useOptimizedCart";
+import { useCart } from "@/hooks/useCart";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useAuth } from "@/contexts/AuthContext";
 import { CartSheet } from "@/components/CartSheet";
 import { IconBadge } from "@/components/IconBadge";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "@/contexts/AppContext";
+import { Navigation } from "@/components/Navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,7 +22,7 @@ const Header = React.memo(() => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { getTotalItems } = useOptimizedCart();
+  const { getTotalItems } = useCart();
   const { count: favoritesCount } = useFavorites();
   const { user, signOut, isAdmin } = useAuth();
   const { isLoading } = useApp();
@@ -78,22 +79,11 @@ const Header = React.memo(() => {
             </div>
 
             {/* Center - Navigation Links */}
-            <nav className="hidden md:flex items-center space-x-8">
-              <Button
-                variant="ghost"
-                onClick={() => navigate("/")}
-                className="font-medium hover:text-primary transition-colors"
-              >
-                Ver produtos
-              </Button>
-              
-              <Button
-                variant="ghost"
-                onClick={() => navigate("/favoritos")}
-                className="font-medium hover:text-primary transition-colors"
-              >
-                Produtos salvos
-              </Button>
+            <div className="hidden md:flex items-center">
+              <Navigation className="mr-8" />
+            </div>
+            
+            <div className="hidden md:flex items-center space-x-4">{/* User Menu Container */}
               
               {/* User Menu */}
               {user ? (
@@ -130,7 +120,7 @@ const Header = React.memo(() => {
                   Login
                 </Button>
               )}
-            </nav>
+            </div>
 
             {/* Right side - Search */}
             <div className="hidden md:flex items-center max-w-xs">
@@ -178,28 +168,11 @@ const Header = React.memo(() => {
                 </form>
                 
                 <div className="space-y-2">
-                  <Button
-                    variant="ghost"
-                    onClick={() => {
-                      navigate("/");
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="w-full justify-start"
-                  >
-                    Ver produtos
-                  </Button>
-                  
-                  <Button
-                    variant="ghost"
-                    onClick={() => {
-                      navigate("/favoritos");
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="w-full justify-start"
-                  >
-                    <Heart className="w-4 h-4 mr-2" />
-                    Produtos salvos ({favoritesCount})
-                  </Button>
+                  <Navigation 
+                    orientation="vertical" 
+                    showMobileMenu={true}
+                    onLinkClick={() => setIsMobileMenuOpen(false)}
+                  />
 
                   {/* Mobile User Menu */}
                   {user ? (

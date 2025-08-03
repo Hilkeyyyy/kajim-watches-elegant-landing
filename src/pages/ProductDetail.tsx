@@ -10,7 +10,7 @@ import { AddToCartButton } from "@/components/AddToCartButton";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { useToast } from "@/hooks/use-toast";
 import { getAllBadges } from "@/utils/badgeUtils";
-import { useOptimizedCart } from "@/hooks/useOptimizedCart";
+import { useCart } from "@/hooks/useCart";
 import { supabase } from "@/integrations/supabase/client";
 import { convertSupabaseToProduct } from "@/types/supabase-product";
 import { Product } from "@/types/product";
@@ -21,7 +21,7 @@ const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { addToCart } = useOptimizedCart();
+  const { addToCart } = useCart();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
 

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect, useCallback, useMemo } from 'react';
 import { storage, type CartItem } from '@/utils/storage';
 import { useToast } from '@/hooks/use-toast';
+import { errorHandler } from '@/utils/errorHandler';
 import { parsePrice, formatPrice, calculateItemTotal } from '@/utils/priceUtils';
 import { logCartAction, logFavoriteAction, logStorageAction } from '@/utils/auditLogger';
 

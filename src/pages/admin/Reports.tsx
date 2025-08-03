@@ -1,127 +1,143 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { useReports } from '@/hooks/useReports';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { 
   BarChart3, 
   TrendingUp, 
-  TrendingDown, 
-  DollarSign,
   Package,
   Users,
   ShoppingCart,
-  Activity
+  Activity,
+  RefreshCw,
+  AlertCircle
 } from 'lucide-react';
 
 export default function Reports() {
-  // Mock data for demonstration
-  const salesData = {
-    totalRevenue: 45672.89,
-    totalOrders: 245,
-    averageOrderValue: 186.42,
-    conversionRate: 3.24
-  };
+  const { data, loading, error, refetch } = useReports();
 
-  const productData = {
-    topSellingProducts: [
-      { name: "Relógio Smartwatch Pro", sales: 45, revenue: 4500 },
-      { name: "Relógio Clássico Elegante", sales: 38, revenue: 3800 },
-      { name: "Relógio Esportivo X1", sales: 32, revenue: 2400 }
-    ],
-    categoriesPerformance: [
-      { category: "Smartwatches", percentage: 45 },
-      { category: "Clássicos", percentage: 35 },
-      { category: "Esportivos", percentage: 20 }
-    ]
-  };
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <LoadingSpinner />
+        <span className="ml-2">Carregando relatórios...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-8">
+        <AlertCircle className="mx-auto h-12 w-12 text-red-500 mb-4" />
+        <h3 className="text-lg font-semibold mb-2">Erro ao carregar relatórios</h3>
+        <p className="text-muted-foreground mb-4">{error}</p>
+        <Button onClick={refetch} variant="outline">
+          <RefreshCw className="w-4 h-4 mr-2" />
+          Tentar novamente
+        </Button>
+      </div>
+    );
+  }
+
+  if (!data) return null;
 
   return (
     <div className="space-y-6">
-      {/* Revenue Overview */}
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold">Relatórios</h2>
+          <p className="text-muted-foreground">Dados reais do sistema</p>
+        </div>
+        <Button onClick={refetch} variant="outline" size="sm">
+          <RefreshCw className="w-4 h-4 mr-2" />
+          Atualizar
+        </Button>
+      </div>
+
+      {/* Overview Statistics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Receita Total</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Total de Produtos</CardTitle>
+            <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">R$ {salesData.totalRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+            <div className="text-2xl font-bold">{data.totalProducts}</div>
             <p className="text-xs text-muted-foreground">
-              <TrendingUp className="inline h-3 w-3 text-green-500 mr-1" />
-              +12% desde o mês passado
+              {data.activeProducts} ativos, {data.inactiveProducts} inativos
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total de Pedidos</CardTitle>
-            <ShoppingCart className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{salesData.totalOrders}</div>
-            <p className="text-xs text-muted-foreground">
-              <TrendingUp className="inline h-3 w-3 text-green-500 mr-1" />
-              +8% desde o mês passado
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Ticket Médio</CardTitle>
+            <CardTitle className="text-sm font-medium">Categorias</CardTitle>
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">R$ {salesData.averageOrderValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+            <div className="text-2xl font-bold">{data.totalCategories}</div>
             <p className="text-xs text-muted-foreground">
-              <TrendingDown className="inline h-3 w-3 text-red-500 mr-1" />
-              -2% desde o mês passado
+              Categorias cadastradas
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Taxa de Conversão</CardTitle>
+            <CardTitle className="text-sm font-medium">Usuários</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{data.totalUsers}</div>
+            <p className="text-xs text-muted-foreground">
+              Usuários registrados
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Em Destaque</CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{salesData.conversionRate}%</div>
+            <div className="text-2xl font-bold">{data.featuredProducts}</div>
             <p className="text-xs text-muted-foreground">
-              <TrendingUp className="inline h-3 w-3 text-green-500 mr-1" />
-              +0.5% desde o mês passado
+              Produtos em destaque
             </p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Top Selling Products */}
+      {/* Products by Brand and Status */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Package className="h-5 w-5" />
-              Produtos Mais Vendidos
+              Produtos por Marca
             </CardTitle>
             <CardDescription>
-              Top 3 produtos do último mês
+              Top marcas com mais produtos
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {productData.topSellingProducts.map((product, index) => (
-                <div key={product.name} className="flex items-center justify-between">
+              {data.productsByCategory.slice(0, 5).map((brand, index) => (
+                <div key={brand.name} className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                       <span className="text-sm font-medium">#{index + 1}</span>
                     </div>
                     <div>
-                      <div className="font-medium text-sm">{product.name}</div>
-                      <div className="text-xs text-muted-foreground">{product.sales} vendas</div>
+                      <div className="font-medium text-sm">{brand.name}</div>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="font-medium">R$ {product.revenue.toLocaleString('pt-BR')}</div>
+                    <div className="font-medium">{brand.count} produtos</div>
                   </div>
                 </div>
               ))}
@@ -129,29 +145,31 @@ export default function Reports() {
           </CardContent>
         </Card>
 
-        {/* Categories Performance */}
+        {/* Status Distribution */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BarChart3 className="h-5 w-5" />
-              Performance por Categoria
+              Status dos Produtos
             </CardTitle>
             <CardDescription>
-              Distribuição de vendas por categoria
+              Distribuição por status
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {productData.categoriesPerformance.map((category) => (
-                <div key={category.category} className="space-y-2">
+              {data.productsByStatus.map((status) => (
+                <div key={status.status} className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">{category.category}</span>
-                    <span className="text-sm text-muted-foreground">{category.percentage}%</span>
+                    <span className="text-sm font-medium">{status.status}</span>
+                    <span className="text-sm text-muted-foreground">
+                      {status.count} ({status.percentage}%)
+                    </span>
                   </div>
                   <div className="w-full bg-secondary rounded-full h-2">
                     <div 
                       className="bg-primary h-2 rounded-full transition-all duration-300" 
-                      style={{ width: `${category.percentage}%` }}
+                      style={{ width: `${status.percentage}%` }}
                     />
                   </div>
                 </div>
@@ -161,40 +179,63 @@ export default function Reports() {
         </Card>
       </div>
 
-      {/* Quick Insights */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Activity className="h-5 w-5" />
-            Insights Rápidos
-          </CardTitle>
-          <CardDescription>
-            Resumo das principais métricas e recomendações
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-              <h4 className="font-medium text-green-800 mb-2">Crescimento Positivo</h4>
-              <p className="text-sm text-green-700">
-                As vendas aumentaram 12% este mês, com destaque para smartwatches.
-              </p>
+      {/* Stock Status and Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Package className="h-5 w-5" />
+              Status do Estoque
+            </CardTitle>
+            <CardDescription>
+              Situação atual do estoque
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {data.stockStatus.map((stock, index) => (
+                <div key={stock.status} className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-3 h-3 rounded-full ${
+                      index === 0 ? 'bg-green-500' : 
+                      index === 1 ? 'bg-yellow-500' : 'bg-red-500'
+                    }`} />
+                    <span className="text-sm font-medium">{stock.status}</span>
+                  </div>
+                  <Badge variant={index === 2 ? "destructive" : index === 1 ? "secondary" : "default"}>
+                    {stock.count}
+                  </Badge>
+                </div>
+              ))}
             </div>
-            <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-              <h4 className="font-medium text-yellow-800 mb-2">Atenção Necessária</h4>
-              <p className="text-sm text-yellow-700">
-                O ticket médio diminuiu 2%. Considere estratégias de upselling.
-              </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Activity className="h-5 w-5" />
+              Atividade Recente
+            </CardTitle>
+            <CardDescription>
+              Resumo das atividades
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {data.recentActivity.map((activity, index) => (
+                <div key={index} className="flex items-center justify-between">
+                  <div>
+                    <div className="font-medium text-sm">{activity.action}</div>
+                    <div className="text-xs text-muted-foreground">{activity.date}</div>
+                  </div>
+                  <div className="text-sm font-medium">{activity.item}</div>
+                </div>
+              ))}
             </div>
-            <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <h4 className="font-medium text-blue-800 mb-2">Oportunidade</h4>
-              <p className="text-sm text-blue-700">
-                Taxa de conversão em alta. Momento ideal para campanhas de marketing.
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
