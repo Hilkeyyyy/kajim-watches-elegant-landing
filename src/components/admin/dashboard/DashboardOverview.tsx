@@ -98,7 +98,7 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ stats, isL
       title: "Novo Produto",
       description: "Adicionar produto ao catálogo",
       icon: Package,
-      action: () => navigate('/admin/produtos/novo'),
+      action: () => navigate('/admin/produtos/criar'),
       color: "text-blue-600",
       bgColor: "bg-blue-50"
     },

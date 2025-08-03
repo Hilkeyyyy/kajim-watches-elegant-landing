@@ -33,6 +33,11 @@ const getPageInfo = (pathname: string) => {
       subtitle: 'Gerenciar usuários do sistema',
       breadcrumb: ['Admin', 'Usuários']
     },
+    '/admin/relatorios': {
+      title: 'Relatórios',
+      subtitle: 'Visualizar estatísticas e métricas',
+      breadcrumb: ['Admin', 'Relatórios']
+    },
     '/admin/configuracoes': {
       title: 'Configurações',
       subtitle: 'Configurações do sistema',

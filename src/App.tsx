@@ -20,6 +20,7 @@ import Categories from "./pages/admin/Categories";
 import Users from "./pages/admin/Users";
 import ProductCreate from "./pages/admin/ProductCreate";
 import ProductEdit from "./pages/admin/ProductEdit";
+import Reports from "./pages/admin/Reports";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +53,7 @@ const App = () => {
                       <Route path="produtos/:id/editar" element={<ProductEdit />} />
                       <Route path="categorias" element={<Categories />} />
                       <Route path="usuarios" element={<Users />} />
+                      <Route path="relatorios" element={<Reports />} />
                     </Route>
                     
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

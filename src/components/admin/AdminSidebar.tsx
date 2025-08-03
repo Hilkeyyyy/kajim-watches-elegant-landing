@@ -8,7 +8,8 @@ import {
   Users, 
   Settings,
   LogOut,
-  Store
+  Store,
+  BarChart3
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -50,6 +51,12 @@ const adminItems = [
     url: "/admin/usuarios", 
     icon: Users,
     description: "Gerenciar usuários"
+  },
+  { 
+    title: "Relatórios", 
+    url: "/admin/relatorios", 
+    icon: BarChart3,
+    description: "Visualizar estatísticas"
   },
 ];
 
