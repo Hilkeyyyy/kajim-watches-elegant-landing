@@ -1,16 +1,16 @@
 
 import { useState, useEffect } from "react";
 import { Heart, ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { useNavigate } from "react-router-dom";
 import { products } from "@/data/products";
 import { ProductCard } from "@/components/ProductCard";
 import { useFavorites } from "@/hooks/useFavorites";
-import Header from "@/components/Header";
+import { Header } from "@/components/Header";
 
 const Favorites = () => {
   const [favoriteProducts, setFavoriteProducts] = useState<typeof products>([]);
-  const { favorites, isLoading } = useFavorites();
+  const { favorites, loading: isLoading } = useFavorites();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -53,7 +53,7 @@ const Favorites = () => {
           <div className="flex items-center mb-8">
             <Button
               variant="ghost"
-              size="icon"
+              size="sm"
               onClick={() => navigate("/")}
               className="mr-4"
             >
@@ -90,8 +90,8 @@ const Favorites = () => {
               <p className="font-inter text-muted-foreground mb-6">
                 Adicione produtos aos seus favoritos para vê-los aqui
               </p>
-              <Button
-                variant="luxury"
+                <Button
+                variant="primary"
                 onClick={() => navigate("/")}
               >
                 Explorar Produtos

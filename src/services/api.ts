@@ -1,6 +1,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { Product, CartItem, User, Category, ProductFilters, ApiResponse } from '@/types';
+import { SupabaseProduct, convertSupabaseToProduct, convertProductToSupabase } from '@/types/supabase-product';
 
 class ApiService {
   // PRODUTOS
@@ -36,8 +37,10 @@ class ApiService {
 
       if (error) throw error;
 
+      const convertedProducts = data?.map(item => convertSupabaseToProduct(item as SupabaseProduct)) || [];
+      
       return {
-        data: data || [],
+        data: convertedProducts,
         success: true
       };
     } catch (error) {
@@ -60,8 +63,10 @@ class ApiService {
 
       if (error) throw error;
 
+      const convertedProduct = data ? convertSupabaseToProduct(data as SupabaseProduct) : null;
+      
       return {
-        data,
+        data: convertedProduct,
         success: true
       };
     } catch (error) {
@@ -76,16 +81,20 @@ class ApiService {
 
   async createProduct(product: Omit<Product, 'id' | 'created_at' | 'updated_at'>): Promise<ApiResponse<Product>> {
     try {
+      const supabaseProduct = convertProductToSupabase(product);
+      
       const { data, error } = await supabase
         .from('products')
-        .insert([product])
+        .insert([supabaseProduct])
         .select()
         .single();
 
       if (error) throw error;
 
+      const convertedProduct = convertSupabaseToProduct(data as SupabaseProduct);
+      
       return {
-        data,
+        data: convertedProduct,
         success: true
       };
     } catch (error) {
@@ -100,17 +109,21 @@ class ApiService {
 
   async updateProduct(id: string, updates: Partial<Product>): Promise<ApiResponse<Product>> {
     try {
+      const supabaseUpdates = convertProductToSupabase(updates);
+      
       const { data, error } = await supabase
         .from('products')
-        .update(updates)
+        .update(supabaseUpdates)
         .eq('id', id)
         .select()
         .single();
 
       if (error) throw error;
 
+      const convertedProduct = convertSupabaseToProduct(data as SupabaseProduct);
+      
       return {
-        data,
+        data: convertedProduct,
         success: true
       };
     } catch (error) {

@@ -1,4 +1,4 @@
-import Header from "@/components/Header";
+import { Header } from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import { CategoryCarousel } from "@/components/CategoryCarousel";
 import { OffersCarousel } from "@/components/carousels/OffersCarousel";

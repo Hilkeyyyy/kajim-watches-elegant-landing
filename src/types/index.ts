@@ -2,7 +2,7 @@
 export interface Product {
   id: string;
   name: string;
-  price: string; // Alterado para string para manter consistência
+  price: string;
   image: string;
   images: string[];
   description: string;
@@ -100,7 +100,7 @@ export interface Product {
   custom_tags?: string[];
   stock_quantity?: number;
   stock_status?: string;
-  status?: 'active' | 'inactive' | 'out_of_stock';
+  status?: string;
   is_visible?: boolean;
   is_featured?: boolean;
   

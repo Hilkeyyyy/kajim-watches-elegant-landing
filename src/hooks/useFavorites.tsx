@@ -66,7 +66,7 @@ export const useFavorites = (): UseFavoritesReturn => {
   return {
     favorites,
     loading,
-    isLoading: loading, // Alias para compatibilidade
+    isLoading: loading,
     addToFavorites,
     removeFromFavorites,
     toggleFavorite,

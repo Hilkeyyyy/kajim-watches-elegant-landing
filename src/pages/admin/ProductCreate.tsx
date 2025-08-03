@@ -6,7 +6,7 @@ import { ProductForm } from '@/components/admin/ProductForm';
 import AdminBreadcrumb from '@/components/admin/AdminBreadcrumb';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { Link } from 'react-router-dom';
 
 interface ImageItem {
@@ -105,7 +105,7 @@ const ProductCreate = () => {
       
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-4">
-          <Button asChild variant="ghost" size="icon" className="shrink-0">
+          <Button asChild variant="ghost" size="sm" className="shrink-0">
             <Link to="/admin/produtos">
               <ArrowLeft className="h-4 w-4" />
             </Link>

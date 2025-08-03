@@ -112,8 +112,16 @@ export const convertSupabaseToProduct = (supabaseProduct: SupabaseProduct) => {
     ...supabaseProduct,
     image: supabaseProduct.image_url || '',
     price: supabaseProduct.price.toString(),
-    status: (supabaseProduct.status || 'active') as 'active' | 'inactive' | 'out_of_stock',
+    status: supabaseProduct.status || 'active',
     created_at: supabaseProduct.created_at || new Date().toISOString(),
     updated_at: supabaseProduct.updated_at || new Date().toISOString(),
+  };
+};
+
+export const convertProductToSupabase = (product: any) => {
+  return {
+    ...product,
+    image_url: product.image || '',
+    price: typeof product.price === 'string' ? parseFloat(product.price.replace(/[^\d.,]/g, '').replace(',', '.')) : product.price,
   };
 };

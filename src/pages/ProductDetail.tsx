@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, ShoppingCart, MessageCircle, Shield, Truck, RotateCcw, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ProductBadge } from "@/components/ProductBadge";
@@ -15,7 +15,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { convertSupabaseToProduct } from "@/types/supabase-product";
 import { Product } from "@/types/product";
 import { useEffect, useState } from "react";
-import Header from "@/components/Header";
+import { Header } from "@/components/Header";
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -114,7 +114,13 @@ Data/Hora do pedido: ${currentDate}`;
         id: product.id,
         name: product.name,
         price: product.price,
-        image: product.image
+        image: product.image,
+        images: product.images || [],
+        description: product.description || '',
+        brand: product.brand || '',
+        features: product.features || [],
+        created_at: product.created_at,
+        updated_at: product.updated_at
       });
     }
   };
@@ -128,7 +134,7 @@ Data/Hora do pedido: ${currentDate}`;
         <div className="max-w-6xl mx-auto mb-6">
           <Button
             variant="ghost"
-            size="icon"
+            size="sm"
             onClick={() => navigate("/")}
           >
             <ArrowLeft className="w-5 h-5" />
@@ -201,8 +207,8 @@ Data/Hora do pedido: ${currentDate}`;
               />
               
               <Button 
-                variant="default" 
-                size="xl"
+                variant="primary" 
+                size="lg"
                 className="w-full font-inter font-semibold bg-green-600 text-white hover:bg-green-700"
                 onClick={handleDirectPurchase}
               >

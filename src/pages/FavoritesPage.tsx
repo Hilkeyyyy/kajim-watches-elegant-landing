@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, Heart } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { Button } from '@/components/ui/Button';
-import { Card, CardContent } from '@/components/ui/Card';
+import { Card, CardContent } from '@/components/ui/card';
 import { ProductCard } from '@/components/ProductCard';
 import { useFavorites } from '@/hooks/useFavorites';
 import { products } from '@/data/products';
@@ -79,7 +79,7 @@ export const FavoritesPage: React.FC = () => {
           {favoriteProducts.map((product) => (
             <ProductCard
               key={product.id}
-              product={convertSupabaseToProduct(product)}
+              product={product}
               onProductClick={handleProductClick}
             />
           ))}

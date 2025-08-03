@@ -145,7 +145,7 @@ export const ProductDetailPage: React.FC = () => {
               
               <div className="flex items-center space-x-4 mb-6">
                 <span className="text-3xl font-bold text-primary">
-                  {typeof product.price === 'string' ? product.price : `R$ ${product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                  {product.price}
                 </span>
               </div>
 
