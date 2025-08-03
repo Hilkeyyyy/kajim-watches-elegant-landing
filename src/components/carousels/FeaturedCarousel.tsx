@@ -64,30 +64,38 @@ export const FeaturedCarousel = () => {
   }
 
   return (
-    <div className="mb-12 xs:mb-16 px-4">
-      <h2 className="text-2xl xs:text-3xl font-bold text-center mb-6 xs:mb-8">Produtos em Destaque</h2>
-      <Carousel
-        opts={{
-          align: "start",
-          loop: true,
-        }}
-        className="w-full max-w-[280px] xs:max-w-sm sm:max-w-md md:max-w-2xl lg:max-w-4xl xl:max-w-6xl mx-auto"
-      >
-        <CarouselContent className="-ml-2 md:-ml-4">
-          {products.map((product) => (
-            <CarouselItem key={product.id} className="pl-2 md:pl-4 basis-[85%] xs:basis-[80%] sm:basis-1/2 md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
-              <div className="p-1">
+    <section className="py-16 px-4 bg-background">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-playfair font-semibold text-foreground mb-4">
+            Produtos em Destaque
+          </h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Relógios selecionados pela nossa equipe de especialistas
+          </p>
+        </div>
+        
+        <Carousel
+          opts={{
+            align: "start",
+            loop: true,
+          }}
+          className="w-full"
+        >
+          <CarouselContent className="-ml-4">
+            {products.map((product) => (
+              <CarouselItem key={product.id} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
                 <ProductCard
                   product={product}
                   onProductClick={handleProductClick}
                 />
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious className="hidden xs:flex -left-4 lg:-left-12" />
-        <CarouselNext className="hidden xs:flex -right-4 lg:-right-12" />
-      </Carousel>
-    </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="hidden sm:flex -left-6 bg-background/80 hover:bg-background border-border" />
+          <CarouselNext className="hidden sm:flex -right-6 bg-background/80 hover:bg-background border-border" />
+        </Carousel>
+      </div>
+    </section>
   );
 };

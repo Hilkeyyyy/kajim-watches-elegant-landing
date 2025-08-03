@@ -25,7 +25,7 @@ export const NewProductsCarousel = () => {
           .select('*')
           .eq('is_visible', true)
           .eq('status', 'active')
-          .overlaps('badges', ['NOVIDADE'])
+          .or('badges.ov.{NOVIDADE},badges.ov.{LIMITADO}')
           .order('updated_at', { ascending: false })
           .limit(10);
 
@@ -75,36 +75,38 @@ export const NewProductsCarousel = () => {
   }
 
   return (
-    <section className="container mx-auto px-4 py-8">
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-playfair font-semibold mb-3 text-foreground">
-          Novidades
-        </h2>
-        <p className="text-muted-foreground max-w-2xl mx-auto">
-          Descubra os últimos lançamentos em relógios originais
-        </p>
+    <section className="py-16 px-4 bg-muted/30">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-playfair font-semibold text-foreground mb-4">
+            Novidades & Limitados
+          </h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Os lançamentos mais recentes e edições limitadas da nossa coleção
+          </p>
+        </div>
+        
+        <Carousel
+          opts={{
+            align: "start",
+            loop: true,
+          }}
+          className="w-full"
+        >
+          <CarouselContent className="-ml-4">
+            {products.map((product) => (
+              <CarouselItem key={product.id} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
+                <ProductCard 
+                  product={product} 
+                  onProductClick={handleProductClick}
+                />
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="hidden sm:flex -left-6 bg-background/80 hover:bg-background border-border" />
+          <CarouselNext className="hidden sm:flex -right-6 bg-background/80 hover:bg-background border-border" />
+        </Carousel>
       </div>
-
-      <Carousel
-        opts={{
-          align: "start",
-          loop: true,
-        }}
-        className="w-full"
-      >
-        <CarouselContent className="-ml-2 md:-ml-4">
-          {products.map((product) => (
-            <CarouselItem key={product.id} className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
-              <ProductCard 
-                product={product} 
-                onProductClick={handleProductClick}
-              />
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious className="hidden xs:flex" />
-        <CarouselNext className="hidden xs:flex" />
-      </Carousel>
     </section>
   );
 };
