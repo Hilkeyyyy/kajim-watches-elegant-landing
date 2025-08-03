@@ -7,6 +7,7 @@ import { FeaturedCarousel } from "@/components/carousels/FeaturedCarousel";
 import { OutOfStockCarousel } from "@/components/carousels/OutOfStockCarousel";
 import ProductsSection from "@/components/ProductsSection";
 import AboutSection from "@/components/AboutSection";
+import { CartDebugger } from "@/components/CartDebugger";
 
 const Index = () => {
   return (
@@ -20,6 +21,7 @@ const Index = () => {
       <OutOfStockCarousel />
       <ProductsSection />
       <AboutSection />
+      <CartDebugger />
     </div>
   );
 };
