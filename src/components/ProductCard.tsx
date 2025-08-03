@@ -9,10 +9,11 @@ import { useFavorites } from '@/hooks/useFavorites';
 
 interface ProductCardProps {
   product: Product;
+  onProductClick?: (id: string) => void;
   onClick?: () => void;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
+export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onClick }) => {
   const { addToCart } = useCart();
   const { toggleFavorite, isFavorite } = useFavorites();
 
@@ -26,10 +27,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) =>
     toggleFavorite(product.id);
   };
 
-  const mainImage = product.image_url || product.images[0] || '';
+  const handleClick = () => {
+    if (onProductClick) {
+      onProductClick(product.id);
+    } else if (onClick) {
+      onClick();
+    }
+  };
+
+  const mainImage = product.image || product.images[0] || '';
+  const priceDisplay = typeof product.price === 'string' 
+    ? product.price 
+    : `R$ ${product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
 
   return (
-    <Card className="group cursor-pointer transition-all hover:shadow-lg" onClick={onClick}>
+    <Card className="group cursor-pointer transition-all hover:shadow-lg" onClick={handleClick}>
       <div className="relative overflow-hidden rounded-t-lg">
         <img
           src={mainImage}
@@ -75,7 +87,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) =>
           <div className="flex items-center justify-between pt-2">
             <div>
               <p className="text-lg font-bold text-primary">
-                R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                {priceDisplay}
               </p>
             </div>
             <Button size="sm" onClick={handleAddToCart}>

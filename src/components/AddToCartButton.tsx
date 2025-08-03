@@ -1,7 +1,7 @@
 
 import React from "react";
 import { ShoppingCart, Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { useCart } from "@/hooks/useCart";
 import { useButtonStates } from "@/hooks/useButtonStates";
 import { Product } from "@/types";

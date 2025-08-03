@@ -1,7 +1,8 @@
+
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { convertSupabaseToProduct } from "@/types/supabase-product";
-import { Product } from "@/types/product";
+import { Product } from "@/types";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { ProductCard } from "@/components/ProductCard";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";

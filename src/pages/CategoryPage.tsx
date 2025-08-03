@@ -1,10 +1,11 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { ProductCard } from "@/components/ProductCard";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
-import Header from "@/components/Header";
+import { Header } from "@/components/Header";
 import { supabase } from "@/integrations/supabase/client";
 import { Product } from "@/types/product";
 import { SupabaseProduct, convertSupabaseToProduct } from "@/types/supabase-product";

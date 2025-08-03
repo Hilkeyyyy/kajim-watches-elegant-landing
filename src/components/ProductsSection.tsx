@@ -1,6 +1,7 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Product } from "@/types/product";
+import { Product } from "@/types";
 import { SupabaseProduct, convertSupabaseToProduct } from "@/types/supabase-product";
 import { ProductCard } from "@/components/ProductCard";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
@@ -22,7 +23,7 @@ const ProductsSection = () => {
         .select('*')
         .eq('is_visible', true)
         .eq('status', 'active')
-        .eq('is_featured', true) // Apenas produtos em destaque
+        .eq('is_featured', true)
         .order('sort_order', { ascending: true })
         .order('created_at', { ascending: false });
 
