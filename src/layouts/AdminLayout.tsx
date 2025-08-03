@@ -3,7 +3,7 @@ import React from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import ErrorBoundary from '@/components/ErrorBoundary';
+import { AdminErrorBoundary } from '@/components/admin/AdminErrorBoundary';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
@@ -47,21 +47,21 @@ const AdminLayout = () => {
   }
 
   return (
-    <ErrorBoundary>
+    <AdminErrorBoundary>
       <SidebarProvider defaultOpen={!isMobile}>
         <div className="min-h-screen flex w-full bg-background">
           <AdminSidebar />
           <SidebarInset>
             <AdminHeader />
             <main className="flex-1 p-3 sm:p-6 overflow-x-auto">
-              <ErrorBoundary>
+              <AdminErrorBoundary>
                 <Outlet />
-              </ErrorBoundary>
+              </AdminErrorBoundary>
             </main>
           </SidebarInset>
         </div>
       </SidebarProvider>
-    </ErrorBoundary>
+    </AdminErrorBoundary>
   );
 };
 

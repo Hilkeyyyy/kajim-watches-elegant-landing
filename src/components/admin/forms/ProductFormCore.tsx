@@ -16,7 +16,7 @@ import { ProductFormAdvancedSpecs } from "./ProductFormAdvancedSpecs";
 import { ProductFormCommercial } from "./ProductFormCommercial";
 import { ProductFormMetadata } from "./ProductFormMetadata";
 import { ProductFormFeatures } from "./ProductFormFeatures";
-import { useToast } from "@/hooks/use-toast";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 interface ImageItem {
   id: string;
@@ -135,7 +135,7 @@ export const ProductFormCore: React.FC<ProductFormCoreProps> = ({
   isLoading = false,
   mode
 }) => {
-  const { toast } = useToast();
+  const { handleError, handleWarning } = useErrorHandler();
   const [currentStep, setCurrentStep] = useState(1);
   const [images, setImages] = useState<ImageItem[]>(
     product?.images?.map((url: string, index: number) => ({
@@ -247,24 +247,16 @@ export const ProductFormCore: React.FC<ProductFormCoreProps> = ({
   const handleSubmit = useCallback(async (data: ProductFormData) => {
     try {
       if (images.length === 0) {
-        toast({
-          title: "Atenção",
-          description: "Adicione pelo menos uma imagem ao produto",
-          variant: "destructive"
-        });
+        handleWarning("Adicione pelo menos uma imagem ao produto");
         return;
       }
 
       await onSubmit({ ...data, images, badges });
     } catch (error) {
       console.error('Erro no formulário:', error);
-      toast({
-        title: "Erro",
-        description: "Erro ao salvar produto. Tente novamente.",
-        variant: "destructive"
-      });
+      handleError(error, 'ProductFormCore - Submit');
     }
-  }, [images, badges, onSubmit, toast]);
+  }, [images, badges, onSubmit, handleError, handleWarning]);
 
   const addBadge = useCallback((badge: string) => {
     if (badge && !badges.includes(badge)) {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { ProductForm } from '@/components/admin/ProductForm';
 import AdminBreadcrumb from '@/components/admin/AdminBreadcrumb';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
@@ -47,7 +47,7 @@ const ProductEdit = () => {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { id } = useParams();
-  const { toast } = useToast();
+  const { handleError, handleSuccess } = useErrorHandler();
 
   console.log('ProductEdit - Renderizando com:', { id, product: !!product, isFetching, isLoading, error });
 
@@ -84,21 +84,15 @@ const ProductEdit = () => {
         setProduct(data);
       } catch (error) {
         console.error('ProductEdit - Erro ao buscar produto:', error);
-        const errorMessage = error?.message || 'Erro ao carregar produto';
-        
-        setError(errorMessage);
-        toast({
-          title: "Erro",
-          description: errorMessage,
-          variant: "destructive"
-        });
+        const appError = handleError(error, 'ProductEdit - Buscar Produto');
+        setError(appError.message);
       } finally {
         setIsFetching(false);
       }
     };
 
     fetchProduct();
-  }, [id, navigate, toast]);
+  }, [id, navigate, handleError]);
 
   const handleSubmit = async (data: ProductFormData) => {
     if (!id) {
@@ -162,21 +156,12 @@ const ProductEdit = () => {
       }
 
       console.log('ProductEdit - Produto atualizado com sucesso');
-      toast({
-        title: "Sucesso",
-        description: `Produto "${data.name}" atualizado com sucesso!`
-      });
+      handleSuccess(`Produto "${data.name}" atualizado com sucesso!`);
 
       navigate('/admin/produtos', { replace: true });
     } catch (error) {
       console.error('ProductEdit - Erro ao atualizar produto:', error);
-      
-      const errorMessage = error.message || 'Erro interno do servidor';
-      toast({
-        title: "Erro ao Atualizar",
-        description: errorMessage,
-        variant: "destructive"
-      });
+      handleError(error, 'ProductEdit - Atualizar Produto');
     } finally {
       setIsLoading(false);
     }
