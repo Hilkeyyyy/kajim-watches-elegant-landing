@@ -1,3 +1,4 @@
+import React, { useState, useCallback, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -5,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState } from "react";
 import { MainInfoTab, BadgesTab, SpecificationsTab, OtherInfoTab } from "./ProductFormTabs";
 import { useProductFormTabs } from "@/hooks/useProductFormTabs";
 import { ProductFormErrorBoundary } from "./ProductFormErrorBoundary";
@@ -46,7 +46,7 @@ interface ProductFormProps {
   isLoading?: boolean;
 }
 
-export const ProductForm = ({ product, onSubmit, onCancel, isLoading }: ProductFormProps) => {
+export const ProductForm = React.memo(({ product, onSubmit, onCancel, isLoading }: ProductFormProps) => {
   console.log('ProductForm - Renderizando com produto:', product?.name || 'novo');
   
   const [images, setImages] = useState<ImageItem[]>(
@@ -108,15 +108,18 @@ export const ProductForm = ({ product, onSubmit, onCancel, isLoading }: ProductF
     changeTab(value as any);
   };
 
-  const addBadge = (badge: string) => {
+  const addBadge = useCallback((badge: string) => {
     if (badge && !badges.includes(badge)) {
-      setBadges([...badges, badge]);
+      setBadges(prev => [...prev, badge]);
     }
-  };
+  }, [badges]);
 
-  const removeBadge = (badgeToRemove: string) => {
-    setBadges(badges.filter(badge => badge !== badgeToRemove));
-  };
+  const removeBadge = useCallback((badgeToRemove: string) => {
+    setBadges(prev => prev.filter(badge => badge !== badgeToRemove));
+  }, []);
+
+  const memoizedImages = useMemo(() => images, [images]);
+  const memoizedBadges = useMemo(() => badges, [badges]);
 
   return (
     <Card className="max-w-4xl mx-auto">
@@ -132,26 +135,26 @@ export const ProductForm = ({ product, onSubmit, onCancel, isLoading }: ProductF
               </TabsList>
 
               <ProductFormErrorBoundary>
-                <TabsContent value="main" className="mt-6">
+                <TabsContent value="main" className="mt-6" key="main-tab">
                   <MainInfoTab form={form} />
                 </TabsContent>
 
-                <TabsContent value="badges" className="mt-6">
+                <TabsContent value="badges" className="mt-6" key="badges-tab">
                   <BadgesTab 
-                    badges={badges} 
+                    badges={memoizedBadges} 
                     addBadge={addBadge} 
                     removeBadge={removeBadge} 
                   />
                 </TabsContent>
 
-                <TabsContent value="specs" className="mt-6">
+                <TabsContent value="specs" className="mt-6" key="specs-tab">
                   <SpecificationsTab form={form} />
                 </TabsContent>
 
-                <TabsContent value="other" className="mt-6">
+                <TabsContent value="other" className="mt-6" key="other-tab">
                   <OtherInfoTab 
                     form={form} 
-                    images={images} 
+                    images={memoizedImages} 
                     setImages={setImages} 
                   />
                 </TabsContent>
@@ -172,4 +175,6 @@ export const ProductForm = ({ product, onSubmit, onCancel, isLoading }: ProductF
       </CardContent>
     </Card>
   );
-};
+});
+
+ProductForm.displayName = 'ProductForm';
