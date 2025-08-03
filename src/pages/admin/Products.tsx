@@ -1,29 +1,50 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Edit, Trash2, Eye } from 'lucide-react';
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from '@/components/ui/table';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
-import { StockStatus } from '@/components/StockStatus';
-import { ProductBadge } from '@/components/ProductBadge';
 import { ProductModal } from '@/components/admin/ProductModal';
+import { Plus, MoreHorizontal, Eye, Edit, Trash2, Package } from 'lucide-react';
 
 interface Product {
   id: string;
   name: string;
-  price: number;
   brand: string;
-  status: 'active' | 'inactive' | 'out_of_stock';
+  price: number;
+  image_url?: string;
+  status: string;
   stock_quantity: number;
   stock_status: string;
-  badges: string[];
-  image_url: string;
+  badges?: string[];
+  is_visible: boolean;
+  is_featured: boolean;
   created_at: string;
-  categories?: {
-    name: string;
-  };
 }
 
 const Products = () => {
@@ -31,14 +52,13 @@ const Products = () => {
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingProductId, setEditingProductId] = useState<string | undefined>();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState<Product | null>(null);
   const { toast } = useToast();
-
-  useEffect(() => {
-    fetchProducts();
-  }, []);
 
   const fetchProducts = async () => {
     try {
+      setLoading(true);
       const { data, error } = await supabase
         .from('products')
         .select('*')
@@ -50,28 +70,33 @@ const Products = () => {
       console.error('Erro ao buscar produtos:', error);
       toast({
         title: "Erro",
-        description: "Não foi possível carregar os produtos.",
-        variant: "destructive",
+        description: "Erro ao carregar produtos",
+        variant: "destructive"
       });
     } finally {
       setLoading(false);
     }
   };
 
-  const deleteProduct = async (id: string) => {
-    if (!confirm('Tem certeza que deseja excluir este produto?')) return;
+  const handleDeleteClick = (product: Product) => {
+    setProductToDelete(product);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!productToDelete) return;
 
     try {
       const { error } = await supabase
         .from('products')
         .delete()
-        .eq('id', id);
+        .eq('id', productToDelete.id);
 
       if (error) throw error;
 
       toast({
-        title: "Produto excluído",
-        description: "O produto foi removido com sucesso.",
+        title: "Sucesso",
+        description: "Produto excluído com sucesso!"
       });
 
       fetchProducts();
@@ -79,30 +104,41 @@ const Products = () => {
       console.error('Erro ao excluir produto:', error);
       toast({
         title: "Erro",
-        description: "Não foi possível excluir o produto.",
-        variant: "destructive",
+        description: "Erro ao excluir produto",
+        variant: "destructive"
       });
+    } finally {
+      setDeleteDialogOpen(false);
+      setProductToDelete(null);
     }
   };
 
   const getStatusBadge = (status: string) => {
-    const variants = {
-      active: 'default',
-      inactive: 'secondary',
-      out_of_stock: 'destructive',
-    } as const;
-
-    const labels = {
-      active: 'Ativo',
-      inactive: 'Inativo',
-      out_of_stock: 'Sem Estoque',
-    } as const;
+    const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+      active: "default",
+      inactive: "secondary",
+    };
+    
+    const labels: Record<string, string> = {
+      active: "Ativo",
+      inactive: "Inativo",
+    };
 
     return (
-      <Badge variant={variants[status as keyof typeof variants] || 'secondary'}>
-        {labels[status as keyof typeof labels] || status}
+      <Badge variant={variants[status] || "outline"}>
+        {labels[status] || status}
       </Badge>
     );
+  };
+
+  const getStockBadge = (stockStatus: string, quantity: number) => {
+    if (stockStatus === 'out_of_stock' || quantity === 0) {
+      return <Badge variant="destructive">Sem Estoque</Badge>;
+    }
+    if (quantity < 5) {
+      return <Badge variant="outline">Estoque Baixo</Badge>;
+    }
+    return <Badge variant="default">Em Estoque</Badge>;
   };
 
   const formatPrice = (price: number) => {
@@ -128,24 +164,37 @@ const Products = () => {
     setModalOpen(true);
   };
 
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
   if (loading) {
     return (
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold">Produtos</h1>
-          <Button disabled>
-            <Plus className="mr-2 h-4 w-4" />
-            Adicionar Produto
-          </Button>
+          <div>
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-4 w-64 mt-2" />
+          </div>
+          <Skeleton className="h-10 w-32" />
         </div>
+        
         <Card>
           <CardHeader>
-            <CardTitle>Lista de Produtos</CardTitle>
+            <Skeleton className="h-6 w-32" />
           </CardHeader>
           <CardContent>
-            <div className="animate-pulse space-y-4">
+            <div className="space-y-4">
               {[...Array(5)].map((_, i) => (
-                <div key={i} className="h-12 bg-muted rounded"></div>
+                <div key={i} className="flex space-x-4">
+                  <Skeleton className="h-12 w-12 rounded" />
+                  <div className="space-y-2 flex-1">
+                    <Skeleton className="h-4 w-48" />
+                    <Skeleton className="h-3 w-32" />
+                  </div>
+                  <Skeleton className="h-8 w-20" />
+                  <Skeleton className="h-8 w-24" />
+                </div>
               ))}
             </div>
           </CardContent>
@@ -158,94 +207,122 @@ const Products = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Produtos</h1>
+          <h1 className="text-2xl font-bold">Produtos</h1>
           <p className="text-muted-foreground">
-            Gerencie os produtos da sua loja
+            Gerencie seu catálogo de produtos
           </p>
         </div>
-        <Button onClick={openCreateModal}>
-          <Plus className="mr-2 h-4 w-4" />
+        <Button onClick={openCreateModal} className="gap-2">
+          <Plus className="h-4 w-4" />
           Adicionar Produto
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Lista de Produtos</CardTitle>
-          <CardDescription>
-            Total de {products.length} produtos cadastrados
-          </CardDescription>
+          <CardTitle className="flex items-center gap-2">
+            <Package className="h-5 w-5" />
+            Lista de Produtos ({products.length})
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {products.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-muted-foreground">Nenhum produto cadastrado ainda.</p>
-              <Button className="mt-4" onClick={openCreateModal}>
-                <Plus className="mr-2 h-4 w-4" />
-                Adicionar primeiro produto
+              <Package className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+              <h3 className="text-lg font-medium">Nenhum produto encontrado</h3>
+              <p className="text-muted-foreground mb-4">
+                Comece adicionando seu primeiro produto
+              </p>
+              <Button onClick={openCreateModal} className="gap-2">
+                <Plus className="h-4 w-4" />
+                Adicionar Primeiro Produto
               </Button>
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Nome</TableHead>
+                  <TableHead>Produto</TableHead>
                   <TableHead>Marca</TableHead>
-                  <TableHead>Categoria</TableHead>
                   <TableHead>Preço</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Estoque</TableHead>
+                  <TableHead>Badges</TableHead>
                   <TableHead className="text-right">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {products.map((product) => (
-                <TableRow key={product.id}>
+                  <TableRow key={product.id}>
                     <TableCell>
                       <div className="flex items-center space-x-3">
-                        {product.image_url && (
+                        {product.image_url ? (
                           <img
                             src={product.image_url}
                             alt={product.name}
-                            className="w-12 h-12 rounded-lg object-cover"
+                            className="h-10 w-10 rounded object-cover"
                           />
+                        ) : (
+                          <div className="h-10 w-10 bg-muted rounded flex items-center justify-center">
+                            <Package className="h-5 w-5 text-muted-foreground" />
+                          </div>
                         )}
                         <div>
                           <div className="font-medium">{product.name}</div>
-                          <div className="flex flex-wrap gap-1 mt-1">
-                            {product.badges?.slice(0, 2).map((badge, index) => (
-                              <ProductBadge key={index} badge={badge} className="text-xs" />
-                            ))}
+                          <div className="text-sm text-muted-foreground">
+                            {product.is_featured && "⭐ Destaque • "}
+                            {product.is_visible ? "Visível" : "Oculto"}
                           </div>
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell>{product.brand}</TableCell>
-                    <TableCell>{product.categories?.name || 'Sem categoria'}</TableCell>
+                    <TableCell className="font-medium">{product.brand}</TableCell>
                     <TableCell>{formatPrice(product.price)}</TableCell>
                     <TableCell>{getStatusBadge(product.status)}</TableCell>
                     <TableCell>
-                      <StockStatus 
-                        stockStatus={product.stock_status as 'in_stock' | 'low_stock' | 'out_of_stock'}
-                        stockQuantity={product.stock_quantity}
-                      />
+                      {getStockBadge(product.stock_status, product.stock_quantity)}
+                      <div className="text-sm text-muted-foreground mt-1">
+                        Qtd: {product.stock_quantity}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1">
+                        {product.badges?.map((badge, index) => (
+                          <Badge key={index} variant="outline" className="text-xs">
+                            {badge}
+                          </Badge>
+                        ))}
+                      </div>
                     </TableCell>
                     <TableCell className="text-right">
-                      <div className="flex justify-end space-x-2">
-                        <Button variant="ghost" size="sm">
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm" onClick={() => openEditModal(product.id)}>
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="sm"
-                          onClick={() => deleteProduct(product.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            onClick={() => window.open(`/produto/${product.id}`, '_blank')}
+                          >
+                            <Eye className="h-4 w-4 mr-2" />
+                            Visualizar
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => openEditModal(product.id)}
+                          >
+                            <Edit className="h-4 w-4 mr-2" />
+                            Editar
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => handleDeleteClick(product)}
+                            className="text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Excluir
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -257,10 +334,34 @@ const Products = () => {
 
       <ProductModal
         isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={() => {
+          setModalOpen(false);
+          setEditingProductId(undefined);
+        }}
         onSuccess={handleModalSuccess}
         productId={editingProductId}
       />
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir o produto "{productToDelete?.name}"?
+              Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

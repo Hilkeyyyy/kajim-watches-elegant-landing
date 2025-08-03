@@ -1,58 +1,56 @@
 
-import { useEffect } from 'react';
+import React from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import { AdminSidebar } from '@/components/AdminSidebar';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
+import ErrorBoundary from '@/components/ErrorBoundary';
+import { AdminSidebar } from '@/components/admin/AdminSidebar';
+import { AdminHeader } from '@/components/admin/AdminHeader';
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 
 const AdminLayout = () => {
   const { user, loading, isAdmin } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!loading) {
-      if (!user) {
-        navigate('/auth');
-      } else if (!isAdmin) {
-        navigate('/');
-      }
-    }
-  }, [user, loading, isAdmin, navigate]);
-
+  // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted/20">
+        <div className="text-center space-y-4">
+          <LoadingSpinner />
+          <p className="text-muted-foreground">Carregando painel administrativo...</p>
+        </div>
       </div>
     );
   }
 
-  if (!user || !isAdmin) {
+  // Authentication check
+  if (!user) {
+    navigate('/auth');
+    return null;
+  }
+
+  if (!isAdmin) {
+    navigate('/');
     return null;
   }
 
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        {/* Fixed Header */}
-        <header className="fixed top-0 left-0 right-0 h-14 flex items-center border-b bg-background z-40 px-4">
-          <SidebarTrigger className="mr-3" />
-          <h1 className="text-lg font-semibold truncate">
-            <span className="hidden sm:inline">Painel Administrativo - </span>
-            KAJIM Store
-          </h1>
-        </header>
-
-        {/* Sidebar */}
-        <AdminSidebar />
-
-        {/* Main Content */}
-        <main className="flex-1 pt-14 p-6">
-          <Outlet />
-        </main>
-      </div>
-    </SidebarProvider>
+    <ErrorBoundary>
+      <SidebarProvider defaultOpen={true}>
+        <div className="min-h-screen flex w-full bg-background">
+          <AdminSidebar />
+          <SidebarInset>
+            <AdminHeader />
+            <main className="flex-1 p-6">
+              <ErrorBoundary>
+                <Outlet />
+              </ErrorBoundary>
+            </main>
+          </SidebarInset>
+        </div>
+      </SidebarProvider>
+    </ErrorBoundary>
   );
 };
 
