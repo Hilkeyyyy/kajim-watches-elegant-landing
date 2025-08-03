@@ -16,6 +16,19 @@ const AdminLayout = () => {
 
   console.log('AdminLayout - Auth State:', { user: !!user, loading, isAdmin });
 
+  // Early returns para evitar re-renders desnecessários
+  React.useEffect(() => {
+    if (!loading) {
+      if (!user) {
+        console.warn('AdminLayout - No user, redirecting to auth');
+        navigate('/auth', { replace: true });
+      } else if (!isAdmin) {
+        console.warn('AdminLayout - User is not admin, redirecting to home');
+        navigate('/', { replace: true });
+      }
+    }
+  }, [user, isAdmin, loading, navigate]);
+
   // Loading state
   if (loading) {
     return (
@@ -28,16 +41,8 @@ const AdminLayout = () => {
     );
   }
 
-  // Authentication check
-  if (!user) {
-    console.warn('AdminLayout - No user, redirecting to auth');
-    navigate('/auth');
-    return null;
-  }
-
-  if (!isAdmin) {
-    console.warn('AdminLayout - User is not admin, redirecting to home');
-    navigate('/');
+  // Se não há usuário ou não é admin, não renderiza nada (redirecionamento já aconteceu no useEffect)
+  if (!user || !isAdmin) {
     return null;
   }
 

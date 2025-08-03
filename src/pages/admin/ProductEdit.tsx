@@ -6,9 +6,10 @@ import { ProductForm } from '@/components/admin/ProductForm';
 import AdminBreadcrumb from '@/components/admin/AdminBreadcrumb';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowLeft, Edit } from 'lucide-react';
+import { ArrowLeft, Edit, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface ImageItem {
   id: string;
@@ -43,32 +44,56 @@ const ProductEdit = () => {
   const [product, setProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { id } = useParams();
   const { toast } = useToast();
 
+  console.log('ProductEdit - Renderizando com:', { id, product: !!product, isFetching, isLoading, error });
+
   useEffect(() => {
     const fetchProduct = async () => {
-      if (!id) return;
+      if (!id) {
+        console.warn('ProductEdit - ID não fornecido');
+        setError('ID do produto é obrigatório');
+        setIsFetching(false);
+        return;
+      }
       
       try {
+        console.log('ProductEdit - Buscando produto:', id);
         setIsFetching(true);
+        setError(null);
+        
         const { data, error } = await supabase
           .from('products')
           .select('*')
           .eq('id', id)
           .single();
 
-        if (error) throw error;
+        if (error) {
+          console.error('ProductEdit - Erro na query:', error);
+          throw error;
+        }
+        
+        if (!data) {
+          throw new Error('Produto não encontrado');
+        }
+
+        console.log('ProductEdit - Produto carregado:', data.name);
         setProduct(data);
       } catch (error) {
-        console.error('Erro ao buscar produto:', error);
+        console.error('ProductEdit - Erro ao buscar produto:', error);
+        const errorMessage = error.message === 'No rows returned' 
+          ? 'Produto não encontrado' 
+          : 'Erro ao carregar produto';
+        
+        setError(errorMessage);
         toast({
           title: "Erro",
-          description: "Produto não encontrado",
+          description: errorMessage,
           variant: "destructive"
         });
-        navigate('/admin/produtos');
       } finally {
         setIsFetching(false);
       }
@@ -78,14 +103,28 @@ const ProductEdit = () => {
   }, [id, navigate, toast]);
 
   const handleSubmit = async (data: ProductFormData) => {
-    if (!id) return;
+    if (!id) {
+      console.error('ProductEdit - ID não disponível para submit');
+      return;
+    }
     
     try {
+      console.log('ProductEdit - Iniciando submit para produto:', id);
       setIsLoading(true);
+      
+      // Validações antes do envio
+      if (!data.name || !data.price || !data.brand) {
+        throw new Error('Campos obrigatórios não preenchidos');
+      }
+
+      const price = parseFloat(data.price);
+      if (isNaN(price) || price <= 0) {
+        throw new Error('Preço deve ser um número válido maior que zero');
+      }
       
       const productData = {
         name: data.name,
-        price: parseFloat(data.price),
+        price,
         brand: data.brand,
         model: data.model,
         description: data.description,
@@ -108,24 +147,36 @@ const ProductEdit = () => {
         updated_at: new Date().toISOString(),
       };
 
+      console.log('ProductEdit - Enviando dados para Supabase:', {
+        id,
+        name: productData.name,
+        imagesCount: productData.images.length
+      });
+
       const { error } = await supabase
         .from('products')
         .update(productData)
         .eq('id', id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('ProductEdit - Erro na query:', error);
+        throw error;
+      }
 
+      console.log('ProductEdit - Produto atualizado com sucesso');
       toast({
         title: "Sucesso",
-        description: "Produto atualizado com sucesso!"
+        description: `Produto "${data.name}" atualizado com sucesso!`
       });
 
-      navigate('/admin/produtos');
+      navigate('/admin/produtos', { replace: true });
     } catch (error) {
-      console.error('Erro ao atualizar produto:', error);
+      console.error('ProductEdit - Erro ao atualizar produto:', error);
+      
+      const errorMessage = error.message || 'Erro interno do servidor';
       toast({
-        title: "Erro",
-        description: "Erro ao atualizar produto",
+        title: "Erro ao Atualizar",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {
@@ -144,6 +195,32 @@ const ProductEdit = () => {
         <Card>
           <CardContent className="flex items-center justify-center py-12">
             <LoadingSpinner size="lg" />
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <AdminBreadcrumb />
+        <Card>
+          <CardContent className="py-12">
+            <Alert variant="destructive">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>
+                {error}
+              </AlertDescription>
+            </Alert>
+            <div className="flex justify-center mt-6">
+              <Button asChild variant="outline">
+                <Link to="/admin/produtos">
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Voltar aos Produtos
+                </Link>
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -177,12 +254,20 @@ const ProductEdit = () => {
         </div>
       </div>
 
-      <ProductForm
-        product={product}
-        onSubmit={handleSubmit}
-        onCancel={handleCancel}
-        isLoading={isLoading}
-      />
+      {product ? (
+        <ProductForm
+          product={product}
+          onSubmit={handleSubmit}
+          onCancel={handleCancel}
+          isLoading={isLoading}
+        />
+      ) : (
+        <Card>
+          <CardContent className="flex items-center justify-center py-12">
+            <LoadingSpinner size="lg" />
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };

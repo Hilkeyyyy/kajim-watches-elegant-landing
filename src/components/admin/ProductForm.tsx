@@ -7,6 +7,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import { MainInfoTab, BadgesTab, SpecificationsTab, OtherInfoTab } from "./ProductFormTabs";
+import { useProductFormTabs } from "@/hooks/useProductFormTabs";
+import { ProductFormErrorBoundary } from "./ProductFormErrorBoundary";
 
 interface ImageItem {
   id: string;
@@ -45,6 +47,8 @@ interface ProductFormProps {
 }
 
 export const ProductForm = ({ product, onSubmit, onCancel, isLoading }: ProductFormProps) => {
+  console.log('ProductForm - Renderizando com produto:', product?.name || 'novo');
+  
   const [images, setImages] = useState<ImageItem[]>(
     product?.images?.map((url: string, index: number) => ({
       id: `img-${index}`,
@@ -53,6 +57,7 @@ export const ProductForm = ({ product, onSubmit, onCancel, isLoading }: ProductF
     })) || []
   );
   const [badges, setBadges] = useState<string[]>(product?.badges || []);
+  const { activeTab, changeTab } = useProductFormTabs();
 
   const form = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
@@ -79,7 +84,28 @@ export const ProductForm = ({ product, onSubmit, onCancel, isLoading }: ProductF
   });
 
   const handleSubmit = async (data: ProductFormData) => {
-    await onSubmit({ ...data, images, badges });
+    try {
+      console.log('ProductForm - Enviando dados:', { 
+        name: data.name, 
+        imagesCount: images.length, 
+        badgesCount: badges.length,
+        activeTab 
+      });
+      
+      if (images.length === 0) {
+        console.warn('ProductForm - Nenhuma imagem adicionada');
+      }
+      
+      await onSubmit({ ...data, images, badges });
+    } catch (error) {
+      console.error('ProductForm - Erro no submit:', error);
+      throw error; // Re-throw para que o ProductEdit possa capturar
+    }
+  };
+
+  const handleTabChange = (value: string) => {
+    console.log('ProductForm - Mudando tab:', activeTab, '->', value);
+    changeTab(value as any);
   };
 
   const addBadge = (badge: string) => {
@@ -97,7 +123,7 @@ export const ProductForm = ({ product, onSubmit, onCancel, isLoading }: ProductF
       <CardContent className="p-6">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-            <Tabs defaultValue="main" className="w-full">
+            <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
               <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="main">Informações Principais</TabsTrigger>
                 <TabsTrigger value="badges">Badges</TabsTrigger>
@@ -105,29 +131,31 @@ export const ProductForm = ({ product, onSubmit, onCancel, isLoading }: ProductF
                 <TabsTrigger value="other">Outras Informações</TabsTrigger>
               </TabsList>
 
-              <TabsContent value="main" className="mt-6">
-                <MainInfoTab form={form} />
-              </TabsContent>
+              <ProductFormErrorBoundary>
+                <TabsContent value="main" className="mt-6">
+                  <MainInfoTab form={form} />
+                </TabsContent>
 
-              <TabsContent value="badges" className="mt-6">
-                <BadgesTab 
-                  badges={badges} 
-                  addBadge={addBadge} 
-                  removeBadge={removeBadge} 
-                />
-              </TabsContent>
+                <TabsContent value="badges" className="mt-6">
+                  <BadgesTab 
+                    badges={badges} 
+                    addBadge={addBadge} 
+                    removeBadge={removeBadge} 
+                  />
+                </TabsContent>
 
-              <TabsContent value="specs" className="mt-6">
-                <SpecificationsTab form={form} />
-              </TabsContent>
+                <TabsContent value="specs" className="mt-6">
+                  <SpecificationsTab form={form} />
+                </TabsContent>
 
-              <TabsContent value="other" className="mt-6">
-                <OtherInfoTab 
-                  form={form} 
-                  images={images} 
-                  setImages={setImages} 
-                />
-              </TabsContent>
+                <TabsContent value="other" className="mt-6">
+                  <OtherInfoTab 
+                    form={form} 
+                    images={images} 
+                    setImages={setImages} 
+                  />
+                </TabsContent>
+              </ProductFormErrorBoundary>
             </Tabs>
 
             {/* Actions */}
