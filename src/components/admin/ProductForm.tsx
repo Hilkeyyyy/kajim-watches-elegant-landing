@@ -1,5 +1,6 @@
 import React from "react";
 import { ProductFormCore } from "./forms/ProductFormCore";
+import { ProductFormErrorBoundary } from "./ProductFormErrorBoundary";
 
 interface ImageItem {
   id: string;
@@ -18,13 +19,15 @@ export const ProductForm = React.memo(({ product, onSubmit, onCancel, isLoading 
   const mode = product ? 'edit' : 'create';
   
   return (
-    <ProductFormCore
-      product={product}
-      onSubmit={onSubmit}
-      onCancel={onCancel}
-      isLoading={isLoading}
-      mode={mode}
-    />
+    <ProductFormErrorBoundary>
+      <ProductFormCore
+        product={product}
+        onSubmit={onSubmit}
+        onCancel={onCancel}
+        isLoading={isLoading}
+        mode={mode}
+      />
+    </ProductFormErrorBoundary>
   );
 });
 

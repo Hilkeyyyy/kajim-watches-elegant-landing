@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect, useCallback, useMemo } from 'react';
 import { storage, type CartItem } from '@/utils/storage';
-import { useToast } from '@/hooks/use-toast';
+import { useNotifications } from '@/hooks/useNotifications';
 import { errorHandler } from '@/utils/errorHandler';
 import { parsePrice, formatPrice, calculateItemTotal } from '@/utils/priceUtils';
 import { logCartAction, logFavoriteAction, logStorageAction } from '@/utils/auditLogger';
@@ -141,14 +141,7 @@ const AppContext = createContext<AppContextType | null>(null);
 // Provider
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
-  const { toast } = useToast();
-  
-  console.log('AppProvider - State:', { 
-    cartItems: state.cart.length, 
-    favorites: state.favorites.length,
-    isLoading: state.isLoading,
-    dataLoaded: state.dataLoaded
-  });
+  const { notifySuccess, notifyError, notifyCartAction, notifyFavoriteAction } = useNotifications();
 
   // Carregar dados iniciais
   useEffect(() => {
@@ -164,11 +157,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         dispatch({ type: 'SET_DATA_LOADED', payload: true });
       } catch (error) {
         console.error('Erro ao carregar dados:', error);
-        toast({
-          title: 'Erro',
-          description: 'Erro ao carregar dados salvos. Usando dados padrão.',
-          variant: 'destructive',
-        });
+        notifyError('Erro ao carregar dados salvos', 'Usando dados padrão.');
         dispatch({ type: 'SET_DATA_LOADED', payload: true });
       } finally {
         dispatch({ type: 'SET_LOADING', payload: false });
@@ -176,7 +165,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
 
     loadInitialData();
-  }, [toast]);
+  }, [notifyError]);
 
   // Sincronizar com localStorage
   useEffect(() => {
@@ -209,24 +198,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   
   // Ações do carrinho (memoizadas)
   const addToCart = useCallback((product: Omit<CartItem, 'quantity'>, quantity: number = 1) => {
-    console.log('AppContext.addToCart - INICIANDO', { product, quantity, currentCartLength: state.cart.length });
     try {
       dispatch({ type: 'ADD_TO_CART', payload: { product, quantity } });
       logCartAction('add', product.id, quantity);
-      console.log('AppContext.addToCart - SUCESSO', { productId: product.id, newCartLength: state.cart.length + 1 });
-      toast({
-        title: 'Adicionado ao carrinho',
-        description: `${product.name} foi adicionado ao carrinho.`,
-      });
+      notifyCartAction('add', product.name);
     } catch (error) {
-      console.error('AppContext.addToCart - ERRO', error);
-      toast({
-        title: 'Erro',
-        description: 'Erro ao adicionar produto ao carrinho.',
-        variant: 'destructive',
-      });
+      console.error('Erro ao adicionar produto ao carrinho:', error);
+      notifyError('Erro ao adicionar produto ao carrinho');
     }
-  }, [toast, state.cart.length]);
+  }, [notifySuccess, notifyError, notifyCartAction]);
 
   const removeFromCart = useCallback((productId: string) => {
     dispatch({ type: 'REMOVE_FROM_CART', payload: productId });
@@ -248,22 +228,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const isCurrentlyFavorite = state.favorites.includes(productId);
     dispatch({ type: 'TOGGLE_FAVORITE', payload: { productId, productName } });
     logFavoriteAction(isCurrentlyFavorite ? 'remove' : 'add', productId);
-    
-    toast({
-      title: isCurrentlyFavorite ? 'Removido dos favoritos' : 'Adicionado aos favoritos',
-      description: `${productName} foi ${isCurrentlyFavorite ? 'removido da' : 'adicionado à'} sua lista de favoritos.`,
-    });
-  }, [state.favorites, toast]);
+    notifyFavoriteAction(isCurrentlyFavorite ? 'remove' : 'add', productName);
+  }, [state.favorites, notifyFavoriteAction]);
 
   const isFavorite = useCallback((productId: string) => {
     return state.favorites.includes(productId);
   }, [state.favorites]);
 
-  // Totais memoizados com logs
+  // Totais memoizados
   const getTotalItems = useMemo(() => {
     return () => {
       const total = state.cart.reduce((total, item) => total + item.quantity, 0);
-      console.log('AppContext.getTotalItems', { cartItems: state.cart.length, totalQuantity: total });
       return total;
     };
   }, [state.cart]);
@@ -288,11 +263,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // WhatsApp (mantém código existente)
   const sendCartToWhatsApp = useCallback(() => {
     if (state.cart.length === 0) {
-      toast({
-        title: 'Carrinho vazio',
-        description: 'Adicione produtos ao carrinho antes de enviar.',
-        variant: 'destructive',
-      });
+      notifyError('Carrinho vazio', 'Adicione produtos ao carrinho antes de enviar.');
       return;
     }
 
@@ -313,19 +284,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const whatsappUrl = `https://wa.me/5586988388124?text=${encodeURIComponent(message)}`;
       window.open(whatsappUrl, '_blank');
       
-      toast({
-        title: 'Pedido enviado',
-        description: 'Seu pedido foi enviado para o WhatsApp!',
-      });
+      notifySuccess('Pedido enviado', 'Seu pedido foi enviado para o WhatsApp!');
     } catch (error) {
       console.error('Erro ao enviar pedido para WhatsApp:', error);
-      toast({
-        title: 'Erro',
-        description: 'Erro ao enviar pedido. Tente novamente.',
-        variant: 'destructive',
-      });
+      notifyError('Erro ao enviar pedido', 'Tente novamente.');
     }
-  }, [state.cart, toast, getItemTotal, getCartTotal]);
+  }, [state.cart, notifySuccess, notifyError, getItemTotal, getCartTotal]);
 
   const contextValue: AppContextType = {
     // Estado

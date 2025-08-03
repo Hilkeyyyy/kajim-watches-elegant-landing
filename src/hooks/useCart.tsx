@@ -5,36 +5,19 @@ import { useApp } from '@/contexts/AppContext';
  * Única API oficial para operações de carrinho
  */
 export const useCart = () => {
-  const {
-    cart: cartItems,
-    addToCart,
-    removeFromCart,
-    updateQuantity,
-    clearCart,
-    getTotalItems,
-    getCartTotal,
-    getItemTotal,
-    sendCartToWhatsApp,
-    isLoading,
-  } = useApp();
-
-  console.log('useCart - Hook chamado', { 
-    cartItemsLength: cartItems.length, 
-    totalItems: getTotalItems(),
-    isLoading 
-  });
+  const appContext = useApp();
 
   return {
-    cartItems,
-    addToCart,
-    removeFromCart,
-    updateQuantity,
-    clearCart,
-    getTotalItems,
-    sendCartToWhatsApp,
-    getCartTotal,
-    getItemTotal,
-    isLoading,
+    cartItems: appContext.cart,
+    addToCart: appContext.addToCart,
+    removeFromCart: appContext.removeFromCart,
+    updateQuantity: appContext.updateQuantity,
+    clearCart: appContext.clearCart,
+    getTotalItems: appContext.getTotalItems,
+    sendCartToWhatsApp: appContext.sendCartToWhatsApp,
+    getCartTotal: appContext.getCartTotal,
+    getItemTotal: appContext.getItemTotal,
+    isLoading: appContext.isLoading,
   };
 };
 

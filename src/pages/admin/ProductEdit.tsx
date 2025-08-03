@@ -26,7 +26,7 @@ interface ProductFormData {
   stock_quantity?: number;
   is_visible?: boolean;
   is_featured?: boolean;
-  status?: 'active' | 'inactive' | 'discontinued';
+  status?: 'active' | 'inactive' | 'out_of_stock';
   movement?: string;
   case_size?: string;
   material?: string;
@@ -69,7 +69,7 @@ const ProductEdit = () => {
           .from('products')
           .select('*')
           .eq('id', id)
-          .single();
+          .maybeSingle();
 
         if (error) {
           console.error('ProductEdit - Erro na query:', error);
@@ -84,9 +84,7 @@ const ProductEdit = () => {
         setProduct(data);
       } catch (error) {
         console.error('ProductEdit - Erro ao buscar produto:', error);
-        const errorMessage = error.message === 'No rows returned' 
-          ? 'Produto não encontrado' 
-          : 'Erro ao carregar produto';
+        const errorMessage = error?.message || 'Erro ao carregar produto';
         
         setError(errorMessage);
         toast({
@@ -131,7 +129,7 @@ const ProductEdit = () => {
         stock_quantity: data.stock_quantity || 0,
         is_visible: data.is_visible ?? true,
         is_featured: data.is_featured ?? false,
-        status: (data.status as 'active' | 'inactive' | 'out_of_stock') || 'active',
+        status: data.status || 'active',
         movement: data.movement,
         case_size: data.case_size,
         material: data.material,
