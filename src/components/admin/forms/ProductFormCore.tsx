@@ -188,7 +188,7 @@ export const ProductFormCore: React.FC<ProductFormCoreProps> = ({
               {currentStep === 2 && (
                 <ProductFormImages
                   images={images}
-                  setImages={setImages}
+                  onImagesChange={setImages}
                   badges={badges}
                   addBadge={addBadge}
                   removeBadge={removeBadge}

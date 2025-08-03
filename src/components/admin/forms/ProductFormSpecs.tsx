@@ -16,20 +16,49 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ChevronDown, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 interface ProductFormSpecsProps {
   form: UseFormReturn<any>;
 }
 
 export const ProductFormSpecs: React.FC<ProductFormSpecsProps> = ({ form }) => {
+  const [openSections, setOpenSections] = useState({
+    materials: true,
+    dimensions: true,
+    resistance: true,
+    advanced: false
+  });
+
+  const toggleSection = (section: keyof typeof openSections) => {
+    setOpenSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Materiais */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Materiais e Construção</CardTitle>
-        </CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <Collapsible open={openSections.materials} onOpenChange={() => toggleSection('materials')}>
+        <Card>
+          <CollapsibleTrigger asChild>
+            <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
+              <CardTitle className="flex items-center justify-between">
+                Materiais e Construção
+                {openSections.materials ? (
+                  <ChevronDown className="h-5 w-5" />
+                ) : (
+                  <ChevronRight className="h-5 w-5" />
+                )}
+              </CardTitle>
+            </CardHeader>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="material"
@@ -120,15 +149,28 @@ export const ProductFormSpecs: React.FC<ProductFormSpecsProps> = ({ form }) => {
               </FormItem>
             )}
           />
-        </CardContent>
-      </Card>
+            </CardContent>
+          </CollapsibleContent>
+        </Card>
+      </Collapsible>
 
       {/* Dimensões */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Dimensões e Especificações</CardTitle>
-        </CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <Collapsible open={openSections.dimensions} onOpenChange={() => toggleSection('dimensions')}>
+        <Card>
+          <CollapsibleTrigger asChild>
+            <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
+              <CardTitle className="flex items-center justify-between">
+                Dimensões e Especificações
+                {openSections.dimensions ? (
+                  <ChevronDown className="h-5 w-5" />
+                ) : (
+                  <ChevronRight className="h-5 w-5" />
+                )}
+              </CardTitle>
+            </CardHeader>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <FormField
             control={form.control}
             name="weight"
@@ -170,15 +212,28 @@ export const ProductFormSpecs: React.FC<ProductFormSpecsProps> = ({ form }) => {
               </FormItem>
             )}
           />
-        </CardContent>
-      </Card>
+            </CardContent>
+          </CollapsibleContent>
+        </Card>
+      </Collapsible>
 
       {/* Resistência e Durabilidade */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Resistência e Durabilidade</CardTitle>
-        </CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <Collapsible open={openSections.resistance} onOpenChange={() => toggleSection('resistance')}>
+        <Card>
+          <CollapsibleTrigger asChild>
+            <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
+              <CardTitle className="flex items-center justify-between">
+                Resistência e Durabilidade
+                {openSections.resistance ? (
+                  <ChevronDown className="h-5 w-5" />
+                ) : (
+                  <ChevronRight className="h-5 w-5" />
+                )}
+              </CardTitle>
+            </CardHeader>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="water_resistance"
@@ -230,8 +285,87 @@ export const ProductFormSpecs: React.FC<ProductFormSpecsProps> = ({ form }) => {
               </FormItem>
             )}
           />
-        </CardContent>
-      </Card>
+            </CardContent>
+          </CollapsibleContent>
+        </Card>
+      </Collapsible>
+
+      {/* Especificações Avançadas */}
+      <Collapsible open={openSections.advanced} onOpenChange={() => toggleSection('advanced')}>
+        <Card>
+          <CollapsibleTrigger asChild>
+            <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
+              <CardTitle className="flex items-center justify-between">
+                Especificações Avançadas
+                {openSections.advanced ? (
+                  <ChevronDown className="h-5 w-5" />
+                ) : (
+                  <ChevronRight className="h-5 w-5" />
+                )}
+              </CardTitle>
+            </CardHeader>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="bezel_type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tipo de Moldura</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ex: Unidirecional, Bidirecional" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="clasp_type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tipo de Fecho</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ex: Fecho de segurança, Fivela" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="power_reserve"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Reserva de Energia</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ex: 48 horas, 72 horas" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="country_origin"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>País de Origem</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ex: Suíça, Japão, Alemanha" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </CollapsibleContent>
+        </Card>
+      </Collapsible>
     </div>
   );
 };

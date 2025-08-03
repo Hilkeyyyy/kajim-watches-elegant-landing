@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface ProductFormMainProps {
   form: UseFormReturn<any>;
@@ -24,7 +25,13 @@ interface ProductFormMainProps {
 export const ProductFormMain: React.FC<ProductFormMainProps> = ({ form }) => {
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Informações Básicas */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Informações Básicas</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <FormField
           control={form.control}
           name="name"
@@ -87,11 +94,19 @@ export const ProductFormMain: React.FC<ProductFormMainProps> = ({ form }) => {
             </FormItem>
           )}
         />
-      </div>
+          </div>
+        </CardContent>
+      </Card>
 
-      <FormField
-        control={form.control}
-        name="description"
+      {/* Descrição */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Descrição</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <FormField
+            control={form.control}
+            name="description"
         render={({ field }) => (
           <FormItem>
             <FormLabel>Descrição</FormLabel>
@@ -102,77 +117,87 @@ export const ProductFormMain: React.FC<ProductFormMainProps> = ({ form }) => {
                 {...field}
               />
             </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+        </CardContent>
+      </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <FormField
-          control={form.control}
-          name="watch_type"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Tipo de Relógio</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione o tipo" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="dress">Social</SelectItem>
-                  <SelectItem value="sport">Esportivo</SelectItem>
-                  <SelectItem value="diving">Mergulho</SelectItem>
-                  <SelectItem value="pilot">Aviador</SelectItem>
-                  <SelectItem value="chronograph">Cronógrafo</SelectItem>
-                  <SelectItem value="smartwatch">Smartwatch</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      {/* Especificações do Relógio */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Especificações do Relógio</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <FormField
+              control={form.control}
+              name="watch_type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tipo de Relógio</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o tipo" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="dress">Social</SelectItem>
+                      <SelectItem value="sport">Esportivo</SelectItem>
+                      <SelectItem value="diving">Mergulho</SelectItem>
+                      <SelectItem value="pilot">Aviador</SelectItem>
+                      <SelectItem value="chronograph">Cronógrafo</SelectItem>
+                      <SelectItem value="smartwatch">Smartwatch</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <FormField
-          control={form.control}
-          name="movement"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Movimento</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Tipo de movimento" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="automatic">Automático</SelectItem>
-                  <SelectItem value="manual">Corda Manual</SelectItem>
-                  <SelectItem value="quartz">Quartzo</SelectItem>
-                  <SelectItem value="solar">Solar</SelectItem>
-                  <SelectItem value="kinetic">Cinético</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+            <FormField
+              control={form.control}
+              name="movement"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Movimento</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Tipo de movimento" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="automatic">Automático</SelectItem>
+                      <SelectItem value="manual">Corda Manual</SelectItem>
+                      <SelectItem value="quartz">Quartzo</SelectItem>
+                      <SelectItem value="solar">Solar</SelectItem>
+                      <SelectItem value="kinetic">Cinético</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <FormField
-          control={form.control}
-          name="case_size"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Tamanho da Caixa</FormLabel>
-              <FormControl>
-                <Input placeholder="Ex: 42mm" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
+            <FormField
+              control={form.control}
+              name="case_size"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tamanho da Caixa</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Ex: 42mm" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
