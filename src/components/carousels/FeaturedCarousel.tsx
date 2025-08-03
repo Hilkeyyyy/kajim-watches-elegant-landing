@@ -19,7 +19,7 @@ export const FeaturedCarousel = () => {
         .select('*')
         .eq('is_visible', true)
         .eq('status', 'active')
-        .contains('badges', ['Destaque'])
+        .overlaps('badges', ['Destaque'])
         .order('updated_at', { ascending: false })
         .limit(10);
 

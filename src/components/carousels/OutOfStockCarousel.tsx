@@ -20,7 +20,7 @@ export const OutOfStockCarousel = () => {
           .select('*')
           .eq('is_visible', true)
           .eq('status', 'active')
-          .or('stock_status.eq.out_of_stock,badges.cs.{Limitado}')
+          .or('stock_status.eq.out_of_stock,badges.ov.{Limitado}')
           .order('updated_at', { ascending: false })
           .limit(10);
 

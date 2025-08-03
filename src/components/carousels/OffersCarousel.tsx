@@ -20,7 +20,7 @@ export const OffersCarousel = () => {
           .select('*')
           .eq('is_visible', true)
           .eq('status', 'active')
-          .contains('badges', ['Oferta'])
+          .overlaps('badges', ['Oferta'])
           .order('created_at', { ascending: false })
           .limit(10);
 

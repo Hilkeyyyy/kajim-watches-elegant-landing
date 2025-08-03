@@ -24,7 +24,7 @@ export const NewProductsCarousel = () => {
           .select('*')
           .eq('is_visible', true)
           .eq('status', 'active')
-          .contains('badges', ['Novidade'])
+          .overlaps('badges', ['Novidade'])
           .order('updated_at', { ascending: false })
           .limit(10);
 
