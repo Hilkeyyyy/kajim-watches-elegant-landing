@@ -189,7 +189,7 @@ const Products = () => {
           </p>
         </div>
         <Button asChild className="gap-2 w-full sm:w-auto">
-          <Link to="/admin/produtos/criar">
+          <Link to="/admin/produtos/novo">
             <Plus className="h-4 w-4" />
             {isMobile ? "Adicionar" : "Adicionar Produto"}
           </Link>
@@ -212,7 +212,7 @@ const Products = () => {
                 Comece adicionando seu primeiro produto
               </p>
               <Button asChild className="gap-2">
-                <Link to="/admin/produtos/criar">
+                <Link to="/admin/produtos/novo">
                   <Plus className="h-4 w-4" />
                   Adicionar Primeiro Produto
                 </Link>

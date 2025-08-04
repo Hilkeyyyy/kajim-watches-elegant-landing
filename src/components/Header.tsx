@@ -1,91 +1,193 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Heart, ShoppingCart, User } from 'lucide-react';
+import { Search, Heart, ShoppingCart, User, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useAuth } from '@/hooks/useAuth';
 import { useCart } from '@/hooks/useCart';
 import { useFavorites } from '@/hooks/useFavorites';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export const Header: React.FC = () => {
   const { user, signOut, isAdmin } = useAuth();
   const { getItemCount } = useCart();
   const { count } = useFavorites();
+  const isMobile = useIsMobile();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const cartCount = getItemCount();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto px-4">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/98 backdrop-blur-md supports-[backdrop-filter]:bg-background/95">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-sm">K</span>
+          <Link to="/" className="flex items-center space-x-2 shrink-0">
+            <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center shadow-sm">
+              <span className="text-primary-foreground font-playfair font-bold text-sm">K</span>
             </div>
-            <span className="font-bold text-xl">KAJIM</span>
+            <span className="font-playfair font-bold text-xl text-foreground">KAJIM</span>
           </Link>
 
-          {/* Busca */}
-          <div className="flex-1 max-w-md mx-8">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <Input
-                placeholder="Buscar relógios..."
-                className="pl-9 pr-4"
-              />
-            </div>
-          </div>
+          {/* Desktop Navigation */}
+          {!isMobile && (
+            <>
+              {/* Search Bar - Desktop */}
+              <div className="flex-1 max-w-md mx-8">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                  <Input
+                    placeholder="Buscar relógios premium..."
+                    className="pl-9 pr-4 bg-muted/50 border-border/50 focus:bg-background focus:border-primary/50 transition-all duration-300"
+                  />
+                </div>
+              </div>
 
-          {/* Ações */}
-          <div className="flex items-center space-x-4">
-            {/* Favoritos */}
-            <Link to="/favoritos">
-              <Button variant="ghost" size="sm" className="relative">
-                <Heart className="w-5 h-5" />
-                {count > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                    {count}
-                  </span>
-                )}
-              </Button>
-            </Link>
-
-            {/* Carrinho */}
-            <Link to="/carrinho">
-              <Button variant="ghost" size="sm" className="relative">
-                <ShoppingCart className="w-5 h-5" />
-                {getItemCount() > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                    {getItemCount()}
-                  </span>
-                )}
-              </Button>
-            </Link>
-
-            {/* Menu do usuário */}
-            {user ? (
+              {/* Desktop Actions */}
               <div className="flex items-center space-x-2">
-                {isAdmin && (
-                  <Link to="/admin">
-                    <Button variant="outline" size="sm">
-                      Admin
+                {/* Favorites */}
+                <Link to="/favoritos">
+                  <Button variant="ghost" size="sm" className="relative hover:bg-muted/50 transition-colors">
+                    <Heart className="w-5 h-5" />
+                    {count > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium">
+                        {count}
+                      </span>
+                    )}
+                  </Button>
+                </Link>
+
+                {/* Cart */}
+                <Link to="/carrinho">
+                  <Button variant="ghost" size="sm" className="relative hover:bg-muted/50 transition-colors">
+                    <ShoppingCart className="w-5 h-5" />
+                    {cartCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium">
+                        {cartCount}
+                      </span>
+                    )}
+                  </Button>
+                </Link>
+
+                {/* User Menu */}
+                {user ? (
+                  <div className="flex items-center space-x-2">
+                    {isAdmin && (
+                      <Link to="/admin">
+                        <Button variant="outline" size="sm" className="border-primary/50 text-primary hover:bg-primary hover:text-primary-foreground">
+                          Admin
+                        </Button>
+                      </Link>
+                    )}
+                    <Button variant="ghost" size="sm" onClick={() => signOut()} className="hover:bg-muted/50">
+                      Sair
+                    </Button>
+                  </div>
+                ) : (
+                  <Link to="/auth">
+                    <Button variant="ghost" size="sm" className="hover:bg-muted/50">
+                      <User className="w-4 h-4 mr-2" />
+                      Entrar
                     </Button>
                   </Link>
                 )}
-                <Button variant="ghost" size="sm" onClick={() => signOut()}>
-                  Sair
-                </Button>
               </div>
-            ) : (
-              <Link to="/login">
-                <Button variant="ghost" size="sm">
-                  <User className="w-5 h-5 mr-1" />
-                  Entrar
+            </>
+          )}
+
+          {/* Mobile Actions */}
+          {isMobile && (
+            <div className="flex items-center space-x-2">
+              {/* Mobile Search Icon */}
+              <Button variant="ghost" size="sm" className="hover:bg-muted/50">
+                <Search className="w-5 h-5" />
+              </Button>
+
+              {/* Mobile Favorites */}
+              <Link to="/favoritos">
+                <Button variant="ghost" size="sm" className="relative hover:bg-muted/50">
+                  <Heart className="w-5 h-5" />
+                  {count > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground text-xs rounded-full w-4 h-4 flex items-center justify-center font-medium text-[10px]">
+                      {count}
+                    </span>
+                  )}
                 </Button>
               </Link>
-            )}
-          </div>
+
+              {/* Mobile Cart */}
+              <Link to="/carrinho">
+                <Button variant="ghost" size="sm" className="relative hover:bg-muted/50">
+                  <ShoppingCart className="w-5 h-5" />
+                  {cartCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground text-xs rounded-full w-4 h-4 flex items-center justify-center font-medium text-[10px]">
+                      {cartCount}
+                    </span>
+                  )}
+                </Button>
+              </Link>
+
+              {/* Mobile Menu Button */}
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="hover:bg-muted/50"
+              >
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </Button>
+            </div>
+          )}
         </div>
+
+        {/* Mobile Menu */}
+        {isMobile && mobileMenuOpen && (
+          <div className="border-t border-border/50 bg-background/98 backdrop-blur-md">
+            <div className="py-4 space-y-3">
+              {/* Mobile Search */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                <Input
+                  placeholder="Buscar relógios..."
+                  className="pl-9 pr-4 bg-muted/50 border-border/50"
+                />
+              </div>
+
+              {/* Mobile User Menu */}
+              <div className="flex flex-col space-y-2">
+                {user ? (
+                  <>
+                    {isAdmin && (
+                      <Link to="/admin" onClick={() => setMobileMenuOpen(false)}>
+                        <Button variant="ghost" className="w-full justify-start">
+                          Admin Panel
+                        </Button>
+                      </Link>
+                    )}
+                    <Button 
+                      variant="ghost" 
+                      className="w-full justify-start" 
+                      onClick={() => {
+                        signOut();
+                        setMobileMenuOpen(false);
+                      }}
+                    >
+                      Sair
+                    </Button>
+                  </>
+                ) : (
+                  <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
+                    <Button variant="ghost" className="w-full justify-start">
+                      <User className="w-4 h-4 mr-2" />
+                      Entrar
+                    </Button>
+                  </Link>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </header>
   );
