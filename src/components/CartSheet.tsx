@@ -8,8 +8,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { useCart } from "@/hooks/useCart";
-import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { useApp } from "@/contexts/AppContext";
 
 interface CartSheetProps {
   isOpen: boolean;
@@ -17,35 +16,9 @@ interface CartSheetProps {
 }
 
 export const CartSheet = React.memo(({ isOpen, onClose }: CartSheetProps) => {
-  const { items, updateQuantity, removeFromCart, clearCart, getTotal, getItemCount, loading } = useCart();
+  const { cart, updateQuantity, removeFromCart, clearCart, getCartTotal, getTotalItems, sendCartToWhatsApp, isLoading } = useApp();
 
-  const sendCartToWhatsApp = () => {
-    if (items.length === 0) return;
-
-    const currentDate = new Date().toLocaleString('pt-BR');
-    let message = 'Olá, gostaria de saber mais sobre estes produtos:\n\n';
-
-    items.forEach((item, index) => {
-      const itemTotal = (item.price * item.quantity).toLocaleString('pt-BR', { 
-        style: 'currency', 
-        currency: 'BRL' 
-      });
-      
-      message += `${index + 1}. ${item.name}\n`;
-      message += `Quantidade: ${item.quantity}\n`;
-      message += `Preço: ${item.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n`;
-      message += `Total: ${itemTotal}\n\n`;
-    });
-
-    const total = getTotal().toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-    message += `Total do pedido: ${total}\n`;
-    message += `Data/Hora do pedido: ${currentDate}`;
-
-    const whatsappUrl = `https://wa.me/5586988388124?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
-  };
-
-  if (items.length === 0) {
+  if (cart.length === 0) {
     return (
       <Sheet open={isOpen} onOpenChange={onClose}>
         <SheetContent side="right" className="w-full sm:max-w-lg">
@@ -73,7 +46,7 @@ export const CartSheet = React.memo(({ isOpen, onClose }: CartSheetProps) => {
         <SheetHeader>
           <SheetTitle>Carrinho de Compras</SheetTitle>
           <SheetDescription>
-            {items.length} {items.length === 1 ? 'item' : 'itens'} no carrinho
+            {cart.length} {cart.length === 1 ? 'item' : 'itens'} no carrinho
           </SheetDescription>
         </SheetHeader>
 
@@ -81,7 +54,7 @@ export const CartSheet = React.memo(({ isOpen, onClose }: CartSheetProps) => {
           {/* Cart Items */}
           <div className="flex-1 overflow-auto py-6">
             <div className="space-y-4">
-              {items.map((item) => (
+              {cart.map((item) => (
                 <div
                   key={item.id}
                   className="bg-card p-4 rounded-lg border space-y-4"
@@ -89,7 +62,7 @@ export const CartSheet = React.memo(({ isOpen, onClose }: CartSheetProps) => {
                   <div className="flex items-start space-x-4">
                     <div className="w-20 h-20 rounded-lg overflow-hidden bg-muted flex-shrink-0">
                       <img
-                        src={item.image_url}
+                        src={item.image}
                         alt={item.name}
                         className="w-full h-full object-cover"
                       />
@@ -98,7 +71,7 @@ export const CartSheet = React.memo(({ isOpen, onClose }: CartSheetProps) => {
                     <div className="flex-1 min-w-0">
                       <h4 className="font-medium text-base truncate">{item.name}</h4>
                       <p className="text-sm text-muted-foreground mt-1">
-                        Preço unitário: {item.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                        Preço unitário: {item.price}
                       </p>
                       
                       <div className="flex items-center justify-between mt-3">
@@ -107,7 +80,7 @@ export const CartSheet = React.memo(({ isOpen, onClose }: CartSheetProps) => {
                             variant="outline"
                             size="sm"
                             className="h-8 w-8"
-                            onClick={() => updateQuantity(item.product_id, item.quantity - 1)}
+                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
                           >
                             <Minus className="w-3 h-3" />
                           </Button>
@@ -120,7 +93,7 @@ export const CartSheet = React.memo(({ isOpen, onClose }: CartSheetProps) => {
                             variant="outline"
                             size="sm"
                             className="h-8 w-8"
-                            onClick={() => updateQuantity(item.product_id, item.quantity + 1)}
+                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
                           >
                             <Plus className="w-3 h-3" />
                           </Button>
@@ -129,20 +102,13 @@ export const CartSheet = React.memo(({ isOpen, onClose }: CartSheetProps) => {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => removeFromCart(item.product_id)}
+                          onClick={() => removeFromCart(item.id)}
                           className="text-destructive hover:text-destructive"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
                     </div>
-                  </div>
-                  
-                  <div className="flex justify-between items-center pt-2 border-t">
-                    <span className="text-sm text-muted-foreground">Total do item:</span>
-                    <span className="font-semibold">
-                      {(item.price * item.quantity).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                    </span>
                   </div>
                 </div>
               ))}
@@ -155,11 +121,11 @@ export const CartSheet = React.memo(({ isOpen, onClose }: CartSheetProps) => {
               <div className="flex justify-between items-center">
                 <span className="text-lg font-semibold">Total do Carrinho:</span>
                 <span className="text-lg font-bold text-primary">
-                  {getTotal().toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                  {getCartTotal()}
                 </span>
               </div>
               <p className="text-sm text-muted-foreground mt-1">
-                {items.length} {items.length === 1 ? 'item' : 'itens'} no total
+                {cart.length} {cart.length === 1 ? 'item' : 'itens'} no total
               </p>
             </div>
             
@@ -187,3 +153,5 @@ export const CartSheet = React.memo(({ isOpen, onClose }: CartSheetProps) => {
     </Sheet>
   );
 });
+
+CartSheet.displayName = "CartSheet";

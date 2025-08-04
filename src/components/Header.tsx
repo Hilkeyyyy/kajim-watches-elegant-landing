@@ -5,18 +5,18 @@ import { Search, Heart, ShoppingCart, User, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useAuth } from '@/hooks/useAuth';
-import { useCart } from '@/hooks/useCart';
+import { useApp } from '@/contexts/AppContext';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 export const Header: React.FC = () => {
   const { user, signOut, isAdmin } = useAuth();
-  const { getItemCount } = useCart();
+  const { getTotalItems } = useApp();
   const { count } = useFavorites();
   const isMobile = useIsMobile();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const cartCount = getItemCount();
+  const cartCount = getTotalItems();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/98 backdrop-blur-md supports-[backdrop-filter]:bg-background/95">

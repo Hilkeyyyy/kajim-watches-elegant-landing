@@ -5,11 +5,11 @@ import { Header } from '@/components/Header';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { useCart } from '@/hooks/useCart';
+import { useApp } from '@/contexts/AppContext';
 import { formatPrice } from '@/utils/priceUtils';
 
 export const CartPage: React.FC = () => {
-  const { items, removeFromCart, updateQuantity, clearCart, getTotal } = useCart();
+  const { cart, removeFromCart, updateQuantity, clearCart, getCartTotal } = useApp();
 
   const handleQuantityChange = (productId: string, newQuantity: number) => {
     if (newQuantity <= 0) {
@@ -20,21 +20,21 @@ export const CartPage: React.FC = () => {
   };
 
   const handleSendToWhatsApp = () => {
-    const message = items
+    const message = cart
       .map(
         (item) =>
-          `${item.name} - Qtd: ${item.quantity} - ${formatPrice(item.price * item.quantity)}`
+          `${item.name} - Qtd: ${item.quantity} - ${item.price}`
       )
       .join('\n');
     
-    const total = formatPrice(getTotal());
+    const total = getCartTotal();
     const fullMessage = `🛒 *Pedido KAJIM Watches*\n\n${message}\n\n💰 *Total: ${total}*\n\nGostaria de finalizar esta compra!`;
     
     const whatsappUrl = `https://wa.me/5511999999999?text=${encodeURIComponent(fullMessage)}`;
     window.open(whatsappUrl, '_blank');
   };
 
-  if (items.length === 0) {
+  if (cart.length === 0) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
@@ -86,7 +86,7 @@ export const CartPage: React.FC = () => {
                 <span className="sm:hidden">Voltar</span>
               </Button>
             </Link>
-            {items.length > 0 && (
+            {cart.length > 0 && (
               <Button 
                 variant="outline" 
                 size="sm" 
@@ -111,7 +111,7 @@ export const CartPage: React.FC = () => {
                   Carrinho de Compras
                 </h1>
                 <p className="text-muted-foreground text-sm sm:text-base">
-                  {items.length} {items.length === 1 ? 'item no carrinho' : 'itens no carrinho'}
+                  {cart.length} {cart.length === 1 ? 'item no carrinho' : 'itens no carrinho'}
                 </p>
               </div>
             </div>
@@ -121,14 +121,14 @@ export const CartPage: React.FC = () => {
         <div className="mt-8 sm:mt-12 grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
-            {items.map((item) => (
+            {cart.map((item) => (
               <Card key={item.id} className="overflow-hidden">
                 <CardContent className="p-4 sm:p-6">
                   <div className="flex flex-col sm:flex-row gap-4">
                     {/* Product Image */}
                     <div className="w-full sm:w-24 h-48 sm:h-24 bg-muted/20 rounded-lg overflow-hidden shrink-0">
                       <img
-                        src={item.image_url || '/placeholder.svg'}
+                        src={item.image || '/placeholder.svg'}
                         alt={item.name}
                         className="w-full h-full object-cover"
                       />
@@ -141,7 +141,7 @@ export const CartPage: React.FC = () => {
                           {item.name}
                         </h3>
                         <p className="text-base font-bold text-foreground">
-                          {formatPrice(item.price)}
+                          {item.price}
                         </p>
                       </div>
                       
@@ -151,7 +151,7 @@ export const CartPage: React.FC = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => handleQuantityChange(item.product_id, item.quantity - 1)}
+                            onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
                             disabled={item.quantity <= 1}
                             className="w-8 h-8 p-0"
                           >
@@ -163,7 +163,7 @@ export const CartPage: React.FC = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => handleQuantityChange(item.product_id, item.quantity + 1)}
+                            onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
                             className="w-8 h-8 p-0"
                           >
                             <Plus className="w-3 h-3" />
@@ -173,7 +173,7 @@ export const CartPage: React.FC = () => {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => removeFromCart(item.product_id)}
+                          onClick={() => removeFromCart(item.id)}
                           className="text-destructive hover:text-destructive hover:bg-destructive/10"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -184,7 +184,7 @@ export const CartPage: React.FC = () => {
                       <div className="text-right">
                         <p className="text-sm text-muted-foreground">Subtotal</p>
                         <p className="font-playfair text-lg font-bold text-foreground">
-                          {formatPrice(item.price * item.quantity)}
+                          {item.price}
                         </p>
                       </div>
                     </div>
@@ -204,7 +204,7 @@ export const CartPage: React.FC = () => {
                 <div className="space-y-3">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span className="font-medium">{formatPrice(getTotal())}</span>
+                    <span className="font-medium">{getCartTotal()}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Frete</span>
@@ -213,7 +213,7 @@ export const CartPage: React.FC = () => {
                   <Separator />
                   <div className="flex justify-between text-lg font-bold">
                     <span>Total</span>
-                    <span className="font-playfair">{formatPrice(getTotal())}</span>
+                    <span className="font-playfair">{getCartTotal()}</span>
                   </div>
                 </div>
                 

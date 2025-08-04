@@ -5,6 +5,16 @@ import { errorHandler } from '@/utils/errorHandler';
 import { parsePrice, formatPrice, calculateItemTotal } from '@/utils/priceUtils';
 import { logCartAction, logFavoriteAction, logStorageAction } from '@/utils/auditLogger';
 
+// Interface para produtos que podem ser adicionados ao carrinho
+interface AddToCartProduct {
+  id?: string;
+  product_id?: string;
+  name?: string;
+  price?: string;
+  image?: string;
+  image_url?: string;
+}
+
 // Estados da aplicação
 interface AppState {
   cart: CartItem[];
@@ -21,7 +31,7 @@ type AppAction =
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'SET_DATA_LOADED'; payload: boolean }
   | { type: 'UPDATE_TIMESTAMP' }
-  | { type: 'ADD_TO_CART'; payload: { product: Omit<CartItem, 'quantity'>; quantity: number } }
+  | { type: 'ADD_TO_CART'; payload: { product: CartItem; quantity: number } }
   | { type: 'REMOVE_FROM_CART'; payload: string }
   | { type: 'UPDATE_QUANTITY'; payload: { id: string; quantity: number } }
   | { type: 'CLEAR_CART' }
@@ -117,7 +127,7 @@ interface AppContextType {
   dataLoaded: boolean;
   
   // Ações do carrinho
-  addToCart: (product: Omit<CartItem, 'quantity'>, quantity?: number) => void;
+  addToCart: (product: AddToCartProduct, quantity?: number) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
@@ -197,11 +207,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, []);
   
   // Ações do carrinho (memoizadas)
-  const addToCart = useCallback((product: Omit<CartItem, 'quantity'>, quantity: number = 1) => {
+  const addToCart = useCallback((product: AddToCartProduct, quantity: number = 1) => {
     try {
-      dispatch({ type: 'ADD_TO_CART', payload: { product, quantity } });
-      logCartAction('add', product.id, quantity);
-      notifyCartAction('add', product.name);
+      // Criar CartItem completo
+      const fullCartItem: CartItem = {
+        id: product.id || product.product_id || `cart_${Date.now()}`,
+        name: product.name || 'Produto',
+        price: product.price || 'R$ 0,00',
+        image: product.image || product.image_url || '',
+        quantity: 0 // será sobrescrito pelo reducer
+      };
+      
+      dispatch({ type: 'ADD_TO_CART', payload: { product: fullCartItem, quantity } });
+      logCartAction('add', fullCartItem.id, quantity);
+      notifyCartAction('add', fullCartItem.name);
     } catch (error) {
       console.error('Erro ao adicionar produto ao carrinho:', error);
       notifyError('Erro ao adicionar produto ao carrinho');

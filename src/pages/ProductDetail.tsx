@@ -114,13 +114,7 @@ Data/Hora do pedido: ${currentDate}`;
         id: product.id,
         name: product.name,
         price: product.price,
-        image: product.image,
-        images: product.images || [],
-        description: product.description || '',
-        brand: product.brand || '',
-        features: product.features || [],
-        created_at: product.created_at,
-        updated_at: product.updated_at
+        image: product.image
       });
     }
   };

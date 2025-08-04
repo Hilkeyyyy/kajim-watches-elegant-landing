@@ -5,8 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Product } from '@/types';
-import { useCart } from '@/hooks/useCart';
-import { useFavorites } from '@/hooks/useFavorites';
+import { useApp } from '@/contexts/AppContext';
 import { parsePrice, formatPrice } from '@/utils/priceUtils';
 
 interface ProductCardProps {
@@ -16,17 +15,22 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onClick }) => {
-  const { addToCart } = useCart();
-  const { toggleFavorite, isFavorite } = useFavorites();
+  const { addToCart, toggleFavorite, isFavorite } = useApp();
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
-    addToCart(product);
+    // Usar o produto direto
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: typeof product.price === 'string' ? product.price : formatPrice(product.price),
+      image: product.image || product.images?.[0] || ''
+    });
   };
 
   const handleToggleFavorite = (e: React.MouseEvent) => {
     e.stopPropagation();
-    toggleFavorite(product.id);
+    toggleFavorite(product.id, product.name);
   };
 
   const handleClick = () => {

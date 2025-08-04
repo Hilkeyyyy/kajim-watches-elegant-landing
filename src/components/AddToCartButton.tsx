@@ -2,15 +2,15 @@
 import React from "react";
 import { ShoppingCart, Check } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { useCart } from "@/hooks/useCart";
+import { useApp } from "@/contexts/AppContext";
 import { useButtonStates } from "@/hooks/useButtonStates";
-import { Product } from "@/types";
+import { formatPrice } from "@/utils/priceUtils";
 
 interface AddToCartButtonProps {
   product: {
     id: string;
     name: string;
-    price: string;
+    price: string | number;
     image: string;
   };
   variant?: "default" | "liquid-glass";
@@ -24,7 +24,7 @@ export const AddToCartButton = React.memo(({
   size = "default",
   className = "" 
 }: AddToCartButtonProps) => {
-  const { addToCart } = useCart();
+  const { addToCart } = useApp();
   const { getButtonState, triggerButtonFeedback } = useButtonStates();
   
   const buttonId = `cart-${product.id}`;
@@ -32,25 +32,14 @@ export const AddToCartButton = React.memo(({
 
   const handleAddToCart = React.useCallback(() => {
     try {
-      // Converter para o formato Product completo
-      const fullProduct: Product = {
+      // Usar produto direto
+      addToCart({
         id: product.id,
         name: product.name,
-        brand: 'Unknown',
-        price: product.price,
-        image: product.image,
-        images: [product.image],
-        description: '',
-        features: [],
-        status: 'active',
-        is_visible: true,
-        is_featured: false,
-        stock_quantity: 1,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
+        price: typeof product.price === 'string' ? product.price : formatPrice(product.price),
+        image: product.image
+      });
       
-      addToCart(fullProduct);
       triggerButtonFeedback(buttonId, 1500);
     } catch (error) {
       console.error('AddToCartButton - ERRO:', error);
