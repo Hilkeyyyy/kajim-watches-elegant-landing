@@ -28,7 +28,7 @@ export const useCartWithSupabase = () => {
             id,
             product_id,
             quantity,
-            products!inner(
+            products(
               id,
               name,
               price,
@@ -145,7 +145,7 @@ export const useCartWithSupabase = () => {
               product_id: product.id,
               name: product.name,
               price: priceAsNumber,
-              image_url: product.image_url || product.image || '',
+              image_url: product.image || '',
               quantity
             };
             newItems = [...currentItems, newItem];
