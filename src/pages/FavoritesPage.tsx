@@ -1,14 +1,13 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Heart } from 'lucide-react';
+import { ArrowLeft, Heart, Sparkles } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ProductCard } from '@/components/ProductCard';
 import { useFavorites } from '@/hooks/useFavorites';
 import { products } from '@/data/products';
-import { convertSupabaseToProduct } from '@/types/supabase-product';
 
 export const FavoritesPage: React.FC = () => {
   const { favorites, loading } = useFavorites();
@@ -25,8 +24,11 @@ export const FavoritesPage: React.FC = () => {
       <div className="min-h-screen bg-background">
         <Header />
         <div className="container mx-auto px-4 py-8">
-          <div className="text-center">
-            <p>Carregando favoritos...</p>
+          <div className="flex items-center justify-center min-h-[50vh]">
+            <div className="text-center space-y-4">
+              <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto"></div>
+              <p className="text-muted-foreground">Carregando favoritos...</p>
+            </div>
           </div>
         </div>
       </div>
@@ -37,16 +39,32 @@ export const FavoritesPage: React.FC = () => {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center">
-            <Heart className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h1 className="text-3xl font-bold mb-4">Nenhum favorito ainda</h1>
-            <p className="text-muted-foreground mb-8">
-              Adicione produtos aos favoritos para vê-los aqui.
-            </p>
-            <Link to="/">
-              <Button>Descobrir Produtos</Button>
-            </Link>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex items-center justify-center min-h-[70vh]">
+            <div className="text-center space-y-6 max-w-md mx-auto">
+              <div className="relative">
+                <Heart className="w-20 h-20 text-muted-foreground/40 mx-auto" />
+                <Sparkles className="w-6 h-6 text-accent absolute -top-2 -right-2" />
+              </div>
+              <div className="space-y-3">
+                <h1 className="font-playfair text-2xl sm:text-3xl font-bold text-foreground">
+                  Nenhum favorito ainda
+                </h1>
+                <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
+                  Descubra relógios incríveis e adicione aos seus favoritos para encontrá-los facilmente depois.
+                </p>
+              </div>
+              <div className="space-y-3">
+                <Link to="/">
+                  <Button className="w-full sm:w-auto">
+                    Explorar Relógios
+                  </Button>
+                </Link>
+                <p className="text-xs text-muted-foreground">
+                  💡 Dica: Clique no ícone ❤️ nos produtos para favoritá-los
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -57,42 +75,88 @@ export const FavoritesPage: React.FC = () => {
     <div className="min-h-screen bg-background">
       <Header />
       
-      <div className="container mx-auto px-4 py-8">
-        {/* Breadcrumb */}
-        <div className="flex items-center justify-between mb-6">
-          <Link to="/">
-            <Button variant="ghost" size="sm">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Voltar para Home
-            </Button>
-          </Link>
-        </div>
-
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Meus Favoritos</h1>
-          <p className="text-muted-foreground">
-            {favorites.length} {favorites.length === 1 ? 'produto favoritado' : 'produtos favoritados'}
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {favoriteProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onProductClick={handleProductClick}
-            />
-          ))}
-        </div>
-
-        {favoriteProducts.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground mb-4">
-              Alguns produtos favoritos não foram encontrados.
-            </p>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        {/* Header Section */}
+        <div className="space-y-6 sm:space-y-8">
+          {/* Breadcrumb and Navigation */}
+          <div className="flex items-center justify-between">
             <Link to="/">
-              <Button>Ver Todos os Produtos</Button>
+              <Button variant="ghost" size="sm" className="gap-2 hover:bg-muted/50">
+                <ArrowLeft className="w-4 h-4" />
+                <span className="hidden sm:inline">Voltar para Home</span>
+                <span className="sm:hidden">Voltar</span>
+              </Button>
             </Link>
+          </div>
+
+          {/* Page Title and Stats */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-br from-accent/20 to-moss/20 rounded-lg">
+                <Heart className="w-6 h-6 text-accent" />
+              </div>
+              <div>
+                <h1 className="font-playfair text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
+                  Meus Favoritos
+                </h1>
+                <p className="text-muted-foreground text-sm sm:text-base">
+                  {favorites.length} {favorites.length === 1 ? 'relógio favoritado' : 'relógios favoritados'}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Products Grid */}
+        <div className="mt-8 sm:mt-12">
+          {favoriteProducts.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+              {favoriteProducts.map((product, index) => (
+                <div
+                  key={product.id}
+                  className="animate-fade-in"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  <ProductCard
+                    product={product}
+                    onProductClick={handleProductClick}
+                  />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <Card className="p-8 sm:p-12 text-center bg-muted/20 border-dashed">
+              <CardContent>
+                <div className="space-y-4">
+                  <Heart className="w-12 h-12 text-muted-foreground/50 mx-auto" />
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-foreground">Alguns favoritos não foram encontrados</h3>
+                    <p className="text-muted-foreground text-sm">
+                      Alguns produtos podem ter sido removidos do catálogo.
+                    </p>
+                  </div>
+                  <Link to="/">
+                    <Button variant="outline">Ver Todos os Produtos</Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+
+        {/* Empty State Suggestion */}
+        {favoriteProducts.length > 0 && (
+          <div className="mt-12 sm:mt-16 text-center">
+            <div className="space-y-4">
+              <p className="text-muted-foreground">
+                Gostou dos seus favoritos? Explore mais relógios incríveis.
+              </p>
+              <Link to="/">
+                <Button variant="outline">
+                  Explorar Mais Relógios
+                </Button>
+              </Link>
+            </div>
           </div>
         )}
       </div>
