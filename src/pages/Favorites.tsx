@@ -3,27 +3,51 @@ import { useState, useEffect } from "react";
 import { Heart, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useNavigate } from "react-router-dom";
-import { products } from "@/data/products";
 import { ProductCard } from "@/components/ProductCard";
-import { useFavorites } from "@/hooks/useFavorites";
+import { useApp } from "@/contexts/AppContext";
+import { supabase } from "@/integrations/supabase/client";
+import { Product } from "@/types/product";
+import { SupabaseProduct, convertSupabaseToProduct } from "@/types/supabase-product";
 import { Header } from "@/components/Header";
 
 const Favorites = () => {
-  const [favoriteProducts, setFavoriteProducts] = useState<typeof products>([]);
-  const { favorites, loading: isLoading } = useFavorites();
+  const [favoriteProducts, setFavoriteProducts] = useState<Product[]>([]);
+  const { favorites, isLoading } = useApp();
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isLoading && favorites.length >= 0) {
-      const favoriteItems = products.filter(product => 
-        favorites.includes(product.id)
-      );
-      setFavoriteProducts(favoriteItems);
-    }
-  }, [favorites, isLoading]);
+    const fetchFavoriteProducts = async () => {
+      if (favorites.length === 0) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const { data: productsData, error } = await supabase
+          .from('products')
+          .select('*')
+          .in('id', favorites)
+          .eq('is_visible', true)
+          .eq('status', 'active');
+
+        if (error) throw error;
+
+        const products = (productsData as SupabaseProduct[] || []).map(convertSupabaseToProduct);
+        setFavoriteProducts(products);
+      } catch (error) {
+        console.error('Erro ao buscar produtos favoritos:', error);
+        setFavoriteProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFavoriteProducts();
+  }, [favorites]);
 
   // Loading state
-  if (isLoading) {
+  if (loading || isLoading) {
     return (
       <div className="min-h-screen bg-background">
         <Header />

@@ -1,25 +1,57 @@
 
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Heart, Sparkles } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ProductCard } from '@/components/ProductCard';
-import { useFavorites } from '@/hooks/useFavorites';
-import { products } from '@/data/products';
+import { useApp } from '@/contexts/AppContext';
+import { supabase } from '@/integrations/supabase/client';
+import { Product } from '@/types/product';
+import { SupabaseProduct, convertSupabaseToProduct } from '@/types/supabase-product';
 
 export const FavoritesPage: React.FC = () => {
-  const { favorites, loading } = useFavorites();
+  const { favorites, isLoading } = useApp();
+  const navigate = useNavigate();
+  const [favoriteProducts, setFavoriteProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Filtrar produtos favoritos
-  const favoriteProducts = products.filter(product => favorites.includes(product.id));
+  useEffect(() => {
+    const fetchFavoriteProducts = async () => {
+      if (favorites.length === 0) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const { data: productsData, error } = await supabase
+          .from('products')
+          .select('*')
+          .in('id', favorites)
+          .eq('is_visible', true)
+          .eq('status', 'active');
+
+        if (error) throw error;
+
+        const products = (productsData as SupabaseProduct[] || []).map(convertSupabaseToProduct);
+        setFavoriteProducts(products);
+      } catch (error) {
+        console.error('Erro ao buscar produtos favoritos:', error);
+        setFavoriteProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFavoriteProducts();
+  }, [favorites]);
 
   const handleProductClick = (id: string) => {
-    window.location.href = `/produto/${id}`;
+    navigate(`/produto/${id}`);
   };
 
-  if (loading) {
+  if (loading || isLoading) {
     return (
       <div className="min-h-screen bg-background">
         <Header />

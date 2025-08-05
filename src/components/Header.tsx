@@ -6,17 +6,16 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useAuth } from '@/hooks/useAuth';
 import { useApp } from '@/contexts/AppContext';
-import { useFavorites } from '@/hooks/useFavorites';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 export const Header: React.FC = () => {
   const { user, signOut, isAdmin } = useAuth();
-  const { getTotalItems } = useApp();
-  const { count } = useFavorites();
+  const { getTotalItems, favorites } = useApp();
   const isMobile = useIsMobile();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const cartCount = getTotalItems();
+  const favoritesCount = favorites.length;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/98 backdrop-blur-md supports-[backdrop-filter]:bg-background/95">
@@ -50,9 +49,9 @@ export const Header: React.FC = () => {
                 <Link to="/favoritos">
                   <Button variant="ghost" size="sm" className="relative hover:bg-muted/50 transition-colors">
                     <Heart className="w-5 h-5" />
-                    {count > 0 && (
+                    {favoritesCount > 0 && (
                       <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium">
-                        {count}
+                        {favoritesCount}
                       </span>
                     )}
                   </Button>
@@ -108,9 +107,9 @@ export const Header: React.FC = () => {
               <Link to="/favoritos">
                 <Button variant="ghost" size="sm" className="relative hover:bg-muted/50">
                   <Heart className="w-5 h-5" />
-                  {count > 0 && (
+                  {favoritesCount > 0 && (
                     <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground text-xs rounded-full w-4 h-4 flex items-center justify-center font-medium text-[10px]">
-                      {count}
+                      {favoritesCount}
                     </span>
                   )}
                 </Button>

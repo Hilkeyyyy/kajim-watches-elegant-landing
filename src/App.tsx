@@ -8,6 +8,7 @@ import { ProductDetailPage } from '@/pages/ProductDetailPage';
 import { CartPage } from '@/pages/CartPage';
 import { FavoritesPage } from '@/pages/FavoritesPage';
 import Auth from '@/pages/Auth';
+import CategoryPage from '@/pages/CategoryPage';
 import AdminLayout from '@/layouts/AdminLayout';
 import Dashboard from '@/pages/admin/Dashboard';
 import Products from '@/pages/admin/Products';
@@ -29,6 +30,7 @@ export default function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/produto/:id" element={<ProductDetailPage />} />
             <Route path="/product/:id" element={<ProductDetailPage />} />
+            <Route path="/categoria/:categoryId" element={<CategoryPage />} />
             <Route path="/carrinho" element={<CartPage />} />
             <Route path="/favoritos" element={<FavoritesPage />} />
             <Route path="/auth" element={<Auth />} />

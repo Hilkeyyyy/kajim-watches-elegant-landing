@@ -75,10 +75,13 @@ export default {
 			backgroundImage: {
 				'gradient-hero': 'var(--gradient-hero)',
 				'gradient-accent': 'var(--gradient-accent)',
+				'gradient-primary': 'var(--gradient-primary)',
 			},
 			boxShadow: {
 				'elegant': 'var(--shadow-elegant)',
 				'card': 'var(--shadow-card)',
+				'luxury': 'var(--shadow-luxury)',
+				'glow': 'var(--shadow-glow)',
 				'liquid-glass': 'var(--shadow-liquid-glass)',
 			},
 			backdropBlur: {

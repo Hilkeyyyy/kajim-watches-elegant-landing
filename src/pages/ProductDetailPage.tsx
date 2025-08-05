@@ -7,8 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Product } from '@/types';
 import { apiService } from '@/services/api';
-import { useCart } from '@/hooks/useCart';
-import { useFavorites } from '@/hooks/useFavorites';
+import { useApp } from '@/contexts/AppContext';
 
 export const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -16,8 +15,7 @@ export const ProductDetailPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
 
-  const { addToCart } = useCart();
-  const { toggleFavorite, isFavorite } = useFavorites();
+  const { addToCart, toggleFavorite, isFavorite } = useApp();
 
   useEffect(() => {
     if (id) {
@@ -47,7 +45,7 @@ export const ProductDetailPage: React.FC = () => {
 
   const handleToggleFavorite = () => {
     if (product) {
-      toggleFavorite(product.id);
+      toggleFavorite(product.id, product.name);
     }
   };
 
