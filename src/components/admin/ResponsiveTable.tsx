@@ -122,7 +122,7 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
                       Visualizar
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to={`/admin/produtos/${product.id}/editar`}>
+                      <Link to={`/admin/produtos/editar/${product.id}`}>
                         <Edit className="h-4 w-4 mr-2" />
                         Editar
                       </Link>
@@ -221,7 +221,7 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
                       Visualizar
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to={`/admin/produtos/${product.id}/editar`}>
+                      <Link to={`/admin/produtos/editar/${product.id}`}>
                         <Edit className="h-4 w-4 mr-2" />
                         Editar
                       </Link>
