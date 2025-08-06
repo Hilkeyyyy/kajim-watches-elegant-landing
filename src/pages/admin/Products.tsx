@@ -18,7 +18,7 @@ import { useToast } from '@/hooks/use-toast';
 
 import { Plus, Package } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import AdminBreadcrumb from '@/components/admin/AdminBreadcrumb';
+
 import { useIsMobile } from '@/hooks/use-mobile';
 import ResponsiveTable from '@/components/admin/ResponsiveTable';
 
@@ -178,17 +178,15 @@ const Products = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <AdminBreadcrumb />
-      
+    <div className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Produtos</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-xl font-bold">Produtos</h1>
+          <p className="text-sm text-muted-foreground">
             Gerencie seu catálogo de produtos
           </p>
         </div>
-        <Button asChild className="gap-2 w-full sm:w-auto">
+        <Button asChild className="gap-2 w-full sm:w-auto" size="sm">
           <Link to="/admin/produtos/novo">
             <Plus className="h-4 w-4" />
             {isMobile ? "Adicionar" : "Adicionar Produto"}

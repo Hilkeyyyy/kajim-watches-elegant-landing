@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { ProductForm } from '@/components/admin/ProductForm';
-import AdminBreadcrumb from '@/components/admin/AdminBreadcrumb';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
@@ -100,25 +100,21 @@ const ProductCreate = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <AdminBreadcrumb />
-      
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <Button asChild variant="ghost" size="sm" className="shrink-0">
-            <Link to="/admin/produtos">
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2">
-              <Plus className="h-6 w-6" />
-              Criar Produto
-            </h1>
-            <p className="text-muted-foreground">
-              Adicione um novo produto ao catálogo
-            </p>
-          </div>
+    <div className="space-y-4">
+      <div className="flex items-center gap-4">
+        <Button asChild variant="ghost" size="sm" className="shrink-0">
+          <Link to="/admin/produtos">
+            <ArrowLeft className="h-4 w-4" />
+          </Link>
+        </Button>
+        <div>
+          <h1 className="text-xl font-bold flex items-center gap-2">
+            <Plus className="h-5 w-5" />
+            Criar Produto
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Adicione um novo produto ao catálogo
+          </p>
         </div>
       </div>
 

@@ -1,7 +1,8 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
-import { SidebarTrigger } from '@/components/ui/sidebar';
-import { Separator } from '@/components/ui/separator';
+import { useLocation, Link } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/Button';
+import { Store, LogOut, Home } from 'lucide-react';
 import { 
   Breadcrumb,
   BreadcrumbItem,
@@ -54,32 +55,97 @@ const getPageInfo = (pathname: string) => {
 
 export function AdminHeader() {
   const location = useLocation();
+  const { signOut, user } = useAuth();
   const pageInfo = getPageInfo(location.pathname);
 
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+    }
+  };
+
+  const adminItems = [
+    { title: "Dashboard", url: "/admin" },
+    { title: "Produtos", url: "/admin/produtos" },
+    { title: "Categorias", url: "/admin/categorias" },
+    { title: "Usuários", url: "/admin/usuarios" },
+    { title: "Relatórios", url: "/admin/relatorios" },
+  ];
+
   return (
-    <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-      <SidebarTrigger className="-ml-1" />
-      <Separator orientation="vertical" className="mr-2 h-4" />
-      <Breadcrumb>
-        <BreadcrumbList>
-          {pageInfo.breadcrumb.map((item, index) => (
-            <React.Fragment key={item}>
-              {index > 0 && <BreadcrumbSeparator />}
+    <header className="bg-background border-b sticky top-0 z-50">
+      <div className="container mx-auto px-4 py-3 max-w-7xl">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            <Link to="/admin" className="flex items-center gap-2">
+              <Store className="h-6 w-6 text-primary" />
+              <span className="font-bold text-lg">KAJIM Admin</span>
+            </Link>
+            
+            <nav className="hidden md:flex items-center gap-4">
+              {adminItems.map((item) => (
+                <Link
+                  key={item.url}
+                  to={item.url}
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    location.pathname === item.url || 
+                    (item.url !== '/admin' && location.pathname.startsWith(item.url))
+                      ? 'bg-primary/10 text-primary'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  }`}
+                >
+                  {item.title}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">
+              <Home className="h-4 w-4" />
+            </Link>
+            
+            {user?.email && (
+              <div className="hidden sm:block text-sm text-muted-foreground">
+                {user.email}
+              </div>
+            )}
+            
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleSignOut}
+              className="text-muted-foreground hover:text-destructive"
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+
+        <div className="mt-2 flex items-center justify-between">
+          <Breadcrumb>
+            <BreadcrumbList>
               <BreadcrumbItem>
-                {index === pageInfo.breadcrumb.length - 1 ? (
-                  <BreadcrumbPage>{item}</BreadcrumbPage>
-                ) : (
-                  <BreadcrumbLink href="/admin">{item}</BreadcrumbLink>
-                )}
+                <BreadcrumbLink href="/admin">Dashboard</BreadcrumbLink>
               </BreadcrumbItem>
-            </React.Fragment>
-          ))}
-        </BreadcrumbList>
-      </Breadcrumb>
-      
-      <div className="ml-4 flex-1">
-        <h1 className="text-lg font-semibold">{pageInfo.title}</h1>
-        <p className="text-sm text-muted-foreground">{pageInfo.subtitle}</p>
+              {pageInfo.breadcrumb.slice(1).map((item, index) => (
+                <React.Fragment key={item}>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbPage>{item}</BreadcrumbPage>
+                  </BreadcrumbItem>
+                </React.Fragment>
+              ))}
+            </BreadcrumbList>
+          </Breadcrumb>
+          
+          <div className="text-right">
+            <h1 className="text-lg font-semibold">{pageInfo.title}</h1>
+            <p className="text-xs text-muted-foreground">{pageInfo.subtitle}</p>
+          </div>
+        </div>
       </div>
     </header>
   );

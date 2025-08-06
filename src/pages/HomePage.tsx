@@ -2,8 +2,7 @@
 import React from 'react';
 import { Header } from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
-import { CategoryCarousel } from '@/components/CategoryCarousel';
-import BrandsCarousel from '@/components/BrandsCarousel';
+import { BrandCarousel } from '@/components/carousels/BrandCarousel';
 import { OffersCarousel } from '@/components/carousels/OffersCarousel';
 import { NewProductsCarousel } from '@/components/carousels/NewProductsCarousel';
 import { FeaturedCarousel } from '@/components/carousels/FeaturedCarousel';
@@ -17,20 +16,35 @@ export const HomePage: React.FC = () => {
       {/* Hero Section */}
       <HeroSection />
       
-      {/* Categorias */}
-      <CategoryCarousel />
-      
       {/* Produtos em Destaque */}
       <FeaturedCarousel />
+      
+      {/* Carrossel Rolex */}
+      <BrandCarousel 
+        brand="Rolex" 
+        title="Coleção Rolex" 
+        description="Ícones de precisão e status, relógios atemporais" 
+      />
+      
+      {/* Carrossel Patek Philippe */}
+      <BrandCarousel 
+        brand="Patek Philippe" 
+        title="Coleção Patek Philippe" 
+        description="Tradição e excelência suíça em cada detalhe" 
+      />
+      
+      {/* Carrossel TAG Heuer */}
+      <BrandCarousel 
+        brand="TAG Heuer" 
+        title="Coleção TAG Heuer" 
+        description="Esporte e elegância unidos na perfeição" 
+      />
       
       {/* Ofertas */}
       <OffersCarousel />
       
       {/* Novidades e Limitados */}
       <NewProductsCarousel />
-      
-      {/* Carrossel de Marcas */}
-      <BrandsCarousel />
       
       {/* Seção Institucional */}
       <AboutSection />

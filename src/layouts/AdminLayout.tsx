@@ -4,15 +4,11 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { AdminErrorBoundary } from '@/components/admin/AdminErrorBoundary';
-import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import { AdminHeader } from '@/components/admin/AdminHeader';
-import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 const AdminLayout = () => {
   const { user, loading, isAdmin } = useAuth();
   const navigate = useNavigate();
-  const isMobile = useIsMobile();
 
   console.log('AdminLayout - Auth State:', { user: !!user, loading, isAdmin });
 
@@ -48,19 +44,14 @@ const AdminLayout = () => {
 
   return (
     <AdminErrorBoundary>
-      <SidebarProvider defaultOpen={!isMobile}>
-        <div className="min-h-screen flex w-full bg-background">
-          <AdminSidebar />
-          <SidebarInset>
-            <AdminHeader />
-            <main className="flex-1 p-3 sm:p-6 overflow-x-auto">
-              <AdminErrorBoundary>
-                <Outlet />
-              </AdminErrorBoundary>
-            </main>
-          </SidebarInset>
-        </div>
-      </SidebarProvider>
+      <div className="min-h-screen bg-background">
+        <AdminHeader />
+        <main className="container mx-auto p-4 max-w-7xl">
+          <AdminErrorBoundary>
+            <Outlet />
+          </AdminErrorBoundary>
+        </main>
+      </div>
     </AdminErrorBoundary>
   );
 };

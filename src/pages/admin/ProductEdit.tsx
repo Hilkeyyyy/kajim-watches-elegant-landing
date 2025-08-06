@@ -3,7 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { ProductForm } from '@/components/admin/ProductForm';
-import AdminBreadcrumb from '@/components/admin/AdminBreadcrumb';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowLeft, Edit, AlertTriangle } from 'lucide-react';
@@ -173,8 +172,7 @@ const ProductEdit = () => {
 
   if (isFetching) {
     return (
-      <div className="space-y-6">
-        <AdminBreadcrumb />
+      <div className="space-y-4">
         <Card>
           <CardContent className="flex items-center justify-center py-12">
             <LoadingSpinner size="lg" />
@@ -186,18 +184,17 @@ const ProductEdit = () => {
 
   if (error) {
     return (
-      <div className="space-y-6">
-        <AdminBreadcrumb />
+      <div className="space-y-4">
         <Card>
-          <CardContent className="py-12">
+          <CardContent className="py-8">
             <Alert variant="destructive">
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
                 {error}
               </AlertDescription>
             </Alert>
-            <div className="flex justify-center mt-6">
-              <Button asChild variant="outline">
+            <div className="flex justify-center mt-4">
+              <Button asChild variant="outline" size="sm">
                 <Link to="/admin/produtos">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Voltar aos Produtos
@@ -215,25 +212,21 @@ const ProductEdit = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <AdminBreadcrumb />
-      
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <Button asChild variant="ghost" size="sm" className="shrink-0">
-            <Link to="/admin/produtos">
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2">
-              <Edit className="h-6 w-6" />
-              Editar Produto
-            </h1>
-            <p className="text-muted-foreground">
-              Edite as informações do produto "{product.name}"
-            </p>
-          </div>
+    <div className="space-y-4">
+      <div className="flex items-center gap-4">
+        <Button asChild variant="ghost" size="sm" className="shrink-0">
+          <Link to="/admin/produtos">
+            <ArrowLeft className="h-4 w-4" />
+          </Link>
+        </Button>
+        <div>
+          <h1 className="text-xl font-bold flex items-center gap-2">
+            <Edit className="h-5 w-5" />
+            Editar Produto
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Edite as informações do produto "{product.name}"
+          </p>
         </div>
       </div>
 
