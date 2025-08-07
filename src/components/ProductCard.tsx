@@ -123,7 +123,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
         </div>
         
         {/* Product Name */}
-        <h3 className="font-playfair text-lg sm:text-xl font-bold text-foreground line-clamp-2 leading-snug min-h-[2.8rem] sm:min-h-[3.2rem] group-hover:text-primary transition-colors duration-300">
+        <h3 className="text-headline text-foreground line-clamp-2 leading-snug min-h-[2.8rem] sm:min-h-[3.2rem] group-hover:text-primary transition-colors duration-300">
           {product.name}
         </h3>
         
@@ -156,7 +156,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
         
         {/* Price */}
         <div className="pt-3 border-t border-border/30">
-          <p className="font-playfair text-2xl sm:text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+          <p className="text-price-large bg-gradient-primary bg-clip-text text-transparent">
             {priceDisplay}
           </p>
         </div>

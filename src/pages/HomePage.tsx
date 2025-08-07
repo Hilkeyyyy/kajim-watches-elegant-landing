@@ -2,6 +2,7 @@
 import React from 'react';
 import { Header } from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
+import { CategoryCarousel } from '@/components/CategoryCarousel';
 import { BrandCarousel } from '@/components/carousels/BrandCarousel';
 import { OffersCarousel } from '@/components/carousels/OffersCarousel';
 import { NewProductsCarousel } from '@/components/carousels/NewProductsCarousel';
@@ -15,6 +16,9 @@ export const HomePage: React.FC = () => {
       
       {/* Hero Section */}
       <HeroSection />
+      
+      {/* Carrossel de Categorias */}
+      <CategoryCarousel />
       
       {/* Produtos em Destaque */}
       <FeaturedCarousel />

@@ -54,7 +54,7 @@ export const FeaturedCarousel = () => {
   if (products.length === 0) {
     return (
       <div className="mb-12 xs:mb-16 px-4">
-        <h2 className="text-2xl xs:text-3xl font-bold text-center mb-6 xs:mb-8">Produtos em Destaque</h2>
+        <h2 className="text-display bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent text-center mb-6 xs:mb-8">Produtos em Destaque</h2>
         <div className="text-center py-8 text-muted-foreground">
           <p>Nenhum produto em destaque disponível no momento.</p>
           <p className="text-sm mt-2">Novos produtos serão adicionados em breve!</p>
@@ -67,10 +67,10 @@ export const FeaturedCarousel = () => {
     <section className="py-16 px-4 bg-background">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-playfair font-semibold text-foreground mb-4">
+          <h2 className="text-display bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent mb-4">
             Produtos em Destaque
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-subtitle text-muted-foreground max-w-2xl mx-auto font-serif-elegant">
             Relógios selecionados pela nossa equipe de especialistas
           </p>
         </div>

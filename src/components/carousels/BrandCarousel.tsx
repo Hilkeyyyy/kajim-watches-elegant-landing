@@ -64,11 +64,11 @@ export const BrandCarousel = ({ brand, title, description }: BrandCarouselProps)
     <section className="py-12 px-4 bg-background">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-8">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-playfair font-semibold text-foreground mb-2">
+          <h2 className="text-display bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent mb-2">
             {title}
           </h2>
           {description && (
-            <p className="text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-subtitle text-muted-foreground max-w-2xl mx-auto font-serif-elegant">
               {description}
             </p>
           )}

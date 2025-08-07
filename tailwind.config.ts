@@ -29,6 +29,12 @@ export default {
 			fontFamily: {
 				'playfair': ['Playfair Display', 'serif'],
 				'inter': ['Inter', 'sans-serif'],
+				'crimson': ['Crimson Text', 'serif'],
+				'baskerville': ['Libre Baskerville', 'serif'],
+				'display': ['Playfair Display', 'serif'],
+				'body': ['Inter', 'sans-serif'],
+				'serif-elegant': ['Crimson Text', 'serif'],
+				'serif-classic': ['Libre Baskerville', 'serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
