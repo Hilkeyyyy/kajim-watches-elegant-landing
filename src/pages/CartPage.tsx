@@ -46,7 +46,7 @@ export const CartPage: React.FC = () => {
                 <ShoppingBag className="w-6 h-6 text-accent absolute -top-2 -right-2" />
               </div>
               <div className="space-y-3">
-                <h1 className="font-playfair text-2xl sm:text-3xl font-bold text-foreground">
+                <h1 className="text-display gradient-text">
                   Seu carrinho está vazio
                 </h1>
                 <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
@@ -55,7 +55,7 @@ export const CartPage: React.FC = () => {
               </div>
               <div className="space-y-3">
                 <Link to="/">
-                  <Button className="w-full sm:w-auto">
+                  <Button className="w-full sm:w-auto liquid-glass bg-gradient-primary hover:opacity-90">
                     Explorar Relógios
                   </Button>
                 </Link>

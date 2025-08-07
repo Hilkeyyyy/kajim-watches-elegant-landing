@@ -222,16 +222,36 @@ Typography: Playfair Display (elegant serif), Inter (modern sans), Crimson Text 
 @layer components {
   /* Liquid Glass Components */
   .liquid-glass {
-    @apply backdrop-blur-lg border border-white/20;
-    background: var(--gradient-glass);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     box-shadow: var(--glass-shadow);
     transition: var(--transition-smooth);
   }
   
   .liquid-glass:hover {
-    background: var(--gradient-glass-hover);
+    background: rgba(255, 255, 255, 0.12);
     border-color: rgba(255, 255, 255, 0.3);
     transform: translateY(-2px);
+  }
+  
+  /* Success Button Animation */
+  .button-success {
+    @apply relative overflow-hidden;
+  }
+  
+  .button-success.animate-success {
+    animation: success-pulse 0.6s ease-in-out;
+  }
+  
+  .button-success .checkmark {
+    stroke-dasharray: 20;
+    stroke-dashoffset: 20;
+  }
+  
+  .button-success.animate-success .checkmark {
+    animation: checkmark 0.3s ease-in-out 0.2s forwards;
   }
   
   .category-card-modern {
@@ -265,5 +285,33 @@ Typography: Playfair Display (elegant serif), Inter (modern sans), Crimson Text 
   
   .smooth-transitions * {
     transition: var(--transition-smooth);
+  }
+}
+
+@layer utilities {
+  /* Animation Keyframes */
+  @keyframes success-pulse {
+    0% { transform: scale(1); }
+    50% { 
+      transform: scale(1.05); 
+      background-color: hsl(120 100% 50%);
+      border-color: hsl(120 100% 45%);
+    }
+    100% { transform: scale(1); }
+  }
+  
+  @keyframes checkmark {
+    0% { stroke-dashoffset: 20; }
+    100% { stroke-dashoffset: 0; }
+  }
+  
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
+  
+  .animate-shake {
+    animation: shake 0.5s ease-in-out;
   }
 }

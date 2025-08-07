@@ -13,6 +13,7 @@ import { ProductFormDimensions } from "./ProductFormDimensions";
 import { ProductFormMaterials } from "./ProductFormMaterials";
 import { ProductFormColors } from "./ProductFormColors";
 import { ProductFormAdvancedSpecs } from "./ProductFormAdvancedSpecs";
+import { ProductFormAdvancedSpecsComplete } from "./ProductFormAdvancedSpecsComplete";
 import { ProductFormCommercial } from "./ProductFormCommercial";
 import { ProductFormMetadata } from "./ProductFormMetadata";
 import { ProductFormFeatures } from "./ProductFormFeatures";
@@ -367,7 +368,7 @@ export const ProductFormCore: React.FC<ProductFormCoreProps> = ({
               )}
               
               {currentStep === 8 && (
-                <ProductFormAdvancedSpecs form={form} />
+                <ProductFormAdvancedSpecsComplete form={form} />
               )}
               
               {currentStep === 9 && (

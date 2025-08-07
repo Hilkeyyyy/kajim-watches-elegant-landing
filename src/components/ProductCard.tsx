@@ -1,12 +1,14 @@
 
 import React from 'react';
-import { Heart, ShoppingCart, Star } from 'lucide-react';
+import { Star } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Product } from '@/types';
 import { useApp } from '@/contexts/AppContext';
 import { parsePrice, formatPrice } from '@/utils/priceUtils';
+import { AddToCartButtonAnimated } from '@/components/AddToCartButtonAnimated';
+import { FavoriteButton } from '@/components/FavoriteButton';
 
 interface ProductCardProps {
   product: Product;
@@ -15,23 +17,7 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onClick }) => {
-  const { addToCart, toggleFavorite, isFavorite } = useApp();
-
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    // Usar o produto direto
-    addToCart({
-      id: product.id,
-      name: product.name,
-      price: typeof product.price === 'string' ? product.price : formatPrice(product.price),
-      image: product.image || product.images?.[0] || ''
-    });
-  };
-
-  const handleToggleFavorite = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    toggleFavorite(product.id, product.name);
-  };
+  const { toggleFavorite, isFavorite } = useApp();
 
   const handleClick = () => {
     if (onProductClick) {
@@ -90,22 +76,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
         </div>
         
         {/* Favorite Button */}
-        <Button
-          variant="ghost"
-          size="sm"
-          className={`absolute top-3 right-3 w-9 h-9 rounded-full bg-background/95 backdrop-blur-md border border-border/30 hover:bg-background hover:scale-110 hover:rotate-12 transition-all duration-500 shadow-sm ${
-            isFavorite(product.id) 
-              ? "text-red-500 hover:text-red-600 bg-red-50/90 border-red-200/50" 
-              : "text-muted-foreground hover:text-foreground"
-          }`}
-          onClick={handleToggleFavorite}
-        >
-          <Heart 
-            className={`w-4 h-4 transition-all duration-500 ${
-              isFavorite(product.id) ? "fill-current scale-110 animate-pulse" : ""
-            }`} 
-          />
-        </Button>
+        <div className="absolute top-3 right-3">
+          <FavoriteButton productId={product.id} productName={product.name} />
+        </div>
       </div>
 
       <CardContent className="p-5 sm:p-6 space-y-4">
@@ -163,21 +136,23 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
         
         {/* Action Buttons */}
         <div className="flex gap-2 pt-2">
-          <Button
+          <AddToCartButtonAnimated
+            product={{
+              id: product.id,
+              name: product.name,
+              price: priceDisplay,
+              image: mainImage
+            }}
             variant="primary"
             size="sm"
             className="flex-1 gap-2 transition-all duration-500 hover:scale-[1.02] hover:shadow-glow font-semibold rounded-lg"
-            onClick={handleAddToCart}
-          >
-            <ShoppingCart className="w-4 h-4" />
-            <span className="hidden sm:inline">Adicionar</span>
-            <span className="sm:hidden">Add</span>
-          </Button>
+            showText={true}
+          />
           
           <Button
             variant="outline"
             size="sm"
-            className="px-3 transition-all duration-300 hover:bg-primary hover:text-primary-foreground rounded-lg"
+            className="px-3 transition-all duration-300 hover:bg-primary hover:text-primary-foreground rounded-lg liquid-glass"
             onClick={(e) => {
               e.stopPropagation();
               handleClick();

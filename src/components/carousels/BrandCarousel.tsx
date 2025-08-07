@@ -25,7 +25,7 @@ export const BrandCarousel = ({ brand, title, description }: BrandCarouselProps)
         .select('*')
         .eq('is_visible', true)
         .eq('status', 'active')
-        .ilike('brand', `%${brand}%`)
+        .eq('brand', brand)
         .order('updated_at', { ascending: false })
         .limit(8);
 
