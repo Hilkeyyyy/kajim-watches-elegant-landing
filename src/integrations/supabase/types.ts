@@ -170,6 +170,7 @@ export type Database = {
           name: string
           numerals_type: string | null
           operating_temperature: string | null
+          original_price: number | null
           power_reserve: string | null
           pressure_resistance: string | null
           price: number
@@ -286,6 +287,7 @@ export type Database = {
           name: string
           numerals_type?: string | null
           operating_temperature?: string | null
+          original_price?: number | null
           power_reserve?: string | null
           pressure_resistance?: string | null
           price: number
@@ -402,6 +404,7 @@ export type Database = {
           name?: string
           numerals_type?: string | null
           operating_temperature?: string | null
+          original_price?: number | null
           power_reserve?: string | null
           pressure_resistance?: string | null
           price?: number
