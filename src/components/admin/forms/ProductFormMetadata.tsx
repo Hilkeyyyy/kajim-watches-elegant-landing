@@ -48,7 +48,6 @@ export const ProductFormMetadata: React.FC<ProductFormMetadataProps> = ({ form }
                     <SelectContent>
                       <SelectItem value="active">Ativo</SelectItem>
                       <SelectItem value="inactive">Inativo</SelectItem>
-                      <SelectItem value="discontinued">Descontinuado</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />

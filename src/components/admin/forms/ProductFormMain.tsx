@@ -78,6 +78,25 @@ export const ProductFormMain: React.FC<ProductFormMainProps> = ({ form }) => {
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="original_price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Preço Original (opcional)</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="number" 
+                      step="0.01" 
+                      placeholder="0.00" 
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
         </CardContent>
       </Card>

@@ -3,6 +3,7 @@ export interface SupabaseProduct {
   id: string;
   name: string;
   price: number;
+  original_price?: number | null;
   image_url: string;
   images: string[];
   description: string;
@@ -112,6 +113,7 @@ export const convertSupabaseToProduct = (supabaseProduct: SupabaseProduct) => {
     ...supabaseProduct,
     image: supabaseProduct.image_url || '',
     price: supabaseProduct.price.toString(),
+    original_price: supabaseProduct.original_price != null ? supabaseProduct.original_price.toString() : undefined,
     status: supabaseProduct.status || 'active',
     created_at: supabaseProduct.created_at || new Date().toISOString(),
     updated_at: supabaseProduct.updated_at || new Date().toISOString(),
@@ -123,5 +125,6 @@ export const convertProductToSupabase = (product: any) => {
     ...product,
     image_url: product.image || '',
     price: typeof product.price === 'string' ? parseFloat(product.price.replace(/[^\d.,]/g, '').replace(',', '.')) : product.price,
+    original_price: product.original_price ? parseFloat(product.original_price.replace(/[^\d.,]/g, '').replace(',', '.')) : null,
   };
 };

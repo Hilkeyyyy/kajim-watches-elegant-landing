@@ -16,6 +16,7 @@ import { convertSupabaseToProduct } from "@/types/supabase-product";
 import { Product } from "@/types/product";
 import { useEffect, useState } from "react";
 import { Header } from "@/components/Header";
+import { formatPrice } from "@/utils/priceUtils";
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -179,10 +180,16 @@ Data/Hora do pedido: ${currentDate}`;
                 {product.description}
               </p>
               <div className="flex items-center justify-between">
-                <p className="font-playfair text-4xl font-bold text-primary flex items-baseline">
-                  <span className="text-2xl mr-2">R$</span>
-                  <span>{product.price.replace('R$ ', '')}</span>
-                </p>
+                <div className="flex items-baseline gap-3">
+                  {product.original_price && (
+                    <span className="text-lg text-muted-foreground line-through">
+                      {formatPrice(parseFloat(product.original_price))}
+                    </span>
+                  )}
+                  <p className="font-playfair text-4xl font-bold text-primary">
+                    {formatPrice(parseFloat(product.price))}
+                  </p>
+                </div>
               </div>
             </div>
 

@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Product } from '@/types';
 import { apiService } from '@/services/api';
 import { useApp } from '@/contexts/AppContext';
+import { formatPrice } from '@/utils/priceUtils';
 
 export const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -142,8 +143,13 @@ export const ProductDetailPage: React.FC = () => {
               <h1 className="text-3xl font-bold text-foreground mb-4">{product.name}</h1>
               
               <div className="flex items-center space-x-4 mb-6">
+                {product.original_price && (
+                  <span className="text-lg text-muted-foreground line-through">
+                    {formatPrice(parseFloat(product.original_price))}
+                  </span>
+                )}
                 <span className="text-3xl font-bold text-primary">
-                  {product.price}
+                  {formatPrice(parseFloat(product.price))}
                 </span>
               </div>
 

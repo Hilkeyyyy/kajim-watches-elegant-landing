@@ -28,6 +28,7 @@ interface ImageItem {
 const productSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório"),
   price: z.string().min(1, "Preço é obrigatório"),
+  original_price: z.string().optional(),
   brand: z.string().min(1, "Marca é obrigatória"),
   description: z.string().optional(),
   model: z.string().optional(),
@@ -116,7 +117,7 @@ const productSchema = z.object({
   stock_quantity: z.number().min(0, "Quantidade deve ser positiva").optional(),
   is_visible: z.boolean().optional(),
   is_featured: z.boolean().optional(),
-  status: z.enum(['active', 'inactive', 'discontinued']).optional(),
+  status: z.enum(['active', 'inactive']).optional(),
 });
 
 type ProductFormData = z.infer<typeof productSchema>;
@@ -153,6 +154,7 @@ export const ProductFormCore: React.FC<ProductFormCoreProps> = ({
       // Informações básicas
       name: product?.name || "",
       price: product?.price?.toString() || "",
+      original_price: product?.original_price?.toString() || "",
       brand: product?.brand || "",
       description: product?.description || "",
       model: product?.model || "",

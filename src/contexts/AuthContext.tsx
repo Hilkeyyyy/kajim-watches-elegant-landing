@@ -25,7 +25,8 @@ export const useAuth = () => {
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [adminLoading, setAdminLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
@@ -36,16 +37,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setSession(session);
         setUser(session?.user ?? null);
         
-        // Defer admin check to prevent deadlock
+        // Admin check
         if (session?.user) {
-          setTimeout(() => {
-            checkAdminStatus(session.user.id);
-          }, 0);
+          setAdminLoading(true);
+          checkAdminStatus(session.user.id).finally(() => setAdminLoading(false));
         } else {
           setIsAdmin(false);
+          setAdminLoading(false);
         }
         
-        setLoading(false);
+        setAuthLoading(false);
       }
     );
 
@@ -56,12 +57,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        setTimeout(() => {
-          checkAdminStatus(session.user.id);
-        }, 0);
+        setAdminLoading(true);
+        checkAdminStatus(session.user.id).finally(() => setAdminLoading(false));
+      } else {
+        setAdminLoading(false);
       }
       
-      setLoading(false);
+      setAuthLoading(false);
     });
 
     return () => subscription.unsubscribe();
@@ -122,6 +124,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signOut = async () => {
     await supabase.auth.signOut();
   };
+
+  const loading = authLoading || adminLoading;
 
   const value = {
     user,

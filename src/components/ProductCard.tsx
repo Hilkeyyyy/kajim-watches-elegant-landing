@@ -29,10 +29,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
 
   const mainImage = product.image || product.images[0] || '';
   
-  // Garantir que o preço seja tratado corretamente
   const priceDisplay = typeof product.price === 'string' 
-    ? product.price 
+    ? formatPrice(parseFloat(product.price))
     : formatPrice(product.price);
+  const originalDisplay = product.original_price
+    ? (typeof product.original_price === 'string' ? formatPrice(parseFloat(product.original_price)) : formatPrice(product.original_price))
+    : null;
 
   return (
     <Card 
@@ -128,7 +130,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
         )}
         
         {/* Price */}
-        <div className="pt-3 border-t border-border/30">
+        <div className="pt-3 border-t border-border/30 space-y-1">
+          {product.original_price && (
+            <p className="text-sm text-muted-foreground line-through">
+              {typeof product.original_price === 'string' ? product.original_price : String(product.original_price)}
+            </p>
+          )}
           <p className="text-price-large bg-gradient-primary bg-clip-text text-transparent">
             {priceDisplay}
           </p>

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { ProductForm } from '@/components/admin/ProductForm';
+import { parsePrice } from '@/utils/priceUtils';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Plus } from 'lucide-react';
@@ -18,13 +19,14 @@ interface ImageItem {
 interface ProductFormData {
   name: string;
   price: string;
+  original_price?: string;
   brand: string;
   model?: string;
   description?: string;
   stock_quantity?: number;
   is_visible?: boolean;
   is_featured?: boolean;
-  status?: 'active' | 'inactive' | 'discontinued';
+  status?: 'active' | 'inactive';
   movement?: string;
   case_size?: string;
   material?: string;
@@ -49,14 +51,15 @@ const ProductCreate = () => {
       
       const productData = {
         name: data.name,
-        price: parseFloat(data.price),
+        price: parsePrice(data.price),
+        original_price: data.original_price ? parsePrice(data.original_price) : null,
         brand: data.brand,
         model: data.model,
         description: data.description,
         stock_quantity: data.stock_quantity || 0,
         is_visible: data.is_visible ?? true,
         is_featured: data.is_featured ?? false,
-        status: (data.status as 'active' | 'inactive' | 'out_of_stock') || 'active',
+        status: (data.status as 'active' | 'inactive') || 'active',
         movement: data.movement,
         case_size: data.case_size,
         material: data.material,
