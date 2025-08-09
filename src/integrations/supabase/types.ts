@@ -82,6 +82,47 @@ export type Database = {
         }
         Relationships: []
       }
+      product_specifications: {
+        Row: {
+          created_at: string
+          group_name: string
+          id: string
+          key: string
+          product_id: string
+          sort_order: number
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          group_name: string
+          id?: string
+          key: string
+          product_id: string
+          sort_order?: number
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          created_at?: string
+          group_name?: string
+          id?: string
+          key?: string
+          product_id?: string
+          sort_order?: number
+          updated_at?: string
+          value?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_specifications_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           altitude_resistance: string | null
@@ -182,6 +223,7 @@ export type Database = {
           shock_resistant: boolean | null
           sort_order: number | null
           special_features: string[] | null
+          specs: Json | null
           status: Database["public"]["Enums"]["product_status"] | null
           stock_quantity: number | null
           stock_status: string | null
@@ -299,6 +341,7 @@ export type Database = {
           shock_resistant?: boolean | null
           sort_order?: number | null
           special_features?: string[] | null
+          specs?: Json | null
           status?: Database["public"]["Enums"]["product_status"] | null
           stock_quantity?: number | null
           stock_status?: string | null
@@ -416,6 +459,7 @@ export type Database = {
           shock_resistant?: boolean | null
           sort_order?: number | null
           special_features?: string[] | null
+          specs?: Json | null
           status?: Database["public"]["Enums"]["product_status"] | null
           stock_quantity?: number | null
           stock_status?: string | null
