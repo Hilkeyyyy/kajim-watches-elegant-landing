@@ -181,56 +181,125 @@ export const ProductDetailPage: React.FC = () => {
                 <CardTitle>Especificações Técnicas</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 gap-3">
-                  {product.movement && (
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="font-medium">Movimento:</span>
-                      <span>{product.movement}</span>
+                {(() => {
+                  const groups: { title: string; items: Array<{ label: string; value?: string | number | boolean }> }[] = [
+                    {
+                      title: 'Básicas',
+                      items: [
+                        { label: 'Movimento', value: product.movement },
+                        { label: 'Calibre', value: product.caliber },
+                        { label: 'Tipo de Relógio', value: product.watch_type },
+                        { label: 'Coleção', value: product.collection },
+                        { label: 'Referência', value: product.reference_number },
+                        { label: 'Ano de Produção', value: product.production_year },
+                        { label: 'Nº de Joias', value: product.jewels_count },
+                        { label: 'Frequência (Hz)', value: product.frequency_hz },
+                        { label: 'Reserva de Marcha', value: product.power_reserve },
+                        { label: 'Amplitude (°)', value: product.amplitude_degrees },
+                        { label: 'Erro de Batida (ms)', value: product.beat_error_ms },
+                      ],
+                    },
+                    {
+                      title: 'Dimensões',
+                      items: [
+                        { label: 'Diâmetro da Caixa', value: product.case_diameter },
+                        { label: 'Altura da Caixa', value: product.case_height },
+                        { label: 'Espessura da Caixa', value: product.case_thickness || product.thickness },
+                        { label: 'Lug to Lug', value: product.lug_to_lug },
+                        { label: 'Largura entre Lugs (mm)', value: product.lug_width_mm || product.lug_width },
+                        { label: 'Peso', value: product.weight },
+                        { label: 'Diâmetro da Coroa', value: product.crown_diameter },
+                        { label: 'Diâmetro do Cristal', value: product.crystal_diameter },
+                        { label: 'Largura da Pulseira', value: product.bracelet_width },
+                        { label: 'Comprimento da Pulseira', value: product.bracelet_length },
+                      ],
+                    },
+                    {
+                      title: 'Materiais',
+                      items: [
+                        { label: 'Material da Caixa', value: product.case_material || product.material },
+                        { label: 'Material do Bisel', value: product.bezel_material },
+                        { label: 'Cristal', value: product.crystal || product.glass_type },
+                        { label: 'Material do Mostrador', value: product.dial_material },
+                        { label: 'Material dos Ponteiros', value: product.hands_material },
+                        { label: 'Material da Coroa', value: product.crown_material },
+                        { label: 'Material do Fundo', value: product.caseback_material },
+                        { label: 'Material da Pulseira', value: product.bracelet_material || product.strap_material },
+                        { label: 'Material do Fecho', value: product.clasp_material },
+                        { label: 'Material dos Índices', value: product.indices_material },
+                      ],
+                    },
+                    {
+                      title: 'Cores e Acabamentos',
+                      items: [
+                        { label: 'Cor do Mostrador', value: product.dial_color },
+                        { label: 'Cores do Mostrador', value: product.dial_colors?.join(', ') },
+                        { label: 'Cor da Caixa', value: product.case_color },
+                        { label: 'Cor do Bisel', value: product.bezel_color },
+                        { label: 'Cor dos Ponteiros', value: product.hands_color },
+                        { label: 'Cor dos Marcadores', value: product.markers_color },
+                        { label: 'Cor da Pulseira', value: product.strap_color },
+                        { label: 'Textura do Mostrador', value: product.dial_pattern },
+                        { label: 'Acabamento do Mostrador', value: product.dial_finish },
+                      ],
+                    },
+                    {
+                      title: 'Avançadas',
+                      items: [
+                        { label: 'Resistência à Água (m)', value: product.water_resistance_meters || product.water_resistance },
+                        { label: 'Resistência à Água (ATM)', value: product.water_resistance_atm },
+                        { label: 'Resistência Magnética', value: product.anti_magnetic_resistance },
+                        { label: 'Resistência a Choques', value: typeof product.shock_resistant === 'boolean' ? (product.shock_resistant ? 'Sim' : 'Não') : undefined },
+                        { label: 'Resistência à Temperatura', value: product.temperature_resistance },
+                        { label: 'Tipo de Índices', value: product.indices_type },
+                        { label: 'Tipo de Algarismos', value: product.numerals_type },
+                        { label: 'Tipo de Ponteiros', value: product.hands_type },
+                        { label: 'Tipo de Lume', value: product.lume_type },
+                        { label: 'Tipo de Coroa', value: product.crown_type },
+                        { label: 'Fundo da Caixa', value: product.case_back },
+                        { label: 'Tipo de Bisel', value: product.bezel_type },
+                        { label: 'Tipo de Fecho', value: product.clasp_type },
+                        { label: 'Tipo de Fivela', value: product.buckle_type },
+                        { label: 'Certificação', value: product.certification },
+                        { label: 'Garantia', value: product.warranty },
+                        { label: 'País de Origem', value: product.country_origin },
+                        { label: 'Edição Limitada', value: product.limited_edition },
+                      ],
+                    },
+                    {
+                      title: 'Comerciais',
+                      items: [
+                        { label: 'MSRP', value: product.msrp },
+                        { label: 'Disponibilidade', value: product.availability_status },
+                        { label: 'Modelo de Substituição', value: product.replacement_model },
+                        { label: 'Tipo de Caixa/Embalagem', value: product.box_type },
+                        { label: 'Documentação', value: product.documentation },
+                      ],
+                    },
+                  ];
+
+                  return (
+                    <div className="space-y-6">
+                      {groups.map((group) => {
+                        const visible = group.items.filter((i) => i.value !== undefined && i.value !== '' && i.value !== null)
+                        if (visible.length === 0) return null
+                        return (
+                          <div key={group.title}>
+                            <h3 className="text-sm font-semibold mb-3 text-muted-foreground">{group.title}</h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                              {visible.map((i) => (
+                                <div key={i.label} className="flex justify-between py-2 border-b">
+                                  <span className="font-medium">{i.label}:</span>
+                                  <span className="text-right ml-4">{String(i.value)}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )
+                      })}
                     </div>
-                  )}
-                  {product.caliber && (
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="font-medium">Calibre:</span>
-                      <span>{product.caliber}</span>
-                    </div>
-                  )}
-                  {product.case_diameter && (
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="font-medium">Diâmetro da Caixa:</span>
-                      <span>{product.case_diameter}</span>
-                    </div>
-                  )}
-                  {product.case_material && (
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="font-medium">Material da Caixa:</span>
-                      <span>{product.case_material}</span>
-                    </div>
-                  )}
-                  {product.water_resistance && (
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="font-medium">Resistência à Água:</span>
-                      <span>{product.water_resistance}</span>
-                    </div>
-                  )}
-                  {product.crystal && (
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="font-medium">Cristal:</span>
-                      <span>{product.crystal}</span>
-                    </div>
-                  )}
-                  {product.dial_color && (
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="font-medium">Cor do Mostrador:</span>
-                      <span>{product.dial_color}</span>
-                    </div>
-                  )}
-                  {product.strap_material && (
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="font-medium">Material da Pulseira:</span>
-                      <span>{product.strap_material}</span>
-                    </div>
-                  )}
-                </div>
+                  )
+                })()}
               </CardContent>
             </Card>
 

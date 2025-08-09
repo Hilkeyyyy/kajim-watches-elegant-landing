@@ -58,6 +58,16 @@ export function AdminHeader() {
   const { signOut, user } = useAuth();
   const pageInfo = getPageInfo(location.pathname);
 
+  const [navLock, setNavLock] = React.useState(false);
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (navLock) {
+      e.preventDefault();
+      return;
+    }
+    setNavLock(true);
+    window.setTimeout(() => setNavLock(false), 400);
+  };
+
   const handleSignOut = async () => {
     try {
       await signOut();
@@ -89,12 +99,14 @@ export function AdminHeader() {
                 <Link
                   key={item.url}
                   to={item.url}
+                  onClick={handleNavClick}
+                  aria-disabled={navLock}
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                     location.pathname === item.url || 
                     (item.url !== '/admin' && location.pathname.startsWith(item.url))
                       ? 'bg-primary/10 text-primary'
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                  }`}
+                  } ${navLock ? 'pointer-events-none opacity-70' : ''}`}
                 >
                   {item.title}
                 </Link>
@@ -128,7 +140,9 @@ export function AdminHeader() {
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
-                <BreadcrumbLink href="/admin">Dashboard</BreadcrumbLink>
+                <BreadcrumbLink asChild>
+                  <Link to="/admin">Dashboard</Link>
+                </BreadcrumbLink>
               </BreadcrumbItem>
               {pageInfo.breadcrumb.slice(1).map((item, index) => (
                 <React.Fragment key={item}>
