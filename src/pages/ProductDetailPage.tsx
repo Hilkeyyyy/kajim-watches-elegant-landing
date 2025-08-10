@@ -110,7 +110,7 @@ export const ProductDetailPage: React.FC = () => {
             <div className="aspect-square overflow-hidden rounded-lg bg-gray-100">
               <img
                 src={images[selectedImage] || ''}
-                alt={product.name}
+                alt={`Relógio ${product.brand} ${product.name}`}
                 className="w-full h-full object-cover"
               />
             </div>

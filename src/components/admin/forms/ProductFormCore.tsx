@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/Button";
 import { Form } from "@/components/ui/form";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, Save, X } from "lucide-react";
 import { ProductFormMain } from "./ProductFormMain";
 import { ProductFormImages } from "./ProductFormImages";
@@ -12,12 +12,15 @@ import { ProductFormBasicSpecs } from "./ProductFormBasicSpecs";
 import { ProductFormDimensions } from "./ProductFormDimensions";
 import { ProductFormMaterials } from "./ProductFormMaterials";
 import { ProductFormColors } from "./ProductFormColors";
-import { ProductFormAdvancedSpecs } from "./ProductFormAdvancedSpecs";
 import { ProductFormAdvancedSpecsComplete } from "./ProductFormAdvancedSpecsComplete";
 import { ProductFormCommercial } from "./ProductFormCommercial";
 import { ProductFormMetadata } from "./ProductFormMetadata";
 import { ProductFormFeatures } from "./ProductFormFeatures";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { ProductFormPrices } from "./ProductFormPrices";
+import { ProductFormBadges } from "./ProductFormBadges";
+import { ProductFormDescription } from "./ProductFormDescription";
 
 interface ImageItem {
   id: string;
@@ -138,7 +141,6 @@ export const ProductFormCore: React.FC<ProductFormCoreProps> = ({
   mode
 }) => {
   const { handleError, handleWarning } = useErrorHandler();
-  const [currentStep, setCurrentStep] = useState(1);
   const [images, setImages] = useState<ImageItem[]>(
     product?.images?.map((url: string, index: number) => ({
       id: `img-${index}`,
@@ -271,21 +273,6 @@ export const ProductFormCore: React.FC<ProductFormCoreProps> = ({
     setBadges(prev => prev.filter(badge => badge !== badgeToRemove));
   }, []);
 
-  const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 10));
-  const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
-
-  const steps = [
-    { id: 1, title: "Básico", description: "Nome, preço e descrição" },
-    { id: 2, title: "Imagens", description: "Fotos e badges" },
-    { id: 3, title: "Características", description: "Funcionalidades do produto" },
-    { id: 4, title: "Especificações", description: "Movimento e calibre" },
-    { id: 5, title: "Dimensões", description: "Medidas e tamanhos" },
-    { id: 6, title: "Materiais", description: "Caixa, pulseira, cristal" },
-    { id: 7, title: "Cores", description: "Mostrador e acabamentos" },
-    { id: 8, title: "Avançado", description: "Resistências e certificações" },
-    { id: 9, title: "Comercial", description: "Preços e embalagem" },
-    { id: 10, title: "Status", description: "Estoque e visibilidade" }
-  ];
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -304,30 +291,9 @@ export const ProductFormCore: React.FC<ProductFormCoreProps> = ({
             <h1 className="text-2xl font-bold">
               {mode === 'create' ? 'Criar Produto' : 'Editar Produto'}
             </h1>
-            <p className="text-muted-foreground">
-              {steps.find(s => s.id === currentStep)?.description}
-            </p>
+            <p className="text-muted-foreground">Preencha as informações do produto</p>
           </div>
         </div>
-      </div>
-
-      {/* Progress Steps */}
-      <div className="grid grid-cols-5 lg:grid-cols-10 gap-1 lg:gap-2">
-        {steps.map((step) => (
-          <div
-            key={step.id}
-            className={`p-2 lg:p-3 rounded-lg border text-center cursor-pointer transition-all ${
-              currentStep === step.id
-                ? 'border-primary bg-primary/5 text-primary'
-                : currentStep > step.id
-                ? 'border-green-500 bg-green-50 text-green-700'
-                : 'border-muted bg-muted/20 text-muted-foreground'
-            }`}
-            onClick={() => setCurrentStep(step.id)}
-          >
-            <div className="text-xs lg:text-sm font-medium">{step.title}</div>
-          </div>
-        ))}
       </div>
 
       {/* Form */}
@@ -335,77 +301,88 @@ export const ProductFormCore: React.FC<ProductFormCoreProps> = ({
         <CardContent className="p-6">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-              {currentStep === 1 && (
-                <ProductFormMain form={form} />
-              )}
-              
-              {currentStep === 2 && (
-                <ProductFormImages
-                  images={images}
-                  onImagesChange={setImages}
-                  badges={badges}
-                  addBadge={addBadge}
-                  removeBadge={removeBadge}
-                />
-              )}
-              
-              {currentStep === 3 && (
-                <ProductFormFeatures form={form} />
-              )}
-              
-              {currentStep === 4 && (
-                <ProductFormBasicSpecs form={form} />
-              )}
-              
-              {currentStep === 5 && (
-                <ProductFormDimensions form={form} />
-              )}
-              
-              {currentStep === 6 && (
-                <ProductFormMaterials form={form} />
-              )}
-              
-              {currentStep === 7 && (
-                <ProductFormColors form={form} />
-              )}
-              
-              {currentStep === 8 && (
-                <ProductFormAdvancedSpecsComplete form={form} />
-              )}
-              
-              {currentStep === 9 && (
-                <ProductFormCommercial form={form} />
-              )}
-              
-              {currentStep === 10 && (
-                <ProductFormMetadata form={form} />
-              )}
+              <Accordion type="multiple" defaultValue={["images","basic","prices","badges","specs","description","commercial","status"]}>
+                <AccordionItem value="images">
+                  <AccordionTrigger>Imagens</AccordionTrigger>
+                  <AccordionContent>
+                    <ProductFormImages
+                      images={images}
+                      onImagesChange={setImages}
+                      badges={badges}
+                      addBadge={addBadge}
+                      removeBadge={removeBadge}
+                      showBadges={false}
+                    />
+                  </AccordionContent>
+                </AccordionItem>
 
-              {/* Navigation */}
+                <AccordionItem value="basic">
+                  <AccordionTrigger>Informações Básicas</AccordionTrigger>
+                  <AccordionContent>
+                    <ProductFormMain form={form} />
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="prices">
+                  <AccordionTrigger>Preços</AccordionTrigger>
+                  <AccordionContent>
+                    <ProductFormPrices form={form} />
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="badges">
+                  <AccordionTrigger>Badges</AccordionTrigger>
+                  <AccordionContent>
+                    <ProductFormBadges badges={badges} addBadge={addBadge} removeBadge={removeBadge} />
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="specs">
+                  <AccordionTrigger>Especificações</AccordionTrigger>
+                  <AccordionContent>
+                    <div className="space-y-6">
+                      <ProductFormFeatures form={form} />
+                      <ProductFormBasicSpecs form={form} />
+                      <ProductFormDimensions form={form} />
+                      <ProductFormMaterials form={form} />
+                      <ProductFormColors form={form} />
+                      <ProductFormAdvancedSpecsComplete form={form} />
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="description">
+                  <AccordionTrigger>Descrição</AccordionTrigger>
+                  <AccordionContent>
+                    <ProductFormDescription form={form} />
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="commercial">
+                  <AccordionTrigger>Comercial</AccordionTrigger>
+                  <AccordionContent>
+                    <ProductFormCommercial form={form} />
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="status">
+                  <AccordionTrigger>Status e Visibilidade</AccordionTrigger>
+                  <AccordionContent>
+                    <ProductFormMetadata form={form} />
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+
+              {/* Actions */}
               <div className="flex justify-between pt-6 border-t">
-                <div className="flex gap-2">
-                  {currentStep > 1 && (
-                    <Button type="button" variant="outline" onClick={prevStep}>
-                      Anterior
-                    </Button>
-                  )}
-                  {currentStep < 10 && (
-                    <Button type="button" onClick={nextStep}>
-                      Próximo
-                    </Button>
-                  )}
-                </div>
-
-                <div className="flex gap-2">
-                  <Button type="button" variant="ghost" onClick={onCancel}>
-                    <X className="h-4 w-4 mr-2" />
-                    Cancelar
-                  </Button>
-                  <Button type="submit" disabled={isLoading}>
-                    <Save className="h-4 w-4 mr-2" />
-                    {isLoading ? "Salvando..." : mode === 'create' ? "Criar" : "Atualizar"}
-                  </Button>
-                </div>
+                <Button type="button" variant="ghost" onClick={onCancel}>
+                  <X className="h-4 w-4 mr-2" />
+                  Cancelar
+                </Button>
+                <Button type="submit" disabled={isLoading}>
+                  <Save className="h-4 w-4 mr-2" />
+                  {isLoading ? "Salvando..." : mode === 'create' ? "Criar" : "Atualizar"}
+                </Button>
               </div>
             </form>
           </Form>

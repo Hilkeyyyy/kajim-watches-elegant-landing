@@ -19,6 +19,7 @@ interface ProductFormImagesProps {
   badges: string[];
   addBadge: (badge: string) => void;
   removeBadge: (badge: string) => void;
+  showBadges?: boolean;
 }
 
 export const ProductFormImages: React.FC<ProductFormImagesProps> = ({
@@ -26,7 +27,8 @@ export const ProductFormImages: React.FC<ProductFormImagesProps> = ({
   onImagesChange,
   badges,
   addBadge,
-  removeBadge
+  removeBadge,
+  showBadges = true
 }) => {
   const [newBadge, setNewBadge] = useState("");
 
@@ -62,7 +64,7 @@ export const ProductFormImages: React.FC<ProductFormImagesProps> = ({
         </CardContent>
       </Card>
 
-      {/* Badges Section */}
+{showBadges !== false && (
       <Card>
         <CardHeader>
           <CardTitle>Badges do Produto</CardTitle>
@@ -121,6 +123,7 @@ export const ProductFormImages: React.FC<ProductFormImagesProps> = ({
           )}
         </CardContent>
       </Card>
+    )}
     </div>
   );
 };

@@ -21,14 +21,19 @@ export const OutOfStockCarousel = () => {
           .select('*')
           .eq('is_visible', true)
           .eq('status', 'active')
-          .or('stock_status.eq.out_of_stock,badges.ov.{LIMITADO}')
           .order('updated_at', { ascending: false })
-          .limit(10);
+          .limit(30);
 
         if (error) {
           console.error('Error fetching out of stock products:', error);
         } else if (data) {
-          setProducts(data.map(convertSupabaseToProduct));
+          const all = data.map(convertSupabaseToProduct);
+          const filtered = all.filter((p) => {
+            const byStock = (p.stock_quantity !== undefined && p.stock_quantity <= 0) || (p.stock_status === 'out_of_stock');
+            const hasBadge = (p.badges || []).some((b) => ['ESGOTADO','Esgotado','LIMITADO','Limitado'].includes(b));
+            return byStock || hasBadge;
+          });
+          setProducts(filtered);
         }
       } catch (error) {
         console.error('Error:', error);

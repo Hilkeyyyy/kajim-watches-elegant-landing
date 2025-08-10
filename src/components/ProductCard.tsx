@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { Star } from 'lucide-react';
+import React, { useState } from 'react';
+
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +9,7 @@ import { useApp } from '@/contexts/AppContext';
 import { parsePrice, formatPrice } from '@/utils/priceUtils';
 import { AddToCartButtonAnimated } from '@/components/AddToCartButtonAnimated';
 import { FavoriteButton } from '@/components/FavoriteButton';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 interface ProductCardProps {
   product: Product;
@@ -18,6 +19,7 @@ interface ProductCardProps {
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onClick }) => {
   const { toggleFavorite, isFavorite } = useApp();
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   const handleClick = () => {
     if (onProductClick) {
@@ -43,38 +45,24 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
     >
       <div className="relative">
         {/* Product Image */}
-        <div className="aspect-[4/3] sm:aspect-[3/4] overflow-hidden bg-gradient-to-br from-muted/30 to-muted/10 rounded-t-xl">
+        <div
+          className="aspect-square overflow-hidden bg-gradient-to-br from-muted/30 to-muted/10 rounded-t-xl"
+          onClick={(e) => {
+            e.stopPropagation();
+            setLightboxOpen(true);
+          }}
+          role="button"
+          aria-label={`Ampliar imagem de ${product.name}`}
+        >
           <img
             src={mainImage}
-            alt={product.name}
-            className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-[1.15] group-hover:rotate-1"
+            alt={`Relógio ${product.brand} ${product.name}`}
+            className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-[1.08]"
             loading="lazy"
           />
           
-          {/* Image Overlay Gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
           
-          {/* Badges Overlay */}
-          {product.badges && product.badges.length > 0 && (
-            <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
-              {product.badges.slice(0, 2).map((badge, index) => (
-                <Badge 
-                  key={index}
-                  variant={badge === 'OFERTA' ? 'destructive' : badge === 'NOVO' ? 'default' : 'secondary'}
-                  className="text-xs font-semibold px-2.5 py-1 shadow-md backdrop-blur-sm border-0 rounded-full"
-                >
-                  {badge}
-                </Badge>
-              ))}
-            </div>
-          )}
           
-          {/* Featured Star */}
-          {product.is_featured && (
-            <div className="absolute top-3 right-14 bg-gradient-primary p-1.5 rounded-full shadow-glow">
-              <Star className="w-3.5 h-3.5 text-white fill-white" />
-            </div>
-          )}
         </div>
         
         {/* Favorite Button */}
@@ -89,12 +77,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
           <p className="text-xs sm:text-sm text-accent font-semibold uppercase tracking-[0.1em] opacity-80">
             {product.brand}
           </p>
-          {product.is_featured && (
-            <div className="flex items-center gap-1 text-xs text-accent font-medium">
-              <Star className="w-3 h-3 fill-current" />
-              <span className="hidden sm:inline">Destaque</span>
-            </div>
-          )}
         </div>
         
         {/* Product Name */}
@@ -169,6 +151,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
           </Button>
         </div>
       </CardContent>
+
+      <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
+        <DialogContent className="max-w-3xl p-0 bg-transparent border-none shadow-none">
+          <img src={mainImage} alt={`Relógio ${product.brand} ${product.name}`} className="w-full h-auto rounded-lg" />
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };

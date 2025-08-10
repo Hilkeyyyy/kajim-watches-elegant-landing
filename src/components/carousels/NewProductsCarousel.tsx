@@ -16,23 +16,26 @@ export const NewProductsCarousel = () => {
   useEffect(() => {
     const fetchNewProducts = async () => {
       try {
-        // Produtos criados nos últimos 30 dias
-        const thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
         const { data, error } = await supabase
           .from('products')
           .select('*')
           .eq('is_visible', true)
           .eq('status', 'active')
-          .or('badges.ov.{NOVIDADE},badges.ov.{LIMITADO}')
-          .order('updated_at', { ascending: false })
-          .limit(10);
+          .order('created_at', { ascending: false })
+          .limit(30);
 
         if (error) {
           console.error('Error fetching new products:', error);
         } else if (data) {
-          setProducts(data.map(convertSupabaseToProduct));
+          const all = data.map(convertSupabaseToProduct);
+          const threshold = new Date();
+          threshold.setDate(threshold.getDate() - 30);
+          const filtered = all.filter((p) => {
+            const createdAt = p.created_at ? new Date(p.created_at) : null;
+            const hasBadge = (p.badges || []).some((b) => ['NOVIDADE','Novidade','NOVO','Novo','LIMITADO','Limitado'].includes(b));
+            return (createdAt && createdAt >= threshold) || hasBadge;
+          });
+          setProducts(filtered);
         }
       } catch (error) {
         console.error('Error:', error);

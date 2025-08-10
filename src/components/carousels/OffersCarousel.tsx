@@ -21,14 +21,20 @@ export const OffersCarousel = () => {
           .select('*')
           .eq('is_visible', true)
           .eq('status', 'active')
-          .overlaps('badges', ['OFERTA'])
           .order('created_at', { ascending: false })
-          .limit(10);
+          .limit(30);
 
         if (error) {
           console.error('Error fetching offers products:', error);
         } else if (data) {
-          setProducts(data.map(convertSupabaseToProduct));
+          const all = data.map(convertSupabaseToProduct);
+          const filtered = all.filter((p) => {
+            const hasBadge = (p.badges || []).some((b) => ['OFERTA','Oferta','Promoção','PROMOÇÃO','SALE','SALE!'].includes(b));
+            const current = typeof p.price === 'string' ? parseFloat(p.price.replace(/[^0-9.,]/g, '').replace(',','.')) : Number(p.price);
+            const original = p.original_price ? (typeof p.original_price === 'string' ? parseFloat(p.original_price.replace(/[^0-9.,]/g, '').replace(',','.')) : Number(p.original_price)) : 0;
+            return hasBadge || (original > 0 && current > 0 && current < original);
+          });
+          setProducts(filtered);
         }
       } catch (error) {
         console.error('Error:', error);

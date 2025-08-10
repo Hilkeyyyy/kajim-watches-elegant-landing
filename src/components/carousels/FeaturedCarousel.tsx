@@ -20,9 +20,8 @@ export const FeaturedCarousel = () => {
         .select('*')
         .eq('is_visible', true)
         .eq('status', 'active')
-        .overlaps('badges', ['DESTAQUE'])
         .order('updated_at', { ascending: false })
-        .limit(10);
+        .limit(30);
 
       if (error) {
         console.error('Erro ao buscar produtos em destaque:', error);
@@ -31,10 +30,9 @@ export const FeaturedCarousel = () => {
       }
 
       if (data) {
-        const convertedProducts = data.map((item: SupabaseProduct) => 
-          convertSupabaseToProduct(item)
-        );
-        setProducts(convertedProducts);
+        const convertedProducts = data.map((item: SupabaseProduct) => convertSupabaseToProduct(item));
+        const filtered = convertedProducts.filter((p) => p.is_featured || (p.badges || []).some((b) => ['DESTAQUE','Destaque'].includes(b)));
+        setProducts(filtered);
       }
 
       setLoading(false);
