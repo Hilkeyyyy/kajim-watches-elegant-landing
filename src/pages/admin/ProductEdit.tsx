@@ -9,6 +9,7 @@ import { ArrowLeft, Edit, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Link } from 'react-router-dom';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { parsePrice } from '@/utils/priceUtils';
 
 interface ImageItem {
   id: string;
@@ -108,7 +109,7 @@ const ProductEdit = () => {
         throw new Error('Campos obrigatórios não preenchidos');
       }
 
-      const price = parseFloat(data.price);
+      const price = parsePrice(data.price);
       if (isNaN(price) || price <= 0) {
         throw new Error('Preço deve ser um número válido maior que zero');
       }

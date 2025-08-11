@@ -40,13 +40,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
 
   return (
     <Card 
-      className="group cursor-pointer overflow-hidden border-0 bg-card/50 backdrop-blur-sm shadow-luxury hover:shadow-glow transition-all duration-700 hover:scale-[1.03] hover:-translate-y-2 rounded-xl"
+      className="group cursor-pointer overflow-hidden border-0 bg-card/50 backdrop-blur-sm shadow-luxury hover:shadow-glow transition-all duration-700 hover:scale-[1.01] hover:-translate-y-1 rounded-lg"
       onClick={handleClick}
     >
       <div className="relative">
         {/* Product Image */}
         <div
-          className="aspect-square overflow-hidden bg-gradient-to-br from-muted/30 to-muted/10 rounded-t-xl"
+          className="aspect-square overflow-hidden bg-gradient-to-br from-muted/30 to-muted/10 rounded-t-lg"
           onClick={(e) => {
             e.stopPropagation();
             setLightboxOpen(true);
@@ -71,16 +71,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
         </div>
       </div>
 
-      <CardContent className="p-5 sm:p-6 space-y-4">
+      <CardContent className="p-4 sm:p-5 space-y-3">
         {/* Brand */}
         <div className="flex items-center justify-between">
-          <p className="text-xs sm:text-sm text-accent font-semibold uppercase tracking-[0.1em] opacity-80">
+          <p className="text-[10px] sm:text-xs text-accent font-semibold uppercase tracking-[0.1em] opacity-80">
             {product.brand}
           </p>
         </div>
         
         {/* Product Name */}
-        <h3 className="text-headline text-foreground line-clamp-2 leading-snug min-h-[2.8rem] sm:min-h-[3.2rem] group-hover:text-primary transition-colors duration-300">
+        <h3 className="text-headline text-foreground line-clamp-2 leading-snug min-h-[2.2rem] sm:min-h-[2.6rem] group-hover:text-primary transition-colors duration-300">
           {product.name}
         </h3>
         
@@ -118,7 +118,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
               {typeof product.original_price === 'string' ? product.original_price : String(product.original_price)}
             </p>
           )}
-          <p className="text-price-large bg-gradient-primary bg-clip-text text-transparent">
+          <p className="text-price-large bg-gradient-primary bg-clip-text text-transparent leading-tight">
             {priceDisplay}
           </p>
         </div>
