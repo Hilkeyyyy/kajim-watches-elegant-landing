@@ -120,10 +120,10 @@ const productSchema = z.object({
   stock_quantity: z.number().min(0, "Quantidade deve ser positiva").optional(),
   is_visible: z.boolean().optional(),
   is_featured: z.boolean().optional(),
-  status: z.enum(['active', 'inactive']).optional(),
+  status: z.enum(['active', 'inactive', 'out_of_stock']).optional(),
 });
 
-type ProductFormData = z.infer<typeof productSchema>;
+export type ProductFormData = z.infer<typeof productSchema>;
 
 interface ProductFormCoreProps {
   product?: any;
