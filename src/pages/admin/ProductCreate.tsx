@@ -120,9 +120,26 @@ const ProductCreate = () => {
         image_url: data.images.find(img => img.isMain)?.url || data.images[0]?.url,
       };
 
+      // Descobrir colunas existentes para evitar erro de colunas desconhecidas
+      const { data: sample } = await supabase
+        .from('products')
+        .select('*')
+        .limit(1)
+        .maybeSingle();
+
+      const allowedKeys = sample
+        ? Object.keys(sample as Record<string, any>)
+        : [
+            'name','brand','model','description','price','original_price','image_url',
+            'stock_quantity','is_visible','is_featured','status','badges','features'
+          ];
+      const filteredData = Object.fromEntries(
+        Object.entries(productData).filter(([key]) => allowedKeys.includes(key))
+      );
+
       const { error } = await supabase
         .from('products')
-        .insert(productData);
+        .insert(filteredData as any);
 
       if (error) throw error;
 

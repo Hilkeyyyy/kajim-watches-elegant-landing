@@ -29,7 +29,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
     }
   };
 
-  const mainImage = product.image || product.images[0] || '';
+  const mainImage = (product as any).image_url || product.image || (product.images && product.images[0]) || '';
   
   const priceDisplay = typeof product.price === 'string' 
     ? formatPrice(parseFloat(product.price))

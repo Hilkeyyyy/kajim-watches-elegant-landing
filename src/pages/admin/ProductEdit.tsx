@@ -189,15 +189,20 @@ const ProductEdit = () => {
         updated_at: new Date().toISOString(),
       } as const;
 
-      console.log('ProductEdit - Enviando dados para Supabase:', {
+      console.log('ProductEdit - Preparando dados para Supabase');
+      const existingKeys = product ? Object.keys(product as Record<string, any>) : [];
+      const filteredData = Object.fromEntries(
+        Object.entries(productData).filter(([key]) => existingKeys.includes(key))
+      );
+
+      console.log('ProductEdit - Enviando dados filtrados:', {
         id,
-        name: productData.name,
-        imagesCount: productData.images.length
+        keys: Object.keys(filteredData),
       });
 
       const { error } = await supabase
         .from('products')
-        .update(productData)
+        .update(filteredData as any)
         .eq('id', id);
 
       if (error) {
