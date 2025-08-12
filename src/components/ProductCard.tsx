@@ -40,13 +40,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
 
   return (
     <Card 
-      className="group cursor-pointer overflow-hidden border-0 bg-card/50 backdrop-blur-sm shadow-luxury hover:shadow-glow transition-all duration-700 hover:scale-[1.01] hover:-translate-y-1 rounded-lg"
+      className="group cursor-pointer overflow-hidden border-0 bg-card/50 backdrop-blur-sm shadow-luxury hover:shadow-glow transition-all duration-700 hover:scale-[1.01] hover:-translate-y-1 rounded-md"
       onClick={handleClick}
     >
       <div className="relative">
         {/* Product Image */}
         <div
-          className="aspect-square overflow-hidden bg-gradient-to-br from-muted/30 to-muted/10 rounded-t-lg"
+          className="aspect-square overflow-hidden bg-gradient-to-br from-muted/30 to-muted/10 rounded-t-md"
           onClick={(e) => {
             e.stopPropagation();
             setLightboxOpen(true);
@@ -71,22 +71,22 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
         </div>
       </div>
 
-      <CardContent className="p-4 sm:p-5 space-y-3">
+      <CardContent className="p-3 sm:p-4 space-y-2">
         {/* Brand */}
         <div className="flex items-center justify-between">
-          <p className="text-[10px] sm:text-xs text-accent font-semibold uppercase tracking-[0.1em] opacity-80">
+          <p className="text-[9px] sm:text-[11px] text-accent font-semibold uppercase tracking-[0.1em] opacity-80">
             {product.brand}
           </p>
         </div>
         
         {/* Product Name */}
-        <h3 className="text-headline text-foreground line-clamp-2 leading-snug min-h-[2.2rem] sm:min-h-[2.6rem] group-hover:text-primary transition-colors duration-300">
+        <h3 className="text-headline text-foreground line-clamp-2 leading-snug min-h-[1.8rem] sm:min-h-[2.2rem] group-hover:text-primary transition-colors duration-300">
           {product.name}
         </h3>
         
         {/* Key Specifications */}
         {(product.movement || product.case_diameter || product.case_material) && (
-          <div className="space-y-2 text-xs sm:text-sm text-muted-foreground bg-muted/30 rounded-lg p-3">
+          <div className="space-y-2 text-[11px] sm:text-xs text-muted-foreground bg-muted/30 rounded-lg p-2">
             {product.movement && (
               <div className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-gradient-primary rounded-full"></div>
@@ -112,7 +112,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
         )}
         
         {/* Price */}
-        <div className="pt-3 border-t border-border/30 space-y-1">
+        <div className="pt-2 border-t border-border/30 space-y-1">
           {product.original_price && (
             <p className="text-sm text-muted-foreground line-through">
               {typeof product.original_price === 'string' ? product.original_price : String(product.original_price)}
@@ -124,7 +124,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
         </div>
         
         {/* Action Buttons */}
-        <div className="flex gap-2 pt-2">
+        <div className="flex gap-1 pt-1">
           <AddToCartButtonAnimated
             product={{
               id: product.id,
@@ -134,14 +134,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
             }}
             variant="primary"
             size="sm"
-            className="flex-1 gap-2 transition-all duration-500 hover:scale-[1.02] hover:shadow-glow font-semibold rounded-lg"
+            className="flex-1 gap-2 transition-all duration-500 hover:scale-[1.02] hover:shadow-glow font-semibold rounded-md"
             showText={true}
           />
           
           <Button
             variant="outline"
             size="sm"
-            className="px-3 transition-all duration-300 hover:bg-primary hover:text-primary-foreground rounded-lg liquid-glass"
+            className="px-2 transition-all duration-300 hover:bg-primary hover:text-primary-foreground rounded-md liquid-glass"
             onClick={(e) => {
               e.stopPropagation();
               handleClick();
