@@ -43,12 +43,22 @@ export const ProductTable: React.FC<ProductTableProps> = ({
     const variants = {
       active: 'default',
       inactive: 'secondary',
+      out_of_stock: 'outline',
       discontinued: 'outline'
     } as const;
-    
+
+    const label =
+      status === 'active'
+        ? 'Ativo'
+        : status === 'inactive'
+        ? 'Inativo'
+        : status === 'out_of_stock'
+        ? 'Sem estoque'
+        : 'Descontinuado';
+
     return (
       <Badge variant={variants[status as keyof typeof variants] || 'outline'}>
-        {status === 'active' ? 'Ativo' : status === 'inactive' ? 'Inativo' : 'Descontinuado'}
+        {label}
       </Badge>
     );
   };
@@ -137,7 +147,10 @@ export const ProductTable: React.FC<ProductTableProps> = ({
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span className="font-medium">R$ {product.price.toFixed(2)}</span>
+                    {(() => {
+                      const priceNum = typeof product.price === 'number' ? product.price : Number(product.price ?? 0);
+                      return <span className="font-medium">R$ {priceNum.toFixed(2)}</span>;
+                    })()}
                   </TableCell>
                   <TableCell>
                     {getStatusBadge(product.status)}
