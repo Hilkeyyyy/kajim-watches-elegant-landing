@@ -23,7 +23,7 @@ const ProductCreate = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleSubmit = async (data: ProductFormData) => {
+  const handleSubmit = async (data: ProductFormData & { images: ImageItem[]; badges: string[] }) => {
     try {
       setIsLoading(true);
       
