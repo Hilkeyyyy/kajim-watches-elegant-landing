@@ -45,17 +45,24 @@ const Products = () => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (signal?: AbortSignal) => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      let query = supabase
         .from('products')
         .select('*')
         .order('created_at', { ascending: false });
+      // @ts-ignore postgrest-js supports abortSignal
+      if (signal && typeof (query as any).abortSignal === 'function') {
+        // @ts-ignore
+        query = (query as any).abortSignal(signal);
+      }
+      const { data, error } = await query;
 
       if (error) throw error;
       setProducts(data || []);
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.name === 'AbortError') return;
       console.error('Erro ao buscar produtos:', error);
       toast({
         title: "Erro",

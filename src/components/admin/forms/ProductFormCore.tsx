@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -149,6 +149,7 @@ export const ProductFormCore: React.FC<ProductFormCoreProps> = ({
     })) || []
   );
   const [badges, setBadges] = useState<string[]>(product?.badges || []);
+  const submitLockRef = useRef(false);
 
   const form = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
@@ -251,6 +252,12 @@ export const ProductFormCore: React.FC<ProductFormCoreProps> = ({
 
   const handleSubmit = useCallback(async (data: ProductFormData) => {
     try {
+      if (submitLockRef.current) return;
+      submitLockRef.current = true;
+      setTimeout(() => {
+        submitLockRef.current = false;
+      }, 300);
+
       if (images.length === 0) {
         handleWarning("Adicione pelo menos uma imagem ao produto");
         return;

@@ -3,6 +3,7 @@ import { useLocation, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/Button';
 import { Store, LogOut, Home } from 'lucide-react';
+import { useAdminDataStore } from '@/store/useAdminDataStore';
 import { 
   Breadcrumb,
   BreadcrumbItem,
@@ -58,6 +59,8 @@ export function AdminHeader() {
   const { signOut, user } = useAuth();
   const pageInfo = getPageInfo(location.pathname);
 
+  const { prefetchProducts } = useAdminDataStore();
+
   const [navLock, setNavLock] = React.useState(false);
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (navLock) {
@@ -100,6 +103,7 @@ export function AdminHeader() {
                   key={item.url}
                   to={item.url}
                   onClick={handleNavClick}
+                  onMouseEnter={() => prefetchProducts()}
                   aria-disabled={navLock}
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                     location.pathname === item.url || 
