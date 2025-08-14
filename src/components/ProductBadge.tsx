@@ -3,10 +3,11 @@ import { getBadgeVariant } from "@/utils/badgeUtils";
 
 interface ProductBadgeProps {
   badge: string;
+  size?: "sm" | "md" | "lg";
   className?: string;
 }
 
-export const ProductBadge = ({ badge, className }: ProductBadgeProps) => {
+export const ProductBadge = ({ badge, size = "md", className }: ProductBadgeProps) => {
   return (
     <Badge 
       variant={getBadgeVariant(badge)} 

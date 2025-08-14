@@ -6,10 +6,12 @@ import { useApp } from "@/contexts/AppContext";
 
 interface FavoriteButtonProps {
   productId: string;
-  productName: string;
+  productName?: string;
+  size?: "sm" | "md" | "lg";
+  className?: string;
 }
 
-export const FavoriteButton = React.memo(({ productId, productName }: FavoriteButtonProps) => {
+export const FavoriteButton = React.memo(({ productId, productName = '', size = "md", className }: FavoriteButtonProps) => {
   const { toggleFavorite, isFavorite, isLoading } = useApp();
   const isProductFavorite = isFavorite(productId);
 
@@ -25,14 +27,14 @@ export const FavoriteButton = React.memo(({ productId, productName }: FavoriteBu
   return (
     <Button
       variant="ghost"
-      size="sm"
+      size={size}
       onClick={handleToggle}
       disabled={isLoading}
       className={`transition-all duration-300 transform hover:scale-105 ${
         isProductFavorite 
           ? "text-red-600 hover:text-red-700" 
           : "text-muted-foreground hover:text-red-600"
-      } ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+      } ${isLoading ? "opacity-50 cursor-not-allowed" : ""} ${className}`}
     >
       <Heart 
         className={`w-6 h-6 transition-all duration-300 ${

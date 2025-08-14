@@ -1,14 +1,14 @@
-
 import React, { useState } from 'react';
-
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Product } from '@/types';
 import { useApp } from '@/contexts/AppContext';
 import { parsePrice, formatPrice } from '@/utils/priceUtils';
 import { AddToCartButtonAnimated } from '@/components/AddToCartButtonAnimated';
 import { FavoriteButton } from '@/components/FavoriteButton';
+import { StockStatus } from '@/components/StockStatus';
+import { ProductBadge } from '@/components/ProductBadge';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 interface ProductCardProps {
@@ -29,7 +29,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
     }
   };
 
-  const mainImage = (product as any).image_url || product.image || (product.images && product.images[0]) || '';
+  const mainImage = (product as any).image_url || product.image || (product.images && product.images[0]) || '/placeholder.svg';
   
   const priceDisplay = typeof product.price === 'string' 
     ? formatPrice(parseFloat(product.price))
@@ -40,91 +40,85 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
 
   return (
     <Card 
-      className="group cursor-pointer overflow-hidden border-0 bg-card/50 shadow-card hover:shadow-glow transition-all duration-500 hover:scale-[1.02] hover:-translate-y-2 rounded-xl w-full max-w-[280px] aspect-[4/5] liquid-glass"
-      onClick={handleClick}
+      className="group cursor-pointer overflow-hidden border-0 bg-card/80 shadow-card hover:shadow-glow transition-all duration-300 hover:scale-[1.02] rounded-xl w-full max-w-[320px] min-h-[500px] liquid-glass"
     >
-      <div className="relative">
-        {/* Product Image */}
-        <div
-          className="aspect-[4/3] overflow-hidden bg-gradient-to-br from-muted/30 to-muted/10 rounded-t-xl"
-          onClick={(e) => {
-            e.stopPropagation();
-            setLightboxOpen(true);
-          }}
-          role="button"
-          aria-label={`Ampliar imagem de ${product.name}`}
-        >
-          <img
-            src={mainImage}
-            alt={`Relógio ${product.brand} ${product.name}`}
-            className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-[1.08]"
-            loading="lazy"
-          />
-          
-          
-          
-        </div>
-        
-        {/* Favorite Button */}
-        <div className="absolute top-3 right-3">
-          <FavoriteButton productId={product.id} productName={product.name} />
-        </div>
-      </div>
-
-      <CardContent className="p-3 sm:p-4 space-y-2">
-        {/* Brand */}
-        <div className="flex items-center justify-between">
-          <p className="text-[9px] sm:text-[11px] text-accent font-semibold uppercase tracking-[0.1em] opacity-80">
-            {product.brand}
-          </p>
-        </div>
-        
-        {/* Product Name */}
-        <h3 className="text-headline text-foreground line-clamp-2 leading-snug min-h-[1.8rem] sm:min-h-[2.2rem] group-hover:text-primary transition-colors duration-300">
-          {product.name}
-        </h3>
-        
-        {/* Key Specifications */}
-        {(product.movement || product.case_diameter || product.case_material) && (
-          <div className="space-y-2 text-[11px] sm:text-xs text-muted-foreground bg-muted/30 rounded-lg p-2">
-            {product.movement && (
-              <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 bg-gradient-primary rounded-full"></div>
-                <span className="font-medium">Movimento:</span>
-                <span className="text-foreground">{product.movement}</span>
-              </div>
-            )}
-            {product.case_diameter && (
-              <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 bg-gradient-primary rounded-full"></div>
-                <span className="font-medium">Diâmetro:</span>
-                <span className="text-foreground">{product.case_diameter}</span>
-              </div>
-            )}
-            {product.case_material && (
-              <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 bg-gradient-primary rounded-full"></div>
-                <span className="font-medium">Material:</span>
-                <span className="text-foreground">{product.case_material}</span>
-              </div>
-            )}
+      <Link to={`/produto/${product.id}`} className="block">
+        <div className="relative">
+          {/* Product Image */}
+          <div
+            className="h-64 overflow-hidden bg-gradient-to-br from-muted/30 to-muted/10 rounded-t-xl"
+            onClick={(e) => {
+              e.stopPropagation();
+              setLightboxOpen(true);
+            }}
+            role="button"
+            aria-label={`Ampliar imagem de ${product.name}`}
+          >
+            <img
+              src={mainImage}
+              alt={`Relógio ${product.brand} ${product.name}`}
+              className="w-full h-full object-cover transition-all duration-700 group-hover:scale-[1.08]"
+              loading="lazy"
+            />
+            
+            {/* Badges no canto superior esquerdo */}
+            <div className="absolute top-3 left-3 flex flex-col gap-1">
+              {(product as any).badges?.slice(0, 2).map((badge: string, index: number) => (
+                <ProductBadge key={index} badge={badge} size="sm" />
+              ))}
+            </div>
+            
+            {/* Botão de favorito no canto superior direito */}
+            <div className="absolute top-3 right-3">
+              <FavoriteButton 
+                productId={product.id} 
+                productName={product.name}
+                size="sm"
+                className="bg-white/90 hover:bg-white shadow-lg"
+              />
+            </div>
+            
+            {/* Status do estoque no canto inferior direito */}
+            <div className="absolute bottom-3 right-3">
+              <StockStatus 
+                stockStatus={(product as any).stock_status} 
+                quantity={(product as any).stock_quantity}
+                size="sm"
+              />
+            </div>
           </div>
-        )}
-        
-        {/* Price */}
-        <div className="pt-2 border-t border-border/30 space-y-1">
-          {product.original_price && (
-            <p className="text-sm text-muted-foreground line-through">
-              {typeof product.original_price === 'string' ? product.original_price : String(product.original_price)}
-            </p>
-          )}
-          <p className="text-price-large bg-gradient-primary bg-clip-text text-transparent leading-tight">
-            {priceDisplay}
-          </p>
         </div>
-        
-        {/* Action Buttons */}
-        <div className="flex gap-1 pt-1">
+
+        <CardContent className="p-4 space-y-3">
+          {/* Brand */}
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-accent font-semibold uppercase tracking-wider opacity-80">
+              {product.brand}
+            </p>
+          </div>
+          
+          {/* Product Name */}
+          <h3 className="text-lg font-semibold text-foreground line-clamp-2 leading-snug min-h-[2.5rem] group-hover:text-primary transition-colors duration-300">
+            {product.name}
+          </h3>
+          
+          {/* Price */}
+          <div className="pt-2 space-y-1">
+            {product.original_price && (
+              <p className="text-sm text-muted-foreground line-through">
+                {originalDisplay}
+              </p>
+            )}
+            <p className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent leading-tight">
+              {priceDisplay}
+            </p>
+          </div>
+        </CardContent>
+      </Link>
+      
+      {/* Action Buttons - Outside Link to prevent navigation conflicts */}
+      <div className="px-4 pb-4">
+        <div className="flex gap-2">
           <AddToCartButtonAnimated
             product={{
               id: product.id,
@@ -133,27 +127,26 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
               image: mainImage
             }}
             variant="primary"
-            size="sm"
-            className="flex-1 gap-2 transition-all duration-500 hover:scale-[1.02] hover:shadow-glow font-semibold rounded-md"
+            size="md"
+            className="flex-1 gap-2 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg font-semibold rounded-lg"
             showText={true}
           />
           
           <Button
             variant="outline"
-            size="sm"
-            className="px-2 transition-all duration-300 hover:bg-primary hover:text-primary-foreground rounded-md liquid-glass"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleClick();
-            }}
+            size="md"
+            className="px-4 transition-all duration-300 hover:bg-primary hover:text-primary-foreground rounded-lg liquid-glass"
+            asChild
           >
-            <span className="text-xs font-medium">Ver</span>
+            <Link to={`/produto/${product.id}`}>
+              <span className="text-sm font-medium">Ver Mais</span>
+            </Link>
           </Button>
         </div>
-      </CardContent>
+      </div>
 
       <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
-        <DialogContent className="max-w-3xl p-0 bg-transparent border-none shadow-none">
+        <DialogContent className="max-w-4xl p-0 bg-transparent border-none shadow-none">
           <img src={mainImage} alt={`Relógio ${product.brand} ${product.name}`} className="w-full h-auto rounded-lg" />
         </DialogContent>
       </Dialog>
