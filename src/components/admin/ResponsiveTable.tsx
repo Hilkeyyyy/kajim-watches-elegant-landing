@@ -26,20 +26,20 @@ interface Product {
   brand: string;
   price: number;
   image_url?: string;
-  status: string;
-  stock_quantity: number;
-  stock_status: string;
+  status?: string;
+  stock_quantity?: number;
+  stock_status?: string;
   badges?: string[];
-  is_visible: boolean;
-  is_featured: boolean;
+  is_visible?: boolean;
+  is_featured?: boolean;
 }
 
 interface ResponsiveTableProps {
   products: Product[];
   onDeleteClick: (product: Product) => void;
   formatPrice: (price: number) => string;
-  getStatusBadge: (status: string) => React.ReactNode;
-  getStockBadge: (stockStatus: string, quantity: number) => React.ReactNode;
+  getStatusBadge: (status?: string) => React.ReactNode;
+  getStockBadge: (stockStatus?: string, quantity?: number) => React.ReactNode;
 }
 
 const ResponsiveTable: React.FC<ResponsiveTableProps> = ({

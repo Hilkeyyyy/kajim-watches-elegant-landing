@@ -40,13 +40,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
 
   return (
     <Card 
-      className="group cursor-pointer overflow-hidden border-0 bg-card/50 backdrop-blur-sm shadow-luxury hover:shadow-glow transition-all duration-700 hover:scale-[1.01] hover:-translate-y-1 rounded-md"
+      className="group cursor-pointer overflow-hidden border-0 bg-card/50 shadow-card hover:shadow-glow transition-all duration-500 hover:scale-[1.02] hover:-translate-y-2 rounded-xl w-full max-w-[280px] aspect-[4/5] liquid-glass"
       onClick={handleClick}
     >
       <div className="relative">
         {/* Product Image */}
         <div
-          className="aspect-square overflow-hidden bg-gradient-to-br from-muted/30 to-muted/10 rounded-t-md"
+          className="aspect-[4/3] overflow-hidden bg-gradient-to-br from-muted/30 to-muted/10 rounded-t-xl"
           onClick={(e) => {
             e.stopPropagation();
             setLightboxOpen(true);

@@ -63,15 +63,15 @@ Typography: Playfair Display (elegant serif), Inter (modern sans), Crimson Text 
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     
-    /* Liquid Glass Effect */
-    --glass-bg: rgba(255, 255, 255, 0.08);
-    --glass-border: rgba(255, 255, 255, 0.18);
-    --glass-backdrop: blur(20px);
-    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    /* Liquid Glass Effect - NO BLUR for better performance */
+    --glass-bg: rgba(255, 255, 255, 0.12);
+    --glass-border: rgba(255, 255, 255, 0.24);
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
     
-    /* Enhanced gradients for liquid glass */
-    --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-    --gradient-glass-hover: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
+    /* Enhanced gradients for liquid glass - VIBRANT colors */
+    --gradient-glass: linear-gradient(135deg, rgba(200, 230, 255, 0.15), rgba(255, 255, 255, 0.08));
+    --gradient-glass-hover: linear-gradient(135deg, rgba(200, 230, 255, 0.25), rgba(255, 255, 255, 0.12));
+    --gradient-glass-active: linear-gradient(135deg, rgba(120, 200, 255, 0.2), rgba(255, 255, 255, 0.1));
 
     --radius: 0.75rem;
 
@@ -257,7 +257,6 @@ Typography: Playfair Display (elegant serif), Inter (modern sans), Crimson Text 
   .category-card-modern {
     @apply relative overflow-hidden rounded-3xl h-80 cursor-pointer;
     background: var(--gradient-glass);
-    backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.18);
     transition: var(--transition-smooth);
   }

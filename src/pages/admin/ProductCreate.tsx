@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { ProductForm } from '@/components/admin/ProductForm';
 import { parsePrice } from '@/utils/priceUtils';
 import type { ProductFormData } from '@/components/admin/forms/ProductFormCore';
+import { useAdminDataStore } from '@/store/useAdminDataStore';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Plus } from 'lucide-react';
@@ -22,10 +23,26 @@ const ProductCreate = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { fetchProducts } = useAdminDataStore();
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleSubmit = async (data: ProductFormData & { images: ImageItem[]; badges: string[] }) => {
-    try {
-      setIsLoading(true);
+    // Debounce 300ms
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+    
+    return new Promise<void>((resolve, reject) => {
+      debounceRef.current = setTimeout(async () => {
+        // Cancelar operação anterior se existir
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort();
+        }
+        abortControllerRef.current = new AbortController();
+        
+        try {
+          setIsLoading(true);
       
       const productData = {
         // Básico
@@ -120,45 +137,44 @@ const ProductCreate = () => {
         image_url: data.images.find(img => img.isMain)?.url || data.images[0]?.url,
       };
 
-      // Descobrir colunas existentes para evitar erro de colunas desconhecidas
-      const { data: sample } = await supabase
-        .from('products')
-        .select('*')
-        .limit(1)
-        .maybeSingle();
+          // Usar UPSERT para garantir integridade dos dados
+          const { error } = await supabase
+            .from('products')
+            .upsert(productData as any, { 
+              onConflict: 'id',
+              ignoreDuplicates: false 
+            });
 
-      const allowedKeys = sample
-        ? Object.keys(sample as Record<string, any>)
-        : [
-            'name','brand','model','description','price','original_price','image_url',
-            'stock_quantity','is_visible','is_featured','status','badges','features'
-          ];
-      const filteredData = Object.fromEntries(
-        Object.entries(productData).filter(([key]) => allowedKeys.includes(key))
-      );
+          if (error) throw error;
 
-      const { error } = await supabase
-        .from('products')
-        .insert(filteredData as any);
+          // Atualizar cache
+          await fetchProducts({ force: true, signal: abortControllerRef.current?.signal });
 
-      if (error) throw error;
+          toast({
+            title: "Sucesso",
+            description: "Produto criado com sucesso!"
+          });
 
-      toast({
-        title: "Sucesso",
-        description: "Produto criado com sucesso!"
-      });
-
-      navigate('/admin/produtos');
-    } catch (error) {
-      console.error('Erro ao criar produto:', error);
-      toast({
-        title: "Erro",
-        description: "Erro ao criar produto",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
+          navigate('/admin/produtos');
+          resolve();
+        } catch (error: any) {
+          if (error.name === 'AbortError') {
+            console.log('Operação cancelada');
+            resolve();
+            return;
+          }
+          console.error('Erro ao criar produto:', error);
+          toast({
+            title: "Erro",
+            description: "Erro ao criar produto",
+            variant: "destructive"
+          });
+          reject(error);
+        } finally {
+          setIsLoading(false);
+        }
+      }, 300);
+    });
   };
 
   const handleCancel = () => {

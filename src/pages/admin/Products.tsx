@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { useAdminDataStore } from '@/store/useAdminDataStore';
 import { 
   AlertDialog,
   AlertDialogAction,
@@ -22,66 +23,25 @@ import { Link } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
 import ResponsiveTable from '@/components/admin/ResponsiveTable';
 
-interface Product {
-  id: string;
-  name: string;
-  brand: string;
-  price: number;
-  image_url?: string;
-  status: string;
-  stock_quantity: number;
-  stock_status: string;
-  badges?: string[];
-  is_visible: boolean;
-  is_featured: boolean;
-  created_at: string;
-}
-
 const Products = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [productToDelete, setProductToDelete] = useState<Product | null>(null);
+  const [productToDelete, setProductToDelete] = useState<any>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const { products, loadingProducts: loading, fetchProducts } = useAdminDataStore();
 
-  const fetchProducts = async (signal?: AbortSignal) => {
-    try {
-      setLoading(true);
-      let query = supabase
-        .from('products')
-        .select('*')
-        .order('created_at', { ascending: false });
-      // @ts-ignore postgrest-js supports abortSignal
-      if (signal && typeof (query as any).abortSignal === 'function') {
-        // @ts-ignore
-        query = (query as any).abortSignal(signal);
-      }
-      const { data, error } = await query;
-
-      if (error) throw error;
-      setProducts(data || []);
-    } catch (error: any) {
-      if (error?.name === 'AbortError') return;
-      console.error('Erro ao buscar produtos:', error);
-      toast({
-        title: "Erro",
-        description: "Erro ao carregar produtos",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDeleteClick = (product: Product) => {
+  const handleDeleteClick = (product: any) => {
+    // Debounce para evitar múltiplos cliques
+    if (isDeleting) return;
     setProductToDelete(product);
     setDeleteDialogOpen(true);
   };
 
   const confirmDelete = async () => {
-    if (!productToDelete) return;
+    if (!productToDelete || isDeleting) return;
 
+    setIsDeleting(true);
     try {
       const { error } = await supabase
         .from('products')
@@ -90,20 +50,22 @@ const Products = () => {
 
       if (error) throw error;
 
+      // Atualizar usando store
+      await fetchProducts({ force: true });
+      
       toast({
         title: "Sucesso",
-        description: "Produto excluído com sucesso!"
+        description: `Produto "${productToDelete.name}" removido com sucesso`
       });
-
-      fetchProducts();
     } catch (error) {
-      console.error('Erro ao excluir produto:', error);
+      console.error('Erro ao deletar produto:', error);
       toast({
         title: "Erro",
-        description: "Erro ao excluir produto",
+        description: "Erro ao remover produto",
         variant: "destructive"
       });
     } finally {
+      setIsDeleting(false);
       setDeleteDialogOpen(false);
       setProductToDelete(null);
     }
@@ -127,11 +89,11 @@ const Products = () => {
     );
   };
 
-  const getStockBadge = (stockStatus: string, quantity: number) => {
+  const getStockBadge = (stockStatus?: string, quantity?: number) => {
     if (stockStatus === 'out_of_stock' || quantity === 0) {
       return <Badge variant="destructive">Sem Estoque</Badge>;
     }
-    if (quantity < 5) {
+    if ((quantity || 0) < 5) {
       return <Badge variant="outline">Estoque Baixo</Badge>;
     }
     return <Badge variant="default">Em Estoque</Badge>;
@@ -147,7 +109,7 @@ const Products = () => {
 
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [fetchProducts]);
 
   if (loading) {
     return (
@@ -225,7 +187,7 @@ const Products = () => {
             </div>
           ) : (
             <ResponsiveTable
-              products={products}
+              products={products as any}
               onDeleteClick={handleDeleteClick}
               formatPrice={formatPrice}
               getStatusBadge={getStatusBadge}

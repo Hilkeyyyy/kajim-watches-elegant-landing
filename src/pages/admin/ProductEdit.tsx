@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { ProductForm } from '@/components/admin/ProductForm';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { useAdminDataStore } from '@/store/useAdminDataStore';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowLeft, Edit, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
@@ -27,6 +28,9 @@ const ProductEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { handleError, handleSuccess } = useErrorHandler();
+  const { fetchProducts } = useAdminDataStore();
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
   console.log('ProductEdit - Renderizando com:', { id, product: !!product, isFetching, isLoading, error });
 
@@ -78,10 +82,23 @@ const ProductEdit = () => {
       console.error('ProductEdit - ID não disponível para submit');
       return;
     }
+
+    // Debounce 300ms
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
     
-    try {
-      console.log('ProductEdit - Iniciando submit para produto:', id);
-      setIsLoading(true);
+    return new Promise<void>((resolve, reject) => {
+      debounceRef.current = setTimeout(async () => {
+        // Cancelar operação anterior se existir
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort();
+        }
+        abortControllerRef.current = new AbortController();
+        
+        try {
+          console.log('ProductEdit - Iniciando submit para produto:', id);
+          setIsLoading(true);
       
       // Validações antes do envio
       if (!data.name || !data.price || !data.brand) {
@@ -189,37 +206,42 @@ const ProductEdit = () => {
         updated_at: new Date().toISOString(),
       } as const;
 
-      console.log('ProductEdit - Preparando dados para Supabase');
-      const existingKeys = product ? Object.keys(product as Record<string, any>) : [];
-      const filteredData = Object.fromEntries(
-        Object.entries(productData).filter(([key]) => existingKeys.includes(key))
-      );
+          console.log('ProductEdit - Usando UPSERT para máxima integridade');
+          
+          const { error } = await supabase
+            .from('products')
+            .upsert({ ...productData, id }, { 
+              onConflict: 'id',
+              ignoreDuplicates: false 
+            });
 
-      console.log('ProductEdit - Enviando dados filtrados:', {
-        id,
-        keys: Object.keys(filteredData),
-      });
+          if (error) {
+            console.error('ProductEdit - Erro na query:', error);
+            throw error;
+          }
 
-      const { error } = await supabase
-        .from('products')
-        .update(filteredData as any)
-        .eq('id', id);
+          // Atualizar cache
+          await fetchProducts({ force: true, signal: abortControllerRef.current?.signal });
 
-      if (error) {
-        console.error('ProductEdit - Erro na query:', error);
-        throw error;
-      }
+          console.log('ProductEdit - Produto atualizado com sucesso');
+          handleSuccess(`Produto "${data.name}" atualizado com sucesso!`);
 
-      console.log('ProductEdit - Produto atualizado com sucesso');
-      handleSuccess(`Produto "${data.name}" atualizado com sucesso!`);
-
-      navigate('/admin/produtos', { replace: true });
-    } catch (error) {
-      console.error('ProductEdit - Erro ao atualizar produto:', error);
-      handleError(error, 'ProductEdit - Atualizar Produto');
-    } finally {
-      setIsLoading(false);
-    }
+          navigate('/admin/produtos', { replace: true });
+          resolve();
+        } catch (error: any) {
+          if (error.name === 'AbortError') {
+            console.log('Operação cancelada');
+            resolve();
+            return;
+          }
+          console.error('ProductEdit - Erro ao atualizar produto:', error);
+          handleError(error, 'ProductEdit - Atualizar Produto');
+          reject(error);
+        } finally {
+          setIsLoading(false);
+        }
+      }, 300);
+    });
   };
 
   const handleCancel = () => {
