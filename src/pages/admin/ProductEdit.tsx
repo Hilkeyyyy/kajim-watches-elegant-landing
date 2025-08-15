@@ -214,8 +214,11 @@ const ProductEdit = () => {
 
           console.log('ProductEdit - Produto atualizado com sucesso');
           handleSuccess(`Produto "${data.name}" atualizado com sucesso!`);
-
-          navigate('/admin/produtos', { replace: true });
+          
+          // Aguardar um pouco antes de navegar para garantir que o toast seja mostrado
+          setTimeout(() => {
+            navigate('/admin/produtos', { replace: true });
+          }, 1000);
           resolve();
         } catch (error: any) {
           if (error.name === 'AbortError') {

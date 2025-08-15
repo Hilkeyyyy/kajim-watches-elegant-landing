@@ -30,11 +30,6 @@ const getPageInfo = (pathname: string) => {
       subtitle: 'Organizar produtos por categoria',
       breadcrumb: ['Admin', 'Categorias']
     },
-    '/admin/usuarios': {
-      title: 'Usuários',
-      subtitle: 'Gerenciar usuários do sistema',
-      breadcrumb: ['Admin', 'Usuários']
-    },
     '/admin/relatorios': {
       title: 'Relatórios',
       subtitle: 'Visualizar estatísticas e métricas',
@@ -101,7 +96,6 @@ export function AdminHeader() {
     { title: "Dashboard", url: "/admin" },
     { title: "Produtos", url: "/admin/produtos" },
     { title: "Categorias", url: "/admin/categorias" },
-    { title: "Usuários", url: "/admin/usuarios" },
     { title: "Relatórios", url: "/admin/relatorios" },
   ];
 

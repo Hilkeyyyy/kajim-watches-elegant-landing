@@ -39,9 +39,6 @@ const AdminBreadcrumb = () => {
         case 'categorias':
           items.push({ label: 'Categorias' });
           break;
-        case 'usuarios':
-          items.push({ label: 'Usuários' });
-          break;
         default:
           items.push({ label: section.charAt(0).toUpperCase() + section.slice(1) });
       }

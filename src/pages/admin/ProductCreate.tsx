@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { ProductForm } from '@/components/admin/ProductForm';
 import { parsePrice } from '@/utils/priceUtils';
 import type { ProductFormData } from '@/components/admin/forms/ProductFormCore';
@@ -22,7 +22,7 @@ interface ImageItem {
 const ProductCreate = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const { handleError, handleSuccess } = useErrorHandler();
   const { fetchProducts } = useAdminDataStore();
   const abortControllerRef = useRef<AbortController | null>(null);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
@@ -138,10 +138,7 @@ const ProductCreate = () => {
           // Atualizar cache
           await fetchProducts({ force: true, signal: abortControllerRef.current?.signal });
 
-          toast({
-            title: "Sucesso",
-            description: "Produto criado com sucesso!"
-          });
+          handleSuccess("Produto criado com sucesso!");
 
           navigate('/admin/produtos');
           resolve();
@@ -152,11 +149,7 @@ const ProductCreate = () => {
             return;
           }
           console.error('Erro ao criar produto:', error);
-          toast({
-            title: "Erro",
-            description: "Erro ao criar produto",
-            variant: "destructive"
-          });
+          handleError(error, 'ProductCreate - Criar Produto');
           reject(error);
         } finally {
           setIsLoading(false);
