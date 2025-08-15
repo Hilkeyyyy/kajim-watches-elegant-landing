@@ -39,13 +39,37 @@ export class AdminErrorBoundary extends React.Component<
   }
 
   handleRetry = () => {
-    console.log('AdminErrorBoundary - Tentando novamente');
-    this.setState({ hasError: false, error: undefined, errorInfo: undefined });
-    window.location.reload();
+    console.log('AdminErrorBoundary - Tentando recovery automático');
+    try {
+      // Limpar error handlers e caches
+      errorHandler.clearErrors();
+      
+      // Reset do estado
+      this.setState({ hasError: false, error: undefined, errorInfo: undefined });
+      
+      // Recovery mais suave - tentar recarregar apenas o conteúdo
+      setTimeout(() => {
+        if (this.state.hasError) {
+          console.log('AdminErrorBoundary - Recovery falhou, recarregando página');
+          window.location.reload();
+        }
+      }, 2000);
+      
+    } catch (recoveryError) {
+      console.error('AdminErrorBoundary - Erro no recovery:', recoveryError);
+      window.location.reload();
+    }
   };
 
   handleGoHome = () => {
-    window.location.href = '/admin';
+    try {
+      // Limpar estado de erro
+      errorHandler.clearErrors();
+      window.location.href = '/admin';
+    } catch (error) {
+      console.error('AdminErrorBoundary - Erro ao navegar:', error);
+      window.location.reload();
+    }
   };
 
   showErrorDetails = () => {

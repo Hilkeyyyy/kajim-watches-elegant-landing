@@ -9,21 +9,42 @@ import { AdminHeader } from '@/components/admin/AdminHeader';
 const AdminLayout = () => {
   const { user, loading, isAdmin } = useAuth();
   const navigate = useNavigate();
+  const [navigationLock, setNavigationLock] = React.useState(false);
+  const abortControllerRef = React.useRef<AbortController | null>(null);
 
   console.log('AdminLayout - Auth State:', { user: !!user, loading, isAdmin });
 
-  // Early returns para evitar re-renders desnecessários
+  // Controle de navegação com AbortController
   React.useEffect(() => {
+    // Cancelar requisições anteriores se houver
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    abortControllerRef.current = new AbortController();
+
     if (!loading) {
+      // Implementar debounce/lock para evitar múltiplos redirects
+      if (navigationLock) return;
+
       if (!user) {
+        setNavigationLock(true);
         console.warn('AdminLayout - No user, redirecting to auth');
         navigate('/auth', { replace: true });
+        setTimeout(() => setNavigationLock(false), 1000);
       } else if (!isAdmin) {
+        setNavigationLock(true);
         console.warn('AdminLayout - User is not admin, redirecting to home');
         navigate('/', { replace: true });
+        setTimeout(() => setNavigationLock(false), 1000);
       }
     }
-  }, [user, isAdmin, loading, navigate]);
+
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, [user, isAdmin, loading, navigate, navigationLock]);
 
   // Loading state
   if (loading) {

@@ -175,12 +175,15 @@ export const ProductDetailPage: React.FC = () => {
               </Button>
             </div>
 
-            {/* Especificações Técnicas */}
+            {/* Especificações Técnicas COMPLETAS */}
             <Card>
               <CardHeader>
-                <CardTitle>Especificações Técnicas</CardTitle>
+                <CardTitle>Especificações Técnicas Completas</CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Todas as especificações técnicas disponíveis do produto
+                </p>
               </CardHeader>
-              <CardContent>
+              <CardContent className="max-h-[600px] overflow-y-auto">
                 {(() => {
                   const groups: { title: string; items: Array<{ label: string; value?: string | number | boolean }> }[] = [
                     {
@@ -279,24 +282,43 @@ export const ProductDetailPage: React.FC = () => {
                   ];
 
                   return (
-                    <div className="space-y-6">
+                    <div className="space-y-8">
                       {groups.map((group) => {
                         const visible = group.items.filter((i) => i.value !== undefined && i.value !== '' && i.value !== null)
                         if (visible.length === 0) return null
                         return (
-                          <div key={group.title}>
-                            <h3 className="text-sm font-semibold mb-3 text-muted-foreground">{group.title}</h3>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div key={group.title} className="border rounded-lg p-4 bg-muted/20">
+                            <h3 className="text-lg font-bold mb-4 text-foreground flex items-center gap-2">
+                              <span className="w-2 h-2 bg-primary rounded-full"></span>
+                              {group.title}
+                              <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full ml-2">
+                                {visible.length} spec{visible.length !== 1 ? 's' : ''}
+                              </span>
+                            </h3>
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                               {visible.map((i) => (
-                                <div key={i.label} className="flex justify-between py-2 border-b">
-                                  <span className="font-medium">{i.label}:</span>
-                                  <span className="text-right ml-4">{String(i.value)}</span>
+                                <div key={i.label} className="bg-background rounded-lg p-3 border shadow-sm hover:shadow-md transition-shadow">
+                                  <div className="flex flex-col space-y-1">
+                                    <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">{i.label}</span>
+                                    <span className="text-base font-medium text-foreground break-words">{String(i.value)}</span>
+                                  </div>
                                 </div>
                               ))}
                             </div>
                           </div>
                         )
                       })}
+                      
+                      {/* Contador total de especificações */}
+                      <div className="text-center py-4 border-t bg-muted/10 rounded-lg">
+                        <p className="text-sm text-muted-foreground">
+                          <span className="font-bold text-primary">
+                            {groups.reduce((acc, group) => 
+                              acc + group.items.filter(i => i.value !== undefined && i.value !== '' && i.value !== null).length, 0
+                            )}
+                          </span> especificações técnicas completas exibidas
+                        </p>
+                      </div>
                     </div>
                   )
                 })()}

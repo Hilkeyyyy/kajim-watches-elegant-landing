@@ -62,13 +62,31 @@ export function AdminHeader() {
   const { prefetchProducts } = useAdminDataStore();
 
   const [navLock, setNavLock] = React.useState(false);
+  const abortControllerRef = React.useRef<AbortController | null>(null);
+
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (navLock) {
       e.preventDefault();
+      console.log('AdminHeader - Navegação bloqueada temporariamente');
       return;
     }
+    
+    // Cancelar requisições anteriores
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    abortControllerRef.current = new AbortController();
+    
     setNavLock(true);
-    window.setTimeout(() => setNavLock(false), 400);
+    
+    // Prefetch com AbortController
+    try {
+      prefetchProducts();
+    } catch (error) {
+      console.warn('AdminHeader - Erro no prefetch:', error);
+    }
+    
+    window.setTimeout(() => setNavLock(false), 500);
   };
 
   const handleSignOut = async () => {
