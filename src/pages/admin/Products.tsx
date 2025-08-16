@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,7 +16,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useToast } from '@/hooks/use-toast';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
 
 import { Plus, Package } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -27,9 +28,19 @@ const Products = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<any>(null);
   const [isDeleting, setIsDeleting] = useState(false);
-  const { toast } = useToast();
+  const { handleError, handleSuccess } = useErrorHandler();
   const isMobile = useIsMobile();
+  const location = useLocation();
   const { products, loadingProducts: loading, fetchProducts } = useAdminDataStore();
+
+  // Mostrar mensagem de sucesso se veio de navegação
+  useEffect(() => {
+    if (location.state?.successMessage) {
+      handleSuccess(location.state.successMessage);
+      // Limpar o estado para não mostrar novamente
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state, handleSuccess]);
 
   const handleDeleteClick = (product: any) => {
     // Debounce para evitar múltiplos cliques
@@ -53,17 +64,10 @@ const Products = () => {
       // Atualizar usando store
       await fetchProducts({ force: true });
       
-      toast({
-        title: "Sucesso",
-        description: `Produto "${productToDelete.name}" removido com sucesso`
-      });
+      handleSuccess(`Produto "${productToDelete?.name || 'produto'}" removido com sucesso`);
     } catch (error) {
       console.error('Erro ao deletar produto:', error);
-      toast({
-        title: "Erro",
-        description: "Erro ao remover produto",
-        variant: "destructive"
-      });
+      handleError(error, 'Products - Delete');
     } finally {
       setIsDeleting(false);
       setDeleteDialogOpen(false);

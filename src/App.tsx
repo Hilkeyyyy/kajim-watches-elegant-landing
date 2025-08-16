@@ -15,7 +15,7 @@ import Products from '@/pages/admin/Products';
 import ProductCreate from '@/pages/admin/ProductCreate';
 import ProductEdit from '@/pages/admin/ProductEdit';
 import Categories from '@/pages/admin/Categories';
-import Users from '@/pages/admin/Users';
+
 import Reports from '@/pages/admin/Reports';
 import NotFound from '@/pages/NotFound';
 import { Toaster } from '@/components/ui/sonner';
@@ -43,7 +43,7 @@ export default function App() {
               <Route path="produtos/novo" element={<ProductCreate />} />
               <Route path="produtos/editar/:id" element={<ProductEdit />} />
               <Route path="categorias" element={<Categories />} />
-              <Route path="usuarios" element={<Users />} />
+              
               <Route path="relatorios" element={<Reports />} />
             </Route>
 

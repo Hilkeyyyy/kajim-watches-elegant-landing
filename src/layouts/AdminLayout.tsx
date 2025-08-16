@@ -68,9 +68,7 @@ const AdminLayout = () => {
       <div className="min-h-screen bg-background">
         <AdminHeader />
         <main className="container mx-auto p-4 max-w-7xl">
-          <AdminErrorBoundary>
-            <Outlet />
-          </AdminErrorBoundary>
+          <Outlet />
         </main>
       </div>
     </AdminErrorBoundary>
