@@ -18,7 +18,7 @@ import Categories from '@/pages/admin/Categories';
 
 import Reports from '@/pages/admin/Reports';
 import NotFound from '@/pages/NotFound';
-import { Toaster } from '@/components/ui/sonner';
+import { Toaster } from '@/components/ui/toaster';
 
 export default function App() {
   return (

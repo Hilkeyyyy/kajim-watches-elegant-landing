@@ -3,7 +3,7 @@ import React from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { AdminErrorBoundary } from '@/components/admin/AdminErrorBoundary';
+// Removed AdminErrorBoundary wrapper to avoid full-screen error overlay
 import { AdminHeader } from '@/components/admin/AdminHeader';
 
 const AdminLayout = () => {
@@ -64,14 +64,12 @@ const AdminLayout = () => {
   }
 
   return (
-    <AdminErrorBoundary>
-      <div className="min-h-screen bg-background">
-        <AdminHeader />
-        <main className="container mx-auto p-4 max-w-7xl">
-          <Outlet />
-        </main>
-      </div>
-    </AdminErrorBoundary>
+    <div className="min-h-screen bg-background">
+      <AdminHeader />
+      <main className="container mx-auto p-4 max-w-7xl">
+        <Outlet />
+      </main>
+    </div>
   );
 };
 
