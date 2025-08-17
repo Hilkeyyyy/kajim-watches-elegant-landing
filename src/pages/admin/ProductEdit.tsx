@@ -7,6 +7,7 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import type { ProductFormData } from '@/components/admin/forms/ProductFormCore';
 import { useAdminDataStore } from '@/store/useAdminDataStore';
 import { buildSafeProductPayload, validateProductData } from '@/utils/productUtils';
+import { logAdminAction } from '@/utils/auditLogger';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Edit } from 'lucide-react';
@@ -148,6 +149,11 @@ const ProductEdit = () => {
           }
 
           console.log('ProductEdit - Produto atualizado com sucesso');
+          
+          // Log admin action for audit trail
+          logAdminAction('update_product', product.id, { 
+            productName: updatedProduct.name 
+          });
           
           // Atualizar cache silenciosamente
           fetchProducts({ force: true }).catch(console.warn);

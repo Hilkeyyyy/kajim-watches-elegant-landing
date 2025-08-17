@@ -6,6 +6,7 @@ import { ProductForm } from '@/components/admin/ProductForm';
 import type { ProductFormData } from '@/components/admin/forms/ProductFormCore';
 import { useAdminDataStore } from '@/store/useAdminDataStore';
 import { buildSafeProductPayload, validateProductData } from '@/utils/productUtils';
+import { logAdminAction } from '@/utils/auditLogger';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Plus } from 'lucide-react';
@@ -60,16 +61,23 @@ const ProductCreate = () => {
           
           console.log('ProductCreate - Payload seguro:', productPayload);
           
-          const { error } = await supabase
+          const { data: createdProduct, error } = await supabase
             .from('products')
-            .insert(productPayload);
+            .insert(productPayload)
+            .select()
+            .single();
 
           if (error) {
             console.error('Supabase error:', error);
             throw error;
           }
 
-          console.log('ProductCreate - Produto criado com sucesso');
+          console.log('ProductCreate - Produto criado com sucesso:', createdProduct);
+          
+          // Log admin action for audit trail
+          logAdminAction('create_product', createdProduct.id, { 
+            productName: createdProduct.name 
+          });
           
           // Atualizar cache silenciosamente
           fetchProducts({ force: true }).catch(console.warn);

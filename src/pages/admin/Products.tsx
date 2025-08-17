@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
+import { logAdminAction } from '@/utils/auditLogger';
 
 import { Plus, Package } from 'lucide-react';
 import { Link } from 'react-router-dom';

@@ -78,3 +78,11 @@ export const logStorageAction = (action: string, key: string, success: boolean) 
 export const logSecurityEvent = (event: string, details: any) => {
   auditLogger.log(`security_${event}`, details);
 };
+
+export const logAdminAction = (action: string, productId?: string, details?: any) => {
+  auditLogger.log(`admin_${action}`, { productId, ...details });
+};
+
+export const logRoleChange = (targetUserId: string, oldRole: string, newRole: string) => {
+  auditLogger.log('role_update', { targetUserId, oldRole, newRole });
+};
