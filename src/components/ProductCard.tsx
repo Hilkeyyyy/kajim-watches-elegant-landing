@@ -40,13 +40,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
 
   return (
     <Card 
-      className="group cursor-pointer overflow-hidden border-0 bg-card/80 shadow-card hover:shadow-glow transition-all duration-300 hover:scale-[1.02] rounded-xl w-full max-w-[380px] min-h-[580px] liquid-glass"
+      className="group cursor-pointer overflow-hidden border-0 bg-card/80 shadow-card hover:shadow-glow transition-all duration-300 hover:scale-[1.02] rounded-xl w-full max-w-[400px] min-h-[620px] liquid-glass"
     >
       <Link to={`/produto/${product.id}`} className="block">
         <div className="relative">
           {/* Product Image */}
           <div
-            className="h-72 overflow-hidden bg-gradient-to-br from-muted/30 to-muted/10 rounded-t-xl"
+            className="h-80 overflow-hidden bg-gradient-to-br from-muted/30 to-muted/10 rounded-t-xl"
             onClick={(e) => {
               e.stopPropagation();
               setLightboxOpen(true);
@@ -109,7 +109,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
                 {originalDisplay}
               </p>
             )}
-            <p className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent leading-tight">
+            <p className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent leading-tight">
               {priceDisplay}
             </p>
           </div>
