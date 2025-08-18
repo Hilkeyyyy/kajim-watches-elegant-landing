@@ -83,7 +83,7 @@ export const BrandCarousel = ({ brand, title, description }: BrandCarouselProps)
         >
           <CarouselContent className="-ml-4">
             {products.map((product) => (
-              <CarouselItem key={product.id} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
+              <CarouselItem key={product.id} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3 2xl:basis-1/4">
                 <ProductCard
                   product={product}
                   onProductClick={handleProductClick}

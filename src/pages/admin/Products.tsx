@@ -113,7 +113,8 @@ const Products = () => {
 
 
   useEffect(() => {
-    fetchProducts();
+    // Forçar recarregamento quando navegar de volta para a página
+    fetchProducts({ force: true });
   }, [fetchProducts]);
 
   if (loading) {

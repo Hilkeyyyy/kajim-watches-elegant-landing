@@ -155,10 +155,10 @@ const ProductEdit = () => {
             productName: updatedProduct.name 
           });
           
-          // Atualizar cache silenciosamente
-          fetchProducts({ force: true }).catch(console.warn);
+          // Aguardar atualização do cache antes da navegação
+          await fetchProducts({ force: true });
           
-          // Navegar imediatamente e mostrar sucesso na página de destino
+          // Navegar e mostrar sucesso
           navigate('/admin/produtos', { 
             replace: true, 
             state: { successMessage: `Produto "${data.name}" atualizado com sucesso!` }

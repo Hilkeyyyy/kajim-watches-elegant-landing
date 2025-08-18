@@ -1,7 +1,7 @@
 import React from "react";
 import { UseFormReturn } from "react-hook-form";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/Input";
+import { BrazilianNumberInput } from "@/components/BrazilianNumberInput";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface ProductFormPricesProps {
@@ -23,7 +23,12 @@ export const ProductFormPrices: React.FC<ProductFormPricesProps> = ({ form }) =>
               <FormItem>
                 <FormLabel>Preço *</FormLabel>
                 <FormControl>
-                  <Input type="number" step="0.01" placeholder="0.00" {...field} />
+                  <BrazilianNumberInput
+                    type="currency"
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="0,00"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -37,7 +42,12 @@ export const ProductFormPrices: React.FC<ProductFormPricesProps> = ({ form }) =>
               <FormItem>
                 <FormLabel>Preço Original (opcional)</FormLabel>
                 <FormControl>
-                  <Input type="number" step="0.01" placeholder="0.00" {...field} />
+                  <BrazilianNumberInput
+                    type="currency"
+                    value={field.value || ""}
+                    onChange={field.onChange}
+                    placeholder="0,00"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

@@ -40,13 +40,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
 
   return (
     <Card 
-      className="group cursor-pointer overflow-hidden border-0 bg-card/80 shadow-card hover:shadow-glow transition-all duration-300 hover:scale-[1.02] rounded-xl w-full max-w-[320px] min-h-[500px] liquid-glass"
+      className="group cursor-pointer overflow-hidden border-0 bg-card/80 shadow-card hover:shadow-glow transition-all duration-300 hover:scale-[1.02] rounded-xl w-full max-w-[380px] min-h-[580px] liquid-glass"
     >
       <Link to={`/produto/${product.id}`} className="block">
         <div className="relative">
           {/* Product Image */}
           <div
-            className="h-64 overflow-hidden bg-gradient-to-br from-muted/30 to-muted/10 rounded-t-xl"
+            className="h-72 overflow-hidden bg-gradient-to-br from-muted/30 to-muted/10 rounded-t-xl"
             onClick={(e) => {
               e.stopPropagation();
               setLightboxOpen(true);
@@ -89,7 +89,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
           </div>
         </div>
 
-        <CardContent className="p-4 space-y-3">
+        <CardContent className="p-6 space-y-4">
           {/* Brand */}
           <div className="flex items-center justify-between">
             <p className="text-xs text-accent font-semibold uppercase tracking-wider opacity-80">
@@ -98,18 +98,18 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
           </div>
           
           {/* Product Name */}
-          <h3 className="text-lg font-semibold text-foreground line-clamp-2 leading-snug min-h-[2.5rem] group-hover:text-primary transition-colors duration-300">
+          <h3 className="text-xl font-semibold text-foreground line-clamp-2 leading-snug min-h-[3rem] group-hover:text-primary transition-colors duration-300">
             {product.name}
           </h3>
           
           {/* Price */}
-          <div className="pt-2 space-y-1">
+          <div className="pt-3 space-y-2">
             {product.original_price && (
-              <p className="text-sm text-muted-foreground line-through">
+              <p className="text-base text-muted-foreground line-through">
                 {originalDisplay}
               </p>
             )}
-            <p className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent leading-tight">
+            <p className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent leading-tight">
               {priceDisplay}
             </p>
           </div>
@@ -117,7 +117,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
       </Link>
       
       {/* Action Buttons - Outside Link to prevent navigation conflicts */}
-      <div className="px-4 pb-4">
+      <div className="px-6 pb-6">
         <div className="flex gap-2">
           <AddToCartButtonAnimated
             product={{
