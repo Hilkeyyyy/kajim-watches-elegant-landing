@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -19,93 +20,89 @@ interface ImageItem {
   isMain: boolean;
 }
 
-
 const ProductCreate = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { handleError, handleSuccess } = useErrorHandler();
   const { fetchProducts } = useAdminDataStore();
   const abortControllerRef = useRef<AbortController | null>(null);
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleSubmit = async (data: ProductFormData & { images: ImageItem[]; badges: string[] }) => {
-    // Debounce para evitar múltiplas submissões
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
+    try {
+      setIsLoading(true);
+
+      // Cancelar operação anterior se existir
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+
+      // Validar dados essenciais
+      const validation = validateProductData(data);
+      if (!validation.valid) {
+        throw new Error(validation.errors.join(', '));
+      }
+
+      // Verificar se há pelo menos uma imagem
+      if (!data.images || data.images.length === 0) {
+        throw new Error('É necessário adicionar pelo menos uma imagem do produto');
+      }
+
+      // Construir payload seguro
+      const productPayload = buildSafeProductPayload(data);
+      
+      console.log('ProductCreate - Criando produto:', productPayload);
+      
+      const { data: createdProduct, error } = await supabase
+        .from('products')
+        .insert(productPayload)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Supabase error:', error);
+        throw new Error(`Erro ao salvar: ${error.message}`);
+      }
+
+      console.log('ProductCreate - Produto criado com sucesso:', createdProduct);
+      
+      // Log admin action
+      logAdminAction('create_product', createdProduct.id, { 
+        productName: createdProduct.name 
+      });
+      
+      // Mostrar sucesso antes de navegar
+      handleSuccess("Produto criado com sucesso!");
+      
+      // Aguardar um pouco para mostrar o toast
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Recarregar cache de produtos
+      await fetchProducts({ force: true });
+      
+      // Navegar de volta para lista
+      navigate('/admin/produtos', { replace: true });
+      
+    } catch (error: any) {
+      console.error('ProductCreate - Erro completo:', error);
+      
+      if (error.name === 'AbortError') {
+        console.log('ProductCreate - Operação cancelada');
+        return;
+      }
+      
+      // Mostrar erro específico
+      const errorMessage = error.message || 'Erro desconhecido ao criar produto';
+      handleError(new Error(errorMessage), 'ProductCreate');
+    } finally {
+      setIsLoading(false);
     }
-    
-    return new Promise<void>((resolve, reject) => {
-      debounceRef.current = setTimeout(async () => {
-        // Cancelar operação anterior se existir
-        if (abortControllerRef.current) {
-          abortControllerRef.current.abort();
-        }
-        abortControllerRef.current = new AbortController();
-        
-        try {
-          setIsLoading(true);
-
-          // Validar dados essenciais
-          const validation = validateProductData(data);
-          if (!validation.valid) {
-            throw new Error(validation.errors.join(', '));
-          }
-
-          // Verificar se há pelo menos uma imagem
-          if (!data.images || data.images.length === 0) {
-            throw new Error('É necessário adicionar pelo menos uma imagem do produto');
-          }
-
-          // Construir payload seguro
-          const productPayload = buildSafeProductPayload(data);
-          
-          console.log('ProductCreate - Payload seguro:', productPayload);
-          
-          const { data: createdProduct, error } = await supabase
-            .from('products')
-            .insert(productPayload)
-            .select()
-            .single();
-
-          if (error) {
-            console.error('Supabase error:', error);
-            throw error;
-          }
-
-          console.log('ProductCreate - Produto criado com sucesso:', createdProduct);
-          
-          // Log admin action for audit trail
-          logAdminAction('create_product', createdProduct.id, { 
-            productName: createdProduct.name 
-          });
-          
-          // Aguardar atualização do cache antes da navegação
-          await fetchProducts({ force: true });
-          
-          // Navegar e mostrar sucesso
-          navigate('/admin/produtos', { 
-            replace: true, 
-            state: { successMessage: "Produto criado com sucesso!" }
-          });
-          
-          resolve();
-        } catch (error: any) {
-          if (error.name === 'AbortError') {
-            console.log('ProductCreate - Operação cancelada');
-            resolve();
-            return;
-          }
-          console.error('ProductCreate - Erro:', error);
-          handleError(error, 'ProductCreate');
-          reject(error);
-        } finally {
-          setIsLoading(false);
-        }
-      }, 300);
-    });
   };
 
   const handleCancel = () => {
+    // Cancelar operação em andamento
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
     navigate('/admin/produtos');
   };
 

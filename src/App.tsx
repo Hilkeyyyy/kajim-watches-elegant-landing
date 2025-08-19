@@ -1,58 +1,88 @@
 
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from '@/contexts/AuthContext';
+import { Suspense, lazy } from 'react';
+import { Toaster } from '@/components/ui/sonner';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { AppProvider } from '@/contexts/AppContext';
-import { HomePage } from '@/pages/HomePage';
-import { ProductDetailPage } from '@/pages/ProductDetailPage';
-import { CartPage } from '@/pages/CartPage';
-import { FavoritesPage } from '@/pages/FavoritesPage';
-import Auth from '@/pages/Auth';
-import CategoryPage from '@/pages/CategoryPage';
-import AdminLayout from '@/layouts/AdminLayout';
-import Dashboard from '@/pages/admin/Dashboard';
-import Products from '@/pages/admin/Products';
-import ProductCreate from '@/pages/admin/ProductCreate';
-import ProductEdit from '@/pages/admin/ProductEdit';
-import Categories from '@/pages/admin/Categories';
+import { AuthProvider } from '@/contexts/AuthContext';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 
-import Reports from '@/pages/admin/Reports';
-import NotFound from '@/pages/NotFound';
-import { Toaster } from '@/components/ui/toaster';
+// Lazy load pages
+const Index = lazy(() => import('@/pages/Index'));
+const ProductDetailPage = lazy(() => import('@/pages/ProductDetailPage'));
+const CartPage = lazy(() => import('@/pages/CartPage'));
+const FavoritesPage = lazy(() => import('@/pages/FavoritesPage'));
+const CategoryPage = lazy(() => import('@/pages/CategoryPage'));
+const BrandPage = lazy(() => import('@/pages/BrandPage'));
+const Auth = lazy(() => import('@/pages/Auth'));
+const NotFound = lazy(() => import('@/pages/NotFound'));
 
-export default function App() {
+// Admin pages
+const AdminLayout = lazy(() => import('@/layouts/AdminLayout'));
+const Dashboard = lazy(() => import('@/pages/admin/Dashboard'));
+const Products = lazy(() => import('@/pages/admin/Products'));
+const ProductCreate = lazy(() => import('@/pages/admin/ProductCreate'));
+const ProductEdit = lazy(() => import('@/pages/admin/ProductEdit'));
+const Categories = lazy(() => import('@/pages/admin/Categories'));
+const SiteEditor = lazy(() => import('@/pages/admin/SiteEditor'));
+const Reports = lazy(() => import('@/pages/admin/Reports'));
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+function App() {
   return (
-    <AuthProvider>
-      <AppProvider>
-        <Router>
-          <Routes>
-            {/* Páginas Públicas */}
-            <Route path="/" element={<HomePage />} />
-            <Route path="/produto/:id" element={<ProductDetailPage />} />
-            <Route path="/product/:id" element={<ProductDetailPage />} />
-            <Route path="/categoria/:categoryId" element={<CategoryPage />} />
-            <Route path="/carrinho" element={<CartPage />} />
-            <Route path="/favoritos" element={<FavoritesPage />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/login" element={<Auth />} />
+    <ErrorBoundary>
+      <BrowserRouter>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <AppProvider>
+              <TooltipProvider>
+                <div className="min-h-screen bg-background font-sans antialiased">
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <Routes>
+                      {/* Public routes */}
+                      <Route path="/" element={<Index />} />
+                      <Route path="/produto/:id" element={<ProductDetailPage />} />
+                      <Route path="/carrinho" element={<CartPage />} />
+                      <Route path="/favoritos" element={<FavoritesPage />} />
+                      <Route path="/categoria/:id" element={<CategoryPage />} />
+                      <Route path="/marca/:brand" element={<BrandPage />} />
+                      <Route path="/auth" element={<Auth />} />
 
-            {/* Rotas Administrativas */}
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<Dashboard />} />
-              <Route path="produtos" element={<Products />} />
-              <Route path="produtos/novo" element={<ProductCreate />} />
-              <Route path="produtos/editar/:id" element={<ProductEdit />} />
-              <Route path="categorias" element={<Categories />} />
-              
-              <Route path="relatorios" element={<Reports />} />
-            </Route>
+                      {/* Admin routes */}
+                      <Route path="/admin" element={<AdminLayout />}>
+                        <Route index element={<Dashboard />} />
+                        <Route path="dashboard" element={<Dashboard />} />
+                        <Route path="produtos" element={<Products />} />
+                        <Route path="produtos/criar" element={<ProductCreate />} />
+                        <Route path="produtos/:id/editar" element={<ProductEdit />} />
+                        <Route path="categorias" element={<Categories />} />
+                        <Route path="editor" element={<SiteEditor />} />
+                        <Route path="relatorios" element={<Reports />} />
+                      </Route>
 
-            {/* 404 */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          <Toaster />
-        </Router>
-      </AppProvider>
-    </AuthProvider>
+                      {/* 404 */}
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </Suspense>
+                  <Toaster />
+                </div>
+              </TooltipProvider>
+            </AppProvider>
+          </AuthProvider>
+        </QueryClientProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }
+
+export default App;

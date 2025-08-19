@@ -1,8 +1,11 @@
-import React from 'react';
-import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Eye, Edit, Trash2, Star, Package } from 'lucide-react';
+
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { useAdminDataStore } from '@/store/useAdminDataStore';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
+import { formatPrice } from '@/utils/priceUtils';
+import { logAdminAction } from '@/utils/auditLogger';
 import {
   Table,
   TableBody,
@@ -11,188 +14,212 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/Button';
+import { MoreHorizontal, Eye, Edit, Trash2, Plus } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 
-interface Product {
-  id: string;
-  name: string;
-  brand: string;
-  price: number;
-  status: string;
-  stock_quantity: number;
-  is_featured: boolean;
-  is_visible: boolean;
-  image_url?: string;
-}
+export const ProductTable = () => {
+  const navigate = useNavigate();
+  const { products, loadingProducts, fetchProducts } = useAdminDataStore();
+  const { handleError, handleSuccess } = useErrorHandler();
+  const [deleteProductId, setDeleteProductId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
-interface ProductTableProps {
-  products: Product[];
-  onView: (id: string) => void;
-  onEdit: (id: string) => void;
-  onDelete: (id: string) => void;
-  isLoading?: boolean;
-}
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
-export const ProductTable: React.FC<ProductTableProps> = ({
-  products,
-  onView,
-  onEdit,
-  onDelete,
-  isLoading = false
-}) => {
+  const handleView = (id: string) => {
+    navigate(`/produto/${id}`);
+  };
+
+  const handleEdit = (id: string) => {
+    navigate(`/admin/produtos/${id}/editar`);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!id) return;
+    
+    setDeletingId(id);
+    try {
+      const { error } = await supabase
+        .from('products')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      logAdminAction('delete_product', id);
+      handleSuccess('Produto excluído com sucesso!');
+      await fetchProducts({ force: true });
+    } catch (error) {
+      handleError(error, 'Erro ao excluir produto');
+    } finally {
+      setDeletingId(null);
+      setDeleteProductId(null);
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     const variants = {
       active: 'default',
       inactive: 'secondary',
-      out_of_stock: 'outline',
-      discontinued: 'outline'
+      out_of_stock: 'destructive'
+    } as const;
+    
+    const labels = {
+      active: 'Ativo',
+      inactive: 'Inativo', 
+      out_of_stock: 'Sem Estoque'
     } as const;
 
-    const label =
-      status === 'active'
-        ? 'Ativo'
-        : status === 'inactive'
-        ? 'Inativo'
-        : status === 'out_of_stock'
-        ? 'Sem estoque'
-        : 'Descontinuado';
-
     return (
-      <Badge variant={variants[status as keyof typeof variants] || 'outline'}>
-        {label}
+      <Badge variant={variants[status as keyof typeof variants] || 'secondary'}>
+        {labels[status as keyof typeof labels] || status}
       </Badge>
     );
   };
 
-  const getStockBadge = (quantity: number) => {
-    if (quantity === 0) {
-      return <Badge variant="outline" className="text-red-600 border-red-200">Sem estoque</Badge>;
-    }
-    if (quantity < 10) {
-      return <Badge variant="outline" className="text-yellow-600 border-yellow-200">Estoque baixo</Badge>;
-    }
-    return <Badge variant="outline" className="text-green-600 border-green-200">Em estoque</Badge>;
-  };
-
-  if (isLoading) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Carregando produtos...</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-16 bg-muted animate-pulse rounded" />
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    );
+  if (loadingProducts) {
+    return <LoadingSpinner />;
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Package className="h-5 w-5" />
-          Produtos ({products.length})
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-16">Imagem</TableHead>
-                <TableHead>Produto</TableHead>
-                <TableHead>Preço</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Estoque</TableHead>
-                <TableHead className="w-32">Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {products.map((product) => (
-                <TableRow key={product.id}>
-                  <TableCell>
-                    <div className="w-12 h-12 rounded-lg overflow-hidden bg-muted">
-                      {product.image_url ? (
-                        <img 
-                          src={product.image_url} 
-                          alt={product.name}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.currentTarget.src = '/placeholder.svg';
-                          }}
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <Package className="h-4 w-4 text-muted-foreground" />
-                        </div>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <p className="font-medium">{product.name}</p>
-                        {product.is_featured && (
-                          <Star className="h-3 w-3 text-yellow-500 fill-current" />
-                        )}
-                        {!product.is_visible && (
-                          <Badge variant="outline" className="text-xs">Oculto</Badge>
-                        )}
-                      </div>
-                      <p className="text-sm text-muted-foreground">{product.brand}</p>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {(() => {
-                      const priceNum = typeof product.price === 'number' ? product.price : Number(product.price ?? 0);
-                      return <span className="font-medium">R$ {priceNum.toFixed(2)}</span>;
-                    })()}
-                  </TableCell>
-                  <TableCell>
-                    {getStatusBadge(product.status)}
-                  </TableCell>
-                  <TableCell>
-                    <div className="space-y-1">
-                      <div className="text-sm font-medium">{product.stock_quantity}</div>
-                      {getStockBadge(product.stock_quantity)}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => onView(product.id)}
-                      >
-                        <Eye className="h-3 w-3" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => onEdit(product.id)}
-                      >
-                        <Edit className="h-3 w-3" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => onDelete(product.id)}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold">Produtos</h1>
+          <p className="text-muted-foreground">Gerencie o catálogo de produtos</p>
         </div>
-      </CardContent>
-    </Card>
+        <Button onClick={() => navigate('/admin/produtos/criar')} className="gap-2">
+          <Plus className="h-4 w-4" />
+          Novo Produto
+        </Button>
+      </div>
+
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Produto</TableHead>
+              <TableHead>Preço</TableHead>
+              <TableHead>Estoque</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="w-[70px]">Ações</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {products.map((product) => (
+              <TableRow key={product.id}>
+                <TableCell>
+                  <div className="flex items-center gap-3">
+                    {product.image_url && (
+                      <img
+                        src={product.image_url}
+                        alt={product.name}
+                        className="w-12 h-12 object-cover rounded"
+                      />
+                    )}
+                    <div>
+                      <div className="font-medium">{product.name}</div>
+                      <div className="text-sm text-muted-foreground">{product.brand}</div>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell className="font-mono">
+                  {formatPrice(product.price)}
+                </TableCell>
+                <TableCell>
+                  <span className={`px-2 py-1 rounded-full text-xs ${
+                    (product.stock_quantity || 0) > 0 
+                      ? 'bg-green-100 text-green-800' 
+                      : 'bg-red-100 text-red-800'
+                  }`}>
+                    {product.stock_quantity || 0} un.
+                  </span>
+                </TableCell>
+                <TableCell>
+                  {getStatusBadge(product.status || 'active')}
+                </TableCell>
+                <TableCell>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="h-8 w-8 p-0">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent 
+                      align="end" 
+                      className="w-48 bg-background/95 backdrop-blur-md border border-border/50 shadow-lg"
+                    >
+                      <DropdownMenuItem onClick={() => handleView(product.id)} className="cursor-pointer">
+                        <Eye className="mr-2 h-4 w-4" />
+                        Visualizar
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleEdit(product.id)} className="cursor-pointer">
+                        <Edit className="mr-2 h-4 w-4" />
+                        Editar
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        onClick={() => setDeleteProductId(product.id)} 
+                        className="cursor-pointer text-destructive focus:text-destructive"
+                        disabled={deletingId === product.id}
+                      >
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        {deletingId === product.id ? 'Excluindo...' : 'Excluir'}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+            ))}
+            {products.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                  Nenhum produto encontrado
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      <AlertDialog open={!!deleteProductId} onOpenChange={() => setDeleteProductId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza de que deseja excluir este produto? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deleteProductId && handleDelete(deleteProductId)}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
   );
 };

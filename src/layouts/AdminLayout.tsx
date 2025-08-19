@@ -1,75 +1,113 @@
 
 import React from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+import { Outlet, Navigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-// Removed AdminErrorBoundary wrapper to avoid full-screen error overlay
 import { AdminHeader } from '@/components/admin/AdminHeader';
+import { AdminErrorBoundary } from '@/components/admin/AdminErrorBoundary';
+import { Sidebar, SidebarContent, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { 
+  BarChart3, 
+  Package, 
+  FolderOpen, 
+  FileText, 
+  Settings,
+  Edit3
+} from 'lucide-react';
+import { NavLink, useLocation } from 'react-router-dom';
 
 const AdminLayout = () => {
   const { user, loading, isAdmin } = useAuth();
-  const navigate = useNavigate();
-  const [navigationLock, setNavigationLock] = React.useState(false);
-  const abortControllerRef = React.useRef<AbortController | null>(null);
+  const location = useLocation();
 
-  console.log('AdminLayout - Auth State:', { user: !!user, loading, isAdmin });
-
-  // Controle de navegação com AbortController
-  React.useEffect(() => {
-    // Cancelar requisições anteriores se houver
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-    abortControllerRef.current = new AbortController();
-
-    if (!loading) {
-      // Implementar debounce/lock para evitar múltiplos redirects
-      if (navigationLock) return;
-
-      if (!user) {
-        setNavigationLock(true);
-        console.warn('AdminLayout - No user, redirecting to auth');
-        navigate('/auth', { replace: true });
-        setTimeout(() => setNavigationLock(false), 1000);
-      } else if (!isAdmin) {
-        setNavigationLock(true);
-        console.warn('AdminLayout - User is not admin, redirecting to home');
-        navigate('/', { replace: true });
-        setTimeout(() => setNavigationLock(false), 1000);
-      }
-    }
-
-    return () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-    };
-  }, [user, isAdmin, loading, navigate, navigationLock]);
-
-  // Loading state
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted/20">
-        <div className="text-center space-y-4">
-          <LoadingSpinner />
-          <p className="text-muted-foreground">Carregando painel administrativo...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
-  // Se não há usuário ou não é admin, não renderiza nada (redirecionamento já aconteceu no useEffect)
   if (!user || !isAdmin) {
-    return null;
+    return <Navigate to="/auth" replace />;
   }
+
+  const menuItems = [
+    {
+      title: 'Dashboard',
+      href: '/admin/dashboard',
+      icon: BarChart3
+    },
+    {
+      title: 'Produtos',
+      href: '/admin/produtos',
+      icon: Package
+    },
+    {
+      title: 'Categorias',
+      href: '/admin/categorias',
+      icon: FolderOpen
+    },
+    {
+      title: 'Editor do Site',
+      href: '/admin/editor',
+      icon: Edit3
+    },
+    {
+      title: 'Relatórios',
+      href: '/admin/relatorios',
+      icon: FileText
+    }
+  ];
+
+  const isActive = (path: string) => {
+    if (path === '/admin/dashboard') {
+      return location.pathname === '/admin' || location.pathname === '/admin/dashboard';
+    }
+    return location.pathname.startsWith(path);
+  };
 
   return (
-    <div className="min-h-screen bg-background">
-      <AdminHeader />
-      <main className="container mx-auto p-4 max-w-7xl">
-        <Outlet />
-      </main>
-    </div>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-muted/10">
+        <Sidebar className="border-r border-border/40">
+          <SidebarContent className="p-4">
+            <div className="mb-6">
+              <h2 className="text-lg font-bold text-foreground">Admin Panel</h2>
+              <p className="text-sm text-muted-foreground">KAJIM RELÓGIOS</p>
+            </div>
+            
+            <nav className="space-y-2">
+              {menuItems.map((item) => (
+                <NavLink
+                  key={item.href}
+                  to={item.href}
+                  className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                    isActive(item.href)
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  }`}
+                >
+                  <item.icon className="h-4 w-4" />
+                  <span className="font-medium">{item.title}</span>
+                </NavLink>
+              ))}
+            </nav>
+          </SidebarContent>
+        </Sidebar>
+
+        <div className="flex-1 flex flex-col">
+          <header className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <div className="flex h-14 items-center gap-4 px-6">
+              <SidebarTrigger />
+              <AdminHeader />
+            </div>
+          </header>
+
+          <main className="flex-1 p-6 overflow-auto">
+            <AdminErrorBoundary>
+              <Outlet />
+            </AdminErrorBoundary>
+          </main>
+        </div>
+      </div>
+    </SidebarProvider>
   );
 };
 

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/Button';
@@ -38,15 +39,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
     ? (typeof product.original_price === 'string' ? formatPrice(parseFloat(product.original_price)) : formatPrice(product.original_price))
     : null;
 
+  const stockQuantity = (product as any).stock_quantity || 0;
+  const isLimitedStock = stockQuantity > 0 && stockQuantity <= 5;
+
   return (
-    <Card 
-      className="group cursor-pointer overflow-hidden border-0 bg-card/80 shadow-card hover:shadow-glow transition-all duration-300 hover:scale-[1.02] rounded-xl w-full max-w-[400px] min-h-[620px] liquid-glass"
-    >
+    <Card className="group cursor-pointer overflow-hidden border-0 bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] rounded-2xl w-full max-w-[380px] min-h-[680px] relative">
       <Link to={`/produto/${product.id}`} className="block">
         <div className="relative">
           {/* Product Image */}
           <div
-            className="h-80 overflow-hidden bg-gradient-to-br from-muted/30 to-muted/10 rounded-t-xl"
+            className="h-80 overflow-hidden bg-gradient-to-br from-muted/20 to-muted/5 rounded-t-2xl relative"
             onClick={(e) => {
               e.stopPropagation();
               setLightboxOpen(true);
@@ -57,34 +59,49 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
             <img
               src={mainImage}
               alt={`Relógio ${product.brand} ${product.name}`}
-              className="w-full h-full object-cover transition-all duration-700 group-hover:scale-[1.08]"
+              className="w-full h-full object-cover transition-all duration-700 group-hover:scale-[1.08] filter group-hover:brightness-110"
               loading="lazy"
             />
             
+            {/* Glass overlay effect */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent pointer-events-none"></div>
+            
             {/* Badges no canto superior esquerdo */}
-            <div className="absolute top-3 left-3 flex flex-col gap-1">
+            <div className="absolute top-4 left-4 flex flex-col gap-2">
               {(product as any).badges?.slice(0, 2).map((badge: string, index: number) => (
                 <ProductBadge key={index} badge={badge} size="sm" />
               ))}
             </div>
             
             {/* Botão de favorito no canto superior direito */}
-            <div className="absolute top-3 right-3">
+            <div className="absolute top-4 right-4">
               <FavoriteButton 
                 productId={product.id} 
                 productName={product.name}
                 size="sm"
-                className="bg-white/90 hover:bg-white shadow-lg"
+                className="bg-white/95 backdrop-blur-sm hover:bg-white shadow-xl border border-white/20"
               />
             </div>
             
-            {/* Status do estoque no canto inferior direito */}
-            <div className="absolute bottom-3 right-3">
-              <StockStatus 
-                stockStatus={(product as any).stock_status} 
-                quantity={(product as any).stock_quantity}
-                size="sm"
-              />
+            {/* Status do estoque - mais destacado */}
+            <div className="absolute bottom-4 right-4">
+              {isLimitedStock && (
+                <div className="bg-gradient-to-r from-amber-500/90 to-orange-500/90 backdrop-blur-sm text-white px-3 py-2 rounded-full text-xs font-bold shadow-lg border border-amber-400/30">
+                  <span className="flex items-center gap-1">
+                    ⚡ Últimas {stockQuantity} peças
+                  </span>
+                </div>
+              )}
+              {stockQuantity > 5 && (
+                <div className="bg-gradient-to-r from-emerald-500/90 to-green-500/90 backdrop-blur-sm text-white px-3 py-2 rounded-full text-xs font-semibold shadow-lg border border-emerald-400/30">
+                  ✓ Em Estoque ({stockQuantity})
+                </div>
+              )}
+              {stockQuantity === 0 && (
+                <div className="bg-gradient-to-r from-red-500/90 to-rose-500/90 backdrop-blur-sm text-white px-3 py-2 rounded-full text-xs font-semibold shadow-lg border border-red-400/30">
+                  ✗ Indisponível
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -92,33 +109,47 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
         <CardContent className="p-6 space-y-4">
           {/* Brand */}
           <div className="flex items-center justify-between">
-            <p className="text-xs text-accent font-semibold uppercase tracking-wider opacity-80">
+            <p className="text-xs text-primary/80 font-bold uppercase tracking-wider font-mono">
               {product.brand}
             </p>
           </div>
           
           {/* Product Name */}
-          <h3 className="text-xl font-semibold text-foreground line-clamp-2 leading-snug min-h-[3rem] group-hover:text-primary transition-colors duration-300">
+          <h3 className="text-xl font-bold text-foreground line-clamp-2 leading-tight min-h-[3.5rem] group-hover:text-primary transition-colors duration-300 font-serif">
             {product.name}
           </h3>
           
-          {/* Price */}
-          <div className="pt-3 space-y-2">
+          {/* Description */}
+          {product.description && (
+            <p className="text-sm text-muted-foreground/80 line-clamp-2 leading-relaxed font-light">
+              {product.description}
+            </p>
+          )}
+          
+          {/* Price Section */}
+          <div className="pt-2 space-y-2">
             {product.original_price && (
-              <p className="text-base text-muted-foreground line-through">
+              <p className="text-base text-muted-foreground line-through font-mono opacity-70">
                 {originalDisplay}
               </p>
             )}
-            <p className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent leading-tight">
-              {priceDisplay}
-            </p>
+            <div className="flex items-center gap-2">
+              <p className="text-3xl font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent leading-tight font-mono tracking-tight">
+                {priceDisplay}
+              </p>
+              {product.original_price && (
+                <span className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                  OFERTA
+                </span>
+              )}
+            </div>
           </div>
         </CardContent>
       </Link>
       
-      {/* Action Buttons - Outside Link to prevent navigation conflicts */}
+      {/* Action Buttons */}
       <div className="px-6 pb-6">
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <AddToCartButtonAnimated
             product={{
               id: product.id,
@@ -128,18 +159,18 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
             }}
             variant="primary"
             size="md"
-            className="flex-1 gap-2 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg font-semibold rounded-lg"
+            className="flex-1 gap-2 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl font-bold rounded-xl bg-gradient-to-r from-primary to-accent hover:from-accent hover:to-primary text-white border-0 shadow-lg"
             showText={true}
           />
           
           <Button
             variant="outline"
             size="md"
-            className="px-4 transition-all duration-300 hover:bg-primary hover:text-primary-foreground rounded-lg liquid-glass"
+            className="px-4 transition-all duration-300 hover:bg-gradient-to-r hover:from-primary/10 hover:to-accent/10 hover:text-primary hover:border-primary/30 rounded-xl backdrop-blur-sm border-border/30 shadow-md"
             asChild
           >
             <Link to={`/produto/${product.id}`}>
-              <span className="text-sm font-medium">Ver Mais</span>
+              <span className="text-sm font-semibold">Detalhes</span>
             </Link>
           </Button>
         </div>
@@ -147,7 +178,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
 
       <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
         <DialogContent className="max-w-4xl p-0 bg-transparent border-none shadow-none">
-          <img src={mainImage} alt={`Relógio ${product.brand} ${product.name}`} className="w-full h-auto rounded-lg" />
+          <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+            <img 
+              src={mainImage} 
+              alt={`Relógio ${product.brand} ${product.name}`} 
+              className="w-full h-auto"
+            />
+          </div>
         </DialogContent>
       </Dialog>
     </Card>
