@@ -65,42 +65,42 @@ const AdminLayout = () => {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-muted/10">
-        <Sidebar className="border-r border-border/40">
-          <SidebarContent className="p-4">
+      <div className="min-h-screen flex w-full bg-muted/10 overflow-visible">
+        <Sidebar className="border-r border-border/40 z-50 overflow-visible">
+          <SidebarContent className="p-4 overflow-visible">
             <div className="mb-6">
               <h2 className="text-lg font-bold text-foreground">Admin Panel</h2>
               <p className="text-sm text-muted-foreground">KAJIM RELÓGIOS</p>
             </div>
             
-            <nav className="space-y-2">
+            <nav className="space-y-2 overflow-visible">
               {menuItems.map((item) => (
                 <NavLink
                   key={item.href}
                   to={item.href}
-                  className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                  className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors relative z-10 ${
                     isActive(item.href)
-                      ? 'bg-primary text-primary-foreground'
+                      ? 'bg-primary text-primary-foreground shadow-lg'
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                   }`}
                 >
-                  <item.icon className="h-4 w-4" />
-                  <span className="font-medium">{item.title}</span>
+                  <item.icon className="h-4 w-4 flex-shrink-0" />
+                  <span className="font-medium whitespace-nowrap">{item.title}</span>
                 </NavLink>
               ))}
             </nav>
           </SidebarContent>
         </Sidebar>
 
-        <div className="flex-1 flex flex-col">
-          <header className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="flex-1 flex flex-col min-w-0">
+          <header className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-40">
             <div className="flex h-14 items-center gap-4 px-6">
-              <SidebarTrigger />
+              <SidebarTrigger className="z-50" />
               <AdminHeader />
             </div>
           </header>
 
-          <main className="flex-1 p-6 overflow-auto">
+          <main className="flex-1 p-6 overflow-auto min-h-0">
             <AdminErrorBoundary>
               <Outlet />
             </AdminErrorBoundary>

@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/Button';
@@ -11,60 +12,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ImageUpload } from '@/components/ImageUpload';
 import { Save, Settings, Image, Type, Layout } from 'lucide-react';
 
-interface SiteSettings {
-  site_title: string;
-  hero_title: string;
-  hero_subtitle: string;
-  hero_image_url: string;
-  footer_text: string;
-  about_text: string;
-  contact_info: string;
-  additional_info: string;
-}
-
 const SiteEditor = () => {
-  const [settings, setSettings] = useState<SiteSettings>({
-    site_title: 'KAJIM RELÓGIOS',
-    hero_title: 'KAJIM RELÓGIOS',
-    hero_subtitle: 'Precisão. Estilo. Exclusividade.',
-    hero_image_url: '',
-    footer_text: 'KAJIM RELÓGIOS - Todos os direitos reservados.',
-    about_text: 'KAJIM WATCHES é uma combinação entre precisão, elegância e acessibilidade. Relógios 100% originais com garantia.',
-    contact_info: 'Telefone: (86) 9 8838-8124\nE-mail: contato@kajim.com.br',
-    additional_info: 'Cada peça é cuidadosamente selecionada para oferecer a você a experiência de luxo que merece.'
-  });
-  
-  const [isLoading, setIsLoading] = useState(false);
+  const { settings: currentSettings, isLoading, refetch } = useSiteSettings();
+  const [settings, setSettings] = useState(currentSettings);
   const [isSaving, setIsSaving] = useState(false);
   const { handleError, handleSuccess } = useErrorHandler();
 
+  // Update local settings when current settings change
   useEffect(() => {
-    fetchSiteSettings();
-  }, []);
-
-  const fetchSiteSettings = async () => {
-    try {
-      setIsLoading(true);
-      
-      const { data, error } = await supabase
-        .from('site_settings')
-        .select('*')
-        .single();
-
-      if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
-        throw error;
-      }
-
-      if (data) {
-        setSettings(prev => ({ ...prev, ...data }));
-      }
-    } catch (error) {
-      console.error('Erro ao buscar configurações:', error);
-      // Não mostrar erro se for primeira vez (tabela vazia)
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    setSettings(currentSettings);
+  }, [currentSettings]);
 
   const handleSaveSettings = async () => {
     try {
@@ -79,6 +36,7 @@ const SiteEditor = () => {
       }
 
       handleSuccess('Configurações salvas com sucesso!');
+      await refetch(); // Refresh settings
     } catch (error) {
       handleError(error, 'Erro ao salvar configurações');
     } finally {
@@ -86,7 +44,7 @@ const SiteEditor = () => {
     }
   };
 
-  const handleInputChange = (field: keyof SiteSettings, value: string) => {
+  const handleInputChange = (field: string, value: string) => {
     setSettings(prev => ({ ...prev, [field]: value }));
   };
 
@@ -97,6 +55,14 @@ const SiteEditor = () => {
   const handleImageRemove = () => {
     handleInputChange('hero_image_url', '');
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

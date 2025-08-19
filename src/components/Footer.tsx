@@ -1,0 +1,65 @@
+import { useSiteSettings } from '@/hooks/useSiteSettings';
+import { LoadingSpinner } from './LoadingSpinner';
+
+const Footer = () => {
+  const { settings, isLoading } = useSiteSettings();
+
+  if (isLoading) {
+    return (
+      <footer className="bg-background border-t border-border/40 py-8">
+        <div className="container mx-auto px-4 text-center">
+          <LoadingSpinner />
+        </div>
+      </footer>
+    );
+  }
+
+  return (
+    <footer className="bg-gradient-to-br from-slate-800 via-slate-900 to-black text-white py-16 px-4">
+      <div className="max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-12">
+          {/* Brand Section */}
+          <div className="text-center md:text-left">
+            <h3 className="font-playfair text-3xl font-bold mb-4 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+              {settings.site_title}
+            </h3>
+            <p className="text-gray-300 leading-relaxed">
+              {settings.about_text}
+            </p>
+          </div>
+
+          {/* Contact Section */}
+          <div className="text-center md:text-left">
+            <h4 className="font-semibold text-xl mb-4 text-white">
+              Contato
+            </h4>
+            <div className="space-y-2 text-gray-300">
+              {settings.contact_info.split('\n').map((line, index) => (
+                <p key={index}>{line}</p>
+              ))}
+            </div>
+          </div>
+
+          {/* Additional Info Section */}
+          <div className="text-center md:text-left">
+            <h4 className="font-semibold text-xl mb-4 text-white">
+              Sobre Nossos Produtos
+            </h4>
+            <p className="text-gray-300 leading-relaxed">
+              {settings.additional_info}
+            </p>
+          </div>
+        </div>
+
+        {/* Footer Bottom */}
+        <div className="border-t border-gray-700 mt-12 pt-8 text-center">
+          <p className="text-gray-400 text-sm">
+            © 2024 {settings.footer_text}
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+export default Footer;

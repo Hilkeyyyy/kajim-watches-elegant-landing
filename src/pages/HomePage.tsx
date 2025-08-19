@@ -8,6 +8,7 @@ import { OffersCarousel } from '@/components/carousels/OffersCarousel';
 import { NewProductsCarousel } from '@/components/carousels/NewProductsCarousel';
 import { FeaturedCarousel } from '@/components/carousels/FeaturedCarousel';
 import AboutSection from '@/components/AboutSection';
+import Footer from '@/components/Footer';
 
 export const HomePage: React.FC = () => {
   return (
@@ -21,7 +22,9 @@ export const HomePage: React.FC = () => {
       <CategoryCarousel />
       
       {/* Produtos em Destaque */}
-      <FeaturedCarousel />
+      <div id="products">
+        <FeaturedCarousel />
+      </div>
       
       {/* Carrossel Rolex */}
       <BrandCarousel 
@@ -52,6 +55,9 @@ export const HomePage: React.FC = () => {
       
       {/* Seção Institucional */}
       <AboutSection />
+      
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };

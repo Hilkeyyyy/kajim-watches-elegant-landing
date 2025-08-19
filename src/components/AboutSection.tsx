@@ -1,6 +1,20 @@
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { LoadingSpinner } from "./LoadingSpinner";
 import watchDetails from "@/assets/watch-details.jpg";
 
 const AboutSection = () => {
+  const { settings, isLoading } = useSiteSettings();
+
+  if (isLoading) {
+    return (
+      <section className="py-20 px-4 bg-gradient-to-br from-slate-800 via-slate-900 to-black text-white">
+        <div className="max-w-6xl mx-auto text-center">
+          <LoadingSpinner />
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="py-20 px-4 bg-gradient-to-br from-slate-800 via-slate-900 to-black text-white">
       <div className="max-w-6xl mx-auto">
@@ -9,18 +23,16 @@ const AboutSection = () => {
           {/* Text Content */}
           <div className="text-center lg:text-left order-2 lg:order-1">
             <h2 className="text-4xl sm:text-5xl md:text-6xl font-playfair font-bold mb-8 tracking-wide">
-              RELÓGIOS KAJIM
+              {settings.hero_title}
             </h2>
             
             <div className="space-y-6 mb-12">
               <p className="text-lg sm:text-xl text-gray-200 leading-relaxed">
-                KAJIM WATCHES é uma combinação entre precisão, elegância e acessibilidade. 
-                Relógios 100% originais com garantia.
+                {settings.about_text}
               </p>
               
               <p className="text-lg text-gray-300 leading-relaxed">
-                Cada peça é cuidadosamente selecionada para oferecer a você a experiência 
-                de luxo que merece, sem comprometer a qualidade ou o seu orçamento.
+                {settings.additional_info}
               </p>
             </div>
 
