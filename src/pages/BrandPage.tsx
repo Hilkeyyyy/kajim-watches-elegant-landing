@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -104,3 +103,5 @@ export const BrandPage = () => {
     </div>
   );
 };
+
+export default BrandPage;

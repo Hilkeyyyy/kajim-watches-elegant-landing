@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Heart, Sparkles } from 'lucide-react';
@@ -195,3 +194,5 @@ export const FavoritesPage: React.FC = () => {
     </div>
   );
 };
+
+export default FavoritesPage;
