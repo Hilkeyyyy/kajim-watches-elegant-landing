@@ -90,6 +90,14 @@ const SiteEditor = () => {
     setSettings(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleImageUpload = (url: string) => {
+    handleInputChange('hero_image_url', url);
+  };
+
+  const handleImageRemove = () => {
+    handleInputChange('hero_image_url', '');
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -181,9 +189,10 @@ const SiteEditor = () => {
               <div className="space-y-2">
                 <Label>Imagem de Fundo</Label>
                 <ImageUpload
-                  value={settings.hero_image_url}
-                  onChange={(url) => handleInputChange('hero_image_url', url)}
                   bucket="category-images"
+                  currentImageUrl={settings.hero_image_url}
+                  onImageUploaded={handleImageUpload}
+                  onImageRemoved={handleImageRemove}
                   className="w-full h-48"
                 />
               </div>

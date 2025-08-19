@@ -552,6 +552,48 @@ export type Database = {
         }
         Relationships: []
       }
+      site_settings: {
+        Row: {
+          about_text: string | null
+          additional_info: string | null
+          contact_info: string | null
+          created_at: string
+          footer_text: string | null
+          hero_image_url: string | null
+          hero_subtitle: string | null
+          hero_title: string | null
+          id: string
+          site_title: string | null
+          updated_at: string
+        }
+        Insert: {
+          about_text?: string | null
+          additional_info?: string | null
+          contact_info?: string | null
+          created_at?: string
+          footer_text?: string | null
+          hero_image_url?: string | null
+          hero_subtitle?: string | null
+          hero_title?: string | null
+          id?: string
+          site_title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          about_text?: string | null
+          additional_info?: string | null
+          contact_info?: string | null
+          created_at?: string
+          footer_text?: string | null
+          hero_image_url?: string | null
+          hero_subtitle?: string | null
+          hero_title?: string | null
+          id?: string
+          site_title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
