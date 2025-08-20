@@ -43,12 +43,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
   const isLimitedStock = stockQuantity > 0 && stockQuantity <= 5;
 
   return (
-    <Card className="group cursor-pointer overflow-hidden border-0 bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] rounded-2xl w-full max-w-[350px] aspect-[3/4] relative flex flex-col">
+    <Card className="group cursor-pointer overflow-hidden border-0 bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] rounded-2xl w-full aspect-square relative flex flex-col">
       <Link to={`/produto/${product.id}`} className="block flex-1 flex flex-col">
         <div className="relative flex-1">
           {/* Product Image */}
           <div
-            className="h-64 overflow-hidden bg-gradient-to-br from-muted/20 to-muted/5 rounded-t-2xl relative"
+            className="h-[60%] overflow-hidden bg-gradient-to-br from-muted/20 to-muted/5 rounded-t-2xl relative"
             onClick={(e) => {
               e.stopPropagation();
               setLightboxOpen(true);

@@ -9,6 +9,7 @@ import { NewProductsCarousel } from '@/components/carousels/NewProductsCarousel'
 import { FeaturedCarousel } from '@/components/carousels/FeaturedCarousel';
 import AboutSection from '@/components/AboutSection';
 import Footer from '@/components/Footer';
+import { MobileNavigation } from '@/components/MobileNavigation';
 
 export const HomePage: React.FC = () => {
   return (
@@ -18,8 +19,10 @@ export const HomePage: React.FC = () => {
       {/* Hero Section */}
       <HeroSection />
       
-      {/* Carrossel de Categorias */}
-      <CategoryCarousel />
+      {/* Carrossel de Categorias na Hero */}
+      <div className="bg-gradient-to-br from-background via-muted/5 to-background -mt-20 pt-20">
+        <CategoryCarousel />
+      </div>
       
       {/* Produtos em Destaque */}
       <div id="products">
@@ -58,6 +61,9 @@ export const HomePage: React.FC = () => {
       
       {/* Footer */}
       <Footer />
+      
+      {/* Mobile Navigation */}
+      <MobileNavigation />
     </div>
   );
 };

@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useApp } from '@/contexts/AppContext';
 import { formatPrice } from '@/utils/priceUtils';
+import { MobileNavigation } from '@/components/MobileNavigation';
 
 export const CartPage: React.FC = () => {
   const { cart, removeFromCart, updateQuantity, clearCart, getCartTotal } = useApp();
@@ -126,21 +127,21 @@ export const CartPage: React.FC = () => {
                 <CardContent className="p-4 sm:p-6">
                   <div className="flex flex-col sm:flex-row gap-4">
                     {/* Product Image */}
-                    <div className="w-full sm:w-24 h-48 sm:h-24 bg-muted/20 rounded-lg overflow-hidden shrink-0">
+                    <div className="w-full sm:w-32 h-48 sm:h-32 bg-muted/20 rounded-xl overflow-hidden shrink-0 shadow-md">
                       <img
                         src={item.image || '/placeholder.svg'}
                         alt={item.name}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                       />
                     </div>
                     
                     {/* Product Info */}
                     <div className="flex-1 space-y-3">
-                      <div className="space-y-1">
-                        <h3 className="font-playfair text-lg font-semibold text-foreground line-clamp-2">
+                      <div className="space-y-2">
+                        <h3 className="font-playfair text-lg font-bold text-foreground line-clamp-2 hover:text-primary transition-colors cursor-pointer">
                           {item.name}
                         </h3>
-                        <p className="text-base font-bold text-foreground">
+                        <p className="text-lg font-black bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                           {item.price}
                         </p>
                       </div>
@@ -235,6 +236,8 @@ export const CartPage: React.FC = () => {
           </div>
         </div>
       </div>
+      
+      <MobileNavigation />
     </div>
   );
 };

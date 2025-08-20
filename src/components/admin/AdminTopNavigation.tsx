@@ -1,0 +1,167 @@
+import React from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
+import { 
+  BarChart3, 
+  Package, 
+  FolderOpen, 
+  FileText, 
+  Edit3,
+  Home,
+  LogOut,
+  User,
+  Menu
+} from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator
+} from '@/components/ui/dropdown-menu';
+import { useAuth } from '@/hooks/useAuth';
+
+export const AdminTopNavigation = () => {
+  const { user, signOut } = useAuth();
+  const location = useLocation();
+
+  const menuItems = [
+    {
+      title: 'Dashboard',
+      href: '/admin/dashboard',
+      icon: BarChart3
+    },
+    {
+      title: 'Produtos',
+      href: '/admin/produtos',
+      icon: Package
+    },
+    {
+      title: 'Categorias',
+      href: '/admin/categorias', 
+      icon: FolderOpen
+    },
+    {
+      title: 'Editor do Site',
+      href: '/admin/editor',
+      icon: Edit3
+    },
+    {
+      title: 'Relatórios',
+      href: '/admin/relatorios',
+      icon: FileText
+    }
+  ];
+
+  const isActive = (path: string) => {
+    if (path === '/admin/dashboard') {
+      return location.pathname === '/admin' || location.pathname === '/admin/dashboard';
+    }
+    return location.pathname.startsWith(path);
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+    }
+  };
+
+  return (
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
+          {/* Brand */}
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm">K</span>
+              </div>
+              <div className="hidden sm:block">
+                <h1 className="font-bold text-foreground">KAJIM Admin</h1>
+                <p className="text-xs text-muted-foreground">Painel Administrativo</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Navigation Menu - Desktop */}
+          <nav className="hidden lg:flex items-center space-x-1">
+            {menuItems.map((item) => (
+              <NavLink
+                key={item.href}
+                to={item.href}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  isActive(item.href)
+                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                }`}
+              >
+                <item.icon className="w-4 h-4" />
+                <span className="whitespace-nowrap">{item.title}</span>
+              </NavLink>
+            ))}
+          </nav>
+
+          {/* User Menu & Mobile Navigation */}
+          <div className="flex items-center gap-2">
+            {/* Mobile Navigation */}
+            <div className="lg:hidden">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="gap-2">
+                    <Menu className="w-4 h-4" />
+                    <span className="sr-only">Menu de navegação</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  {menuItems.map((item) => (
+                    <DropdownMenuItem key={item.href} asChild>
+                      <NavLink 
+                        to={item.href}
+                        className={`flex items-center gap-2 w-full ${
+                          isActive(item.href) ? 'bg-muted' : ''
+                        }`}
+                      >
+                        <item.icon className="w-4 h-4" />
+                        {item.title}
+                      </NavLink>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
+            {/* User Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <User className="w-4 h-4" />
+                  <span className="hidden sm:inline text-sm font-medium">
+                    {user?.email?.split('@')[0] || 'Admin'}
+                  </span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem asChild>
+                  <NavLink to="/" className="flex items-center gap-2 w-full">
+                    <Home className="w-4 h-4" />
+                    Ver Site
+                  </NavLink>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem 
+                  onClick={handleSignOut}
+                  className="flex items-center gap-2 text-destructive focus:text-destructive"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Sair
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+};

@@ -3,21 +3,29 @@ import React from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { AdminHeader } from '@/components/admin/AdminHeader';
 import { AdminErrorBoundary } from '@/components/admin/AdminErrorBoundary';
-import { Sidebar, SidebarContent, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { 
   BarChart3, 
   Package, 
   FolderOpen, 
   FileText, 
-  Settings,
-  Edit3
+  Edit3,
+  Home,
+  LogOut,
+  User
 } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router-dom';
+import { Button } from '@/components/ui/Button';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator
+} from '@/components/ui/dropdown-menu';
 
 const AdminLayout = () => {
-  const { user, loading, isAdmin } = useAuth();
+  const { user, loading, isAdmin, signOut } = useAuth();
   const location = useLocation();
 
   if (loading) {
@@ -41,7 +49,7 @@ const AdminLayout = () => {
     },
     {
       title: 'Categorias',
-      href: '/admin/categorias',
+      href: '/admin/categorias', 
       icon: FolderOpen
     },
     {
@@ -63,51 +71,119 @@ const AdminLayout = () => {
     return location.pathname.startsWith(path);
   };
 
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+    }
+  };
+
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-muted/10 overflow-visible">
-        <Sidebar className="border-r border-border/40 z-50 overflow-visible">
-          <SidebarContent className="p-4 overflow-visible">
-            <div className="mb-6">
-              <h2 className="text-lg font-bold text-foreground">Admin Panel</h2>
-              <p className="text-sm text-muted-foreground">KAJIM RELÓGIOS</p>
+    <div className="min-h-screen bg-background">
+      {/* Fixed Header Navigation */}
+      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center justify-between">
+            {/* Brand */}
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">K</span>
+                </div>
+                <div className="hidden sm:block">
+                  <h1 className="font-bold text-foreground">KAJIM Admin</h1>
+                  <p className="text-xs text-muted-foreground">Painel Administrativo</p>
+                </div>
+              </div>
             </div>
-            
-            <nav className="space-y-2 overflow-visible">
+
+            {/* Navigation Menu - Desktop */}
+            <nav className="hidden lg:flex items-center space-x-1">
               {menuItems.map((item) => (
                 <NavLink
                   key={item.href}
                   to={item.href}
-                  className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors relative z-10 ${
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                     isActive(item.href)
-                      ? 'bg-primary text-primary-foreground shadow-lg'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                   }`}
                 >
-                  <item.icon className="h-4 w-4 flex-shrink-0" />
-                  <span className="font-medium whitespace-nowrap">{item.title}</span>
+                  <item.icon className="w-4 h-4" />
+                  <span className="whitespace-nowrap">{item.title}</span>
                 </NavLink>
               ))}
             </nav>
-          </SidebarContent>
-        </Sidebar>
 
-        <div className="flex-1 flex flex-col min-w-0">
-          <header className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-40">
-            <div className="flex h-14 items-center gap-4 px-6">
-              <SidebarTrigger className="z-50" />
-              <AdminHeader />
+            {/* User Menu & Mobile Navigation */}
+            <div className="flex items-center gap-2">
+              {/* Mobile Navigation */}
+              <div className="lg:hidden">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="gap-2">
+                      <Package className="w-4 h-4" />
+                      <span className="sr-only">Menu de navegação</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    {menuItems.map((item) => (
+                      <DropdownMenuItem key={item.href} asChild>
+                        <NavLink 
+                          to={item.href}
+                          className={`flex items-center gap-2 w-full ${
+                            isActive(item.href) ? 'bg-muted' : ''
+                          }`}
+                        >
+                          <item.icon className="w-4 h-4" />
+                          {item.title}
+                        </NavLink>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+
+              {/* User Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="gap-2">
+                    <User className="w-4 h-4" />
+                    <span className="hidden sm:inline text-sm font-medium">
+                      {user?.email?.split('@')[0] || 'Admin'}
+                    </span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuItem asChild>
+                    <NavLink to="/" className="flex items-center gap-2 w-full">
+                      <Home className="w-4 h-4" />
+                      Ver Site
+                    </NavLink>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem 
+                    onClick={handleSignOut}
+                    className="flex items-center gap-2 text-destructive focus:text-destructive"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Sair
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
-          </header>
-
-          <main className="flex-1 p-6 overflow-auto min-h-0">
-            <AdminErrorBoundary>
-              <Outlet />
-            </AdminErrorBoundary>
-          </main>
+          </div>
         </div>
-      </div>
-    </SidebarProvider>
+      </header>
+
+      {/* Main Content */}
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <AdminErrorBoundary>
+          <Outlet />
+        </AdminErrorBoundary>
+      </main>
+    </div>
   );
 };
 

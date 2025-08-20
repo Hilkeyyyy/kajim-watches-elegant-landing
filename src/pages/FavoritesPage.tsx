@@ -9,6 +9,7 @@ import { useApp } from '@/contexts/AppContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Product } from '@/types/product';
 import { SupabaseProduct, convertSupabaseToProduct } from '@/types/supabase-product';
+import { MobileNavigation } from '@/components/MobileNavigation';
 
 export const FavoritesPage: React.FC = () => {
   const { favorites, isLoading } = useApp();
@@ -141,7 +142,7 @@ export const FavoritesPage: React.FC = () => {
         {/* Products Grid */}
         <div className="mt-8 sm:mt-12">
           {favoriteProducts.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 justify-items-center">
               {favoriteProducts.map((product, index) => (
                 <div
                   key={product.id}
@@ -191,6 +192,8 @@ export const FavoritesPage: React.FC = () => {
           </div>
         )}
       </div>
+      
+      <MobileNavigation />
     </div>
   );
 };

@@ -79,8 +79,8 @@ const ProductCreate = () => {
       // Recarregar cache de produtos
       await fetchProducts({ force: true });
       
-      // Navegar de volta para lista
-      navigate('/admin/produtos', { replace: true });
+      // Navegar para edição do produto criado
+      navigate(`/admin/produtos/editar/${createdProduct.id}`, { replace: true });
       
     } catch (error: any) {
       console.error('ProductCreate - Erro completo:', error);

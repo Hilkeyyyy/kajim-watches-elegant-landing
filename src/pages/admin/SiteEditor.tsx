@@ -26,14 +26,28 @@ const SiteEditor = () => {
   const handleSaveSettings = async () => {
     try {
       setIsSaving(true);
-
-      const { error } = await supabase
+      
+      // Verificar se já existe configuração
+      const { data: existingSettings } = await supabase
         .from('site_settings')
-        .upsert(settings, { onConflict: 'id' });
+        .select('id')
+        .single();
 
-      if (error) {
-        throw error;
+      let result;
+      if (existingSettings) {
+        // Atualizar configuração existente
+        result = await supabase
+          .from('site_settings')
+          .update(settings)
+          .eq('id', existingSettings.id);
+      } else {
+        // Criar nova configuração
+        result = await supabase
+          .from('site_settings')
+          .insert([settings]);
       }
+
+      if (result.error) throw result.error;
 
       handleSuccess('Configurações salvas com sucesso!');
       await refetch(); // Refresh settings
@@ -88,22 +102,22 @@ const SiteEditor = () => {
       </div>
 
       <Tabs defaultValue="general" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="general" className="gap-2">
+        <TabsList className="grid w-full grid-cols-4 bg-muted/30">
+          <TabsTrigger value="general" className="gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary/10 data-[state=active]:to-accent/10 data-[state=active]:text-primary">
             <Type className="h-4 w-4" />
-            Geral
+            <span className="hidden sm:inline">Geral</span>
           </TabsTrigger>
-          <TabsTrigger value="hero" className="gap-2">
+          <TabsTrigger value="hero" className="gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary/10 data-[state=active]:to-accent/10 data-[state=active]:text-primary">
             <Image className="h-4 w-4" />
-            Seção Hero
+            <span className="hidden sm:inline">Hero</span>
           </TabsTrigger>
-          <TabsTrigger value="content" className="gap-2">
+          <TabsTrigger value="content" className="gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary/10 data-[state=active]:to-accent/10 data-[state=active]:text-primary">
             <Layout className="h-4 w-4" />
-            Conteúdo
+            <span className="hidden sm:inline">Conteúdo</span>
           </TabsTrigger>
-          <TabsTrigger value="footer" className="gap-2">
+          <TabsTrigger value="footer" className="gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary/10 data-[state=active]:to-accent/10 data-[state=active]:text-primary">
             <Settings className="h-4 w-4" />
-            Rodapé
+            <span className="hidden sm:inline">Rodapé</span>
           </TabsTrigger>
         </TabsList>
 
