@@ -45,15 +45,24 @@ const HeroSection = () => {
         </div>
         
         {/* Subtitle */}
-        <p className="font-inter text-lg sm:text-xl md:text-2xl text-muted-foreground mb-12 tracking-wide font-light">
+        <p className="font-inter text-lg sm:text-xl md:text-2xl text-muted-foreground mb-8 tracking-wide font-light">
           {settings.hero_subtitle}
         </p>
+        
+        {/* Original Guarantee Badge */}
+        <div className="mb-12 inline-flex items-center gap-3 bg-gradient-to-r from-emerald-500/10 to-green-500/10 backdrop-blur-xl border border-emerald-500/20 rounded-full px-8 py-4 shadow-xl">
+          <div className="w-3 h-3 bg-gradient-to-r from-emerald-400 to-green-400 rounded-full animate-pulse"></div>
+          <span className="font-semibold text-emerald-600 dark:text-emerald-400 text-lg tracking-wide">
+            ✓ 100% ORIGINAIS
+          </span>
+          <div className="w-3 h-3 bg-gradient-to-r from-emerald-400 to-green-400 rounded-full animate-pulse"></div>
+        </div>
         
         {/* CTA Button */}
         <Button 
           size="lg"
           onClick={scrollToProducts}
-          className="bg-foreground text-background hover:bg-foreground/90 font-inter font-medium tracking-wide px-8 py-4 text-base transition-all duration-300 hover:scale-105"
+          className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:from-accent hover:to-primary font-inter font-medium tracking-wide px-8 py-4 text-base transition-all duration-300 hover:scale-105 shadow-2xl hover:shadow-primary/20 border-0 backdrop-blur-xl"
         >
           Explorar Coleção
         </Button>

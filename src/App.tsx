@@ -16,6 +16,7 @@ const CartPage = lazy(() => import('@/pages/CartPage'));
 const FavoritesPage = lazy(() => import('@/pages/FavoritesPage'));
 const CategoryPage = lazy(() => import('@/pages/CategoryPage'));
 const BrandPage = lazy(() => import('@/pages/BrandPage'));
+const BuscarPage = lazy(() => import('@/pages/BuscarPage'));
 const Auth = lazy(() => import('@/pages/Auth'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
@@ -54,6 +55,7 @@ function App() {
                       <Route path="/produto/:id" element={<ProductDetailPage />} />
                       <Route path="/carrinho" element={<CartPage />} />
                       <Route path="/favoritos" element={<FavoritesPage />} />
+                      <Route path="/buscar" element={<BuscarPage />} />
                       <Route path="/categoria/:id" element={<CategoryPage />} />
                       <Route path="/marca/:brand" element={<BrandPage />} />
                       <Route path="/auth" element={<Auth />} />
@@ -63,8 +65,8 @@ function App() {
                         <Route index element={<Dashboard />} />
                         <Route path="dashboard" element={<Dashboard />} />
                         <Route path="produtos" element={<Products />} />
-                        <Route path="produtos/criar" element={<ProductCreate />} />
-                        <Route path="produtos/:id/editar" element={<ProductEdit />} />
+                        <Route path="produtos/novo" element={<ProductCreate />} />
+                        <Route path="produtos/editar/:id" element={<ProductEdit />} />
                         <Route path="categorias" element={<Categories />} />
                         <Route path="editor" element={<SiteEditor />} />
                         <Route path="relatorios" element={<Reports />} />

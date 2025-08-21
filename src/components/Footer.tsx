@@ -23,9 +23,17 @@ const Footer = () => {
             <h3 className="font-playfair text-3xl font-bold mb-4 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
               {settings.site_title}
             </h3>
-            <p className="text-gray-300 leading-relaxed">
+            <p className="text-gray-300 leading-relaxed mb-4">
               {settings.about_text}
             </p>
+            <div className="bg-gradient-to-r from-emerald-500/20 to-green-500/20 backdrop-blur-sm border border-emerald-500/30 rounded-xl p-4">
+              <p className="text-emerald-300 font-semibold text-sm flex items-center gap-2">
+                ✓ <span className="font-bold">100% ORIGINAIS</span>
+              </p>
+              <p className="text-emerald-200/80 text-xs mt-1">
+                KAJIM trabalha exclusivamente com relógios originais, nunca réplicas ou clones.
+              </p>
+            </div>
           </div>
 
           {/* Contact Section */}
@@ -53,8 +61,17 @@ const Footer = () => {
 
         {/* Footer Bottom */}
         <div className="border-t border-gray-700 mt-12 pt-8 text-center">
+          <div className="mb-4">
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500/20 to-yellow-500/20 backdrop-blur-sm border border-amber-500/30 rounded-full px-6 py-2">
+              <span className="text-amber-300 text-lg">🏆</span>
+              <span className="text-amber-200 font-bold text-sm">GARANTIA DE ORIGINALIDADE</span>
+            </div>
+          </div>
           <p className="text-gray-400 text-sm">
             © 2024 {settings.footer_text}
+          </p>
+          <p className="text-gray-500 text-xs mt-2">
+            Todos os relógios vendidos pela KAJIM são 100% originais e acompanham certificado de autenticidade.
           </p>
         </div>
       </div>

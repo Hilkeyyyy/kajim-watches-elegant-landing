@@ -47,6 +47,12 @@ Typography: Playfair Display (elegant serif), Inter (modern sans), Crimson Text 
     --input: 0 0% 91%;
     --ring: 0 0% 9%;
     
+    /* Glassmorphism Effects */
+    --glass-background: hsla(0, 0%, 100%, 0.8);
+    --glass-border: hsla(0, 0%, 100%, 0.2);
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    --glass-backdrop-filter: blur(8px);
+    
     /* Gradients */
     --gradient-hero: linear-gradient(135deg, hsl(var(--background)), hsl(var(--muted)));
     --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--moss)));
@@ -288,6 +294,23 @@ Typography: Playfair Display (elegant serif), Inter (modern sans), Crimson Text 
 }
 
 @layer utilities {
+  /* Glassmorphism Utilities */
+  .glass-card {
+    @apply bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl;
+  }
+  
+  .glass-card-dark {
+    @apply bg-black/10 backdrop-blur-xl border border-black/20 shadow-2xl;
+  }
+  
+  .glass-dropdown {
+    @apply bg-background/95 backdrop-blur-xl border border-border/50 shadow-2xl;
+  }
+  
+  .glass-nav {
+    @apply bg-background/90 backdrop-blur-2xl border-b border-border/40;
+  }
+  
   /* Animation Keyframes */
   @keyframes success-pulse {
     0% { transform: scale(1); }

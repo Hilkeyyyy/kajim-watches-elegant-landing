@@ -20,8 +20,11 @@ export const HomePage: React.FC = () => {
       <HeroSection />
       
       {/* Carrossel de Categorias na Hero */}
-      <div className="bg-gradient-to-br from-background via-muted/5 to-background -mt-20 pt-20">
-        <CategoryCarousel />
+      <div className="bg-gradient-to-br from-background via-muted/5 to-background -mt-20 pt-20 relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-transparent backdrop-blur-sm"></div>
+        <div className="relative">
+          <CategoryCarousel />
+        </div>
       </div>
       
       {/* Produtos em Destaque */}

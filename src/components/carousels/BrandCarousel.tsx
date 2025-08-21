@@ -49,7 +49,7 @@ export const BrandCarousel = ({ brand, title, description }: BrandCarouselProps)
   }, [brand]);
 
   const handleProductClick = (id: string) => {
-    navigate(`/product/${id}`);
+    navigate(`/produto/${id}`);
   };
 
   if (loading) {
@@ -61,17 +61,21 @@ export const BrandCarousel = ({ brand, title, description }: BrandCarouselProps)
   }
 
   return (
-    <section className="py-12 px-4 bg-background">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-8">
-          <h2 className="text-display bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent mb-2">
+    <section className="py-16 px-4 bg-gradient-to-br from-background via-muted/10 to-background relative">
+      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-primary/5 to-transparent backdrop-blur-sm"></div>
+      <div className="max-w-7xl mx-auto relative">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent mb-4 font-serif">
             {title}
           </h2>
           {description && (
-            <p className="text-subtitle text-muted-foreground max-w-2xl mx-auto font-serif-elegant">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               {description}
             </p>
           )}
+          <div className="mt-6 inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500/10 to-green-500/10 backdrop-blur-xl border border-emerald-500/20 rounded-full px-6 py-2">
+            <span className="text-emerald-600 dark:text-emerald-400 font-semibold text-sm">✓ 100% Originais</span>
+          </div>
         </div>
         
         <Carousel

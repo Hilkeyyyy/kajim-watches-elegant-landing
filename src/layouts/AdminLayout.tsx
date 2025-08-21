@@ -127,7 +127,7 @@ const AdminLayout = () => {
                       <span className="sr-only">Menu de navegação</span>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuContent align="end" className="w-56 bg-background/95 backdrop-blur-xl border border-border/50 shadow-2xl rounded-2xl overflow-hidden">
                     {menuItems.map((item) => (
                       <DropdownMenuItem key={item.href} asChild>
                         <NavLink 
@@ -155,7 +155,7 @@ const AdminLayout = () => {
                     </span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuContent align="end" className="w-56 bg-background/95 backdrop-blur-xl border border-border/50 shadow-2xl rounded-2xl overflow-hidden">
                   <DropdownMenuItem asChild>
                     <NavLink to="/" className="flex items-center gap-2 w-full">
                       <Home className="w-4 h-4" />
