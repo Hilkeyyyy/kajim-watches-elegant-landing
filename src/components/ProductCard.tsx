@@ -43,7 +43,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
   const isLimitedStock = stockQuantity > 0 && stockQuantity <= 5;
 
   return (
-    <Card className="group cursor-pointer overflow-hidden border-0 bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] rounded-2xl w-full aspect-square relative flex flex-col">
+    <Card className="group cursor-pointer overflow-hidden border-0 bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] rounded-2xl w-full h-full relative flex flex-col">
       <Link to={`/produto/${product.id}`} className="block flex-1 flex flex-col">
         <div className="relative flex-1">
           {/* Product Image */}
@@ -119,12 +119,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
             {product.name}
           </h3>
           
-          {/* Description */}
-          {product.description && (
-            <p className="text-xs text-muted-foreground/80 line-clamp-2 leading-relaxed font-light flex-1">
-              {product.description}
-            </p>
-          )}
+          {/* Description - always show something */}
+          <p className="text-xs text-muted-foreground/80 line-clamp-2 leading-relaxed font-light flex-1">
+            {product.description || 
+             `Relógio ${product.brand}${product.model ? ` ${product.model}` : ''}${product.case_size ? ` - ${product.case_size}` : ''}${product.movement ? ` - ${product.movement}` : ''}.`}
+          </p>
           
           {/* Price Section */}
           <div className="pt-2 space-y-1 mt-auto">

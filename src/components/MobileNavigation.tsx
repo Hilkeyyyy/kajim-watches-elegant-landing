@@ -66,7 +66,7 @@ export const MobileNavigation = () => {
               {item.count > 0 && (
                 <Badge 
                   variant="destructive" 
-                  className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-xs font-bold bg-gradient-to-r from-red-500 to-red-600 text-white border-2 border-background rounded-full shadow-lg animate-pulse min-w-[20px]"
+                  className="absolute -top-2 -right-2 h-6 w-6 p-0 flex items-center justify-center text-xs font-black bg-gradient-to-r from-red-500 to-red-600 text-white border-3 border-background rounded-full shadow-xl z-50 min-w-[24px] ring-2 ring-white/50"
                 >
                   {item.count > 99 ? '99+' : item.count}
                 </Badge>

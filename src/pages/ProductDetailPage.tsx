@@ -156,21 +156,21 @@ export const ProductDetailPage: React.FC = () => {
                 <p className="text-muted-foreground mb-6">{product.description}</p>
               )}
               
-              {/* Original Guarantee */}
-              <div className="bg-gradient-to-r from-emerald-500/10 to-green-500/10 backdrop-blur-xl border border-emerald-500/20 rounded-2xl p-6 mb-6">
+              {/* Original Guarantee - Elegante com glassmorphism */}
+              <div className="relative bg-gradient-to-r from-card/95 to-card/90 backdrop-blur-xl border border-border/20 rounded-2xl p-6 mb-6 shadow-xl">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-green-500 rounded-full flex items-center justify-center">
+                  <div className="w-8 h-8 bg-gradient-to-r from-primary/80 to-accent/80 rounded-full flex items-center justify-center shadow-lg">
                     <span className="text-white font-bold text-sm">✓</span>
                   </div>
-                  <h3 className="font-bold text-emerald-700 dark:text-emerald-300 text-lg">
+                  <h3 className="font-bold text-foreground text-lg">
                     100% ORIGINAL GARANTIDO
                   </h3>
                 </div>
-                <p className="text-emerald-600 dark:text-emerald-400 text-sm leading-relaxed">
-                  Este relógio é <strong>100% original</strong> e vem acompanhado de certificado de autenticidade. 
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  Este relógio é <strong className="text-foreground">100% original</strong> e vem acompanhado de certificado de autenticidade. 
                   A KAJIM trabalha exclusivamente com relógios originais, nunca réplicas ou clones.
                 </p>
-                <div className="flex items-center gap-2 mt-3 text-emerald-600 dark:text-emerald-400 text-xs">
+                <div className="flex items-center gap-2 mt-3 text-muted-foreground text-xs">
                   <span>🏆</span>
                   <span className="font-semibold">Certificado de Autenticidade Incluso</span>
                 </div>

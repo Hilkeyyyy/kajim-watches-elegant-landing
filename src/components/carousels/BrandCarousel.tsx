@@ -87,11 +87,13 @@ export const BrandCarousel = ({ brand, title, description }: BrandCarouselProps)
         >
           <CarouselContent className="-ml-4 pr-4">
             {products.map((product) => (
-              <CarouselItem key={product.id} className="pl-4 basis-[85%] sm:basis-[48%] lg:basis-[32%] 2xl:basis-[24%]">
-                <ProductCard
-                  product={product}
-                  onProductClick={handleProductClick}
-                />
+              <CarouselItem key={product.id} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
+                <div className="h-[400px]">
+                  <ProductCard
+                    product={product}
+                    onProductClick={handleProductClick}
+                  />
+                </div>
               </CarouselItem>
             ))}
           </CarouselContent>

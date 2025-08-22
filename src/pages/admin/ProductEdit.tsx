@@ -54,7 +54,7 @@ const ProductEdit = () => {
           .from('products')
           .select('*')
           .eq('id', id)
-          .single();
+          .maybeSingle();
 
         if (abortController.signal.aborted) return;
 
@@ -158,11 +158,19 @@ const ProductEdit = () => {
           // Aguardar atualização do cache antes da navegação
           await fetchProducts({ force: true });
           
-          // Navegar e mostrar sucesso
-          navigate('/admin/produtos', { 
-            replace: true, 
-            state: { successMessage: `Produto "${data.name}" atualizado com sucesso!` }
-          });
+          // Manter usuário na página de edição e mostrar sucesso
+          handleSuccess(`Produto "${data.name}" atualizado com sucesso!`);
+          
+          // Recarregar dados do produto atualizado
+          const { data: refreshedProduct } = await supabase
+            .from('products')
+            .select('*')
+            .eq('id', product.id)
+            .maybeSingle();
+            
+          if (refreshedProduct) {
+            setProduct(refreshedProduct);
+          }
           
           resolve();
         } catch (error: any) {
