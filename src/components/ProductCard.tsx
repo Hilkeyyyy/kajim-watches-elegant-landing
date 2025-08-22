@@ -45,10 +45,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
   return (
     <Card className="group cursor-pointer overflow-hidden border-0 bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] rounded-2xl w-full h-full relative flex flex-col">
       <Link to={`/produto/${product.id}`} className="block flex-1 flex flex-col">
-        <div className="relative flex-1">
-          {/* Product Image */}
+        {/* Product Image */}
+        <div className="relative aspect-square">
           <div
-            className="h-[60%] overflow-hidden bg-gradient-to-br from-muted/20 to-muted/5 rounded-t-2xl relative"
+            className="w-full h-full overflow-hidden bg-gradient-to-br from-muted/20 to-muted/5 rounded-t-2xl relative"
             onClick={(e) => {
               e.stopPropagation();
               setLightboxOpen(true);
@@ -67,14 +67,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
             <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent pointer-events-none"></div>
             
             {/* Badges no canto superior esquerdo */}
-            <div className="absolute top-4 left-4 flex flex-col gap-2">
+            <div className="absolute top-3 left-3 flex flex-col gap-1">
               {(product as any).badges?.slice(0, 2).map((badge: string, index: number) => (
                 <ProductBadge key={index} badge={badge} size="sm" />
               ))}
             </div>
             
             {/* Botão de favorito no canto superior direito */}
-            <div className="absolute top-4 right-4">
+            <div className="absolute top-3 right-3">
               <FavoriteButton 
                 productId={product.id} 
                 productName={product.name}
@@ -84,21 +84,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
             </div>
             
             {/* Status do estoque - mais destacado */}
-            <div className="absolute bottom-4 right-4">
+            <div className="absolute bottom-3 right-3">
               {isLimitedStock && (
-                <div className="bg-gradient-to-r from-amber-500/90 to-orange-500/90 backdrop-blur-sm text-white px-3 py-2 rounded-full text-xs font-bold shadow-lg border border-amber-400/30">
+                <div className="bg-gradient-to-r from-amber-500/90 to-orange-500/90 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg border border-amber-400/30">
                   <span className="flex items-center gap-1">
-                    ⚡ Últimas {stockQuantity} peças
+                    ⚡ Últimas {stockQuantity}
                   </span>
                 </div>
               )}
               {stockQuantity > 5 && (
-                <div className="bg-gradient-to-r from-emerald-500/90 to-green-500/90 backdrop-blur-sm text-white px-3 py-2 rounded-full text-xs font-semibold shadow-lg border border-emerald-400/30">
-                  ✓ Em Estoque ({stockQuantity})
+                <div className="bg-gradient-to-r from-emerald-500/90 to-green-500/90 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg border border-emerald-400/30">
+                  ✓ Estoque ({stockQuantity})
                 </div>
               )}
               {stockQuantity === 0 && (
-                <div className="bg-gradient-to-r from-red-500/90 to-rose-500/90 backdrop-blur-sm text-white px-3 py-2 rounded-full text-xs font-semibold shadow-lg border border-red-400/30">
+                <div className="bg-gradient-to-r from-red-500/90 to-rose-500/90 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg border border-red-400/30">
                   ✗ Indisponível
                 </div>
               )}
@@ -106,21 +106,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
           </div>
         </div>
 
-        <CardContent className="p-4 space-y-3 flex-1 flex flex-col">
+        <CardContent className="p-4 space-y-3 flex flex-col">
           {/* Brand */}
           <div className="flex items-center justify-between">
-            <p className="text-xs text-primary/80 font-bold uppercase tracking-wider font-mono">
+            <p className="text-xs text-primary/80 font-bold uppercase tracking-wider">
               {product.brand}
             </p>
           </div>
           
           {/* Product Name */}
-          <h3 className="text-lg font-bold text-foreground line-clamp-2 leading-tight min-h-[2.5rem] group-hover:text-primary transition-colors duration-300 font-serif">
+          <h3 className="text-base font-bold text-foreground line-clamp-2 leading-tight group-hover:text-primary transition-colors duration-300">
             {product.name}
           </h3>
           
           {/* Description - always show something */}
-          <p className="text-xs text-muted-foreground/80 line-clamp-2 leading-relaxed font-light flex-1">
+          <p className="text-xs text-muted-foreground/80 line-clamp-2 leading-relaxed font-light">
             {product.description || 
              `Relógio ${product.brand}${product.model ? ` ${product.model}` : ''}${product.case_size ? ` - ${product.case_size}` : ''}${product.movement ? ` - ${product.movement}` : ''}.`}
           </p>
@@ -128,13 +128,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
           {/* Price Section */}
           <div className="pt-2 space-y-1 mt-auto">
             {product.original_price && (
-              <p className="text-sm text-muted-foreground line-through font-mono opacity-70">
+              <p className="text-sm text-muted-foreground line-through opacity-70">
                 {originalDisplay}
               </p>
             )}
             <div className="flex items-center gap-2">
-              <p className="text-xl font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent leading-tight font-mono tracking-tight">
-                {priceDisplay}
+              <p className="text-lg font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent leading-tight tracking-tight">
+                {priceDisplay || 'Consulte'}
               </p>
               {product.original_price && (
                 <span className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-1.5 py-0.5 rounded-full text-xs font-bold">
@@ -153,7 +153,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
             product={{
               id: product.id,
               name: product.name,
-              price: priceDisplay,
+              price: priceDisplay || 'Consulte',
               image: mainImage
             }}
             variant="primary"
