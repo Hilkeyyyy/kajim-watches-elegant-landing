@@ -43,7 +43,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
   const isLimitedStock = stockQuantity > 0 && stockQuantity <= 5;
 
   return (
-    <Card className="group cursor-pointer overflow-hidden border-0 bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] rounded-2xl w-full h-full relative flex flex-col min-h-[400px]">
+    <Card className="group cursor-pointer overflow-hidden border-0 bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] rounded-2xl w-full h-full relative flex flex-col min-h-[450px]">
       <Link to={`/produto/${product.id}`} className="block flex-1 flex flex-col">{/* Link com path correto */}
         {/* Product Image */}
         <div className="relative aspect-square">
@@ -146,8 +146,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
         </CardContent>
       </Link>
       
-      {/* Action Buttons */}
-      <div className="px-4 pb-4">
+      {/* Action Buttons - sempre visíveis */}
+      <div className="px-4 pb-4 mt-auto">
         <div className="flex gap-2">
           <AddToCartButtonAnimated
             product={{
@@ -158,14 +158,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
             }}
             variant="primary"
             size="sm"
-            className="flex-1 gap-1 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg font-bold rounded-xl bg-gradient-to-r from-primary to-accent hover:from-accent hover:to-primary text-white border-0 shadow-md text-xs"
+            className="flex-1 gap-1 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg font-bold rounded-xl bg-gradient-to-r from-primary to-accent hover:from-accent hover:to-primary text-white border-0 shadow-md text-xs py-2.5"
             showText={true}
           />
           
           <Button
             variant="outline"
             size="sm"
-            className="px-3 transition-all duration-300 hover:bg-gradient-to-r hover:from-primary/10 hover:to-accent/10 hover:text-primary hover:border-primary/30 rounded-xl backdrop-blur-sm border-border/30 shadow-sm text-xs"
+            className="px-3 py-2.5 transition-all duration-300 hover:bg-gradient-to-r hover:from-primary/10 hover:to-accent/10 hover:text-primary hover:border-primary/30 rounded-xl backdrop-blur-sm border-border/30 shadow-sm text-xs"
             asChild
           >
             <Link to={`/produto/${product.id}`}>

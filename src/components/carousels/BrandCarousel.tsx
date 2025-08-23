@@ -73,8 +73,8 @@ export const BrandCarousel = ({ brand, title, description }: BrandCarouselProps)
               {description}
             </p>
           )}
-          <div className="mt-6 inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500/10 to-green-500/10 backdrop-blur-xl border border-emerald-500/20 rounded-full px-6 py-2">
-            <span className="text-emerald-600 dark:text-emerald-400 font-semibold text-sm">✓ 100% Originais</span>
+          <div className="mt-6 inline-flex items-center gap-2 bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-xl border border-white/20 rounded-full px-6 py-2">
+            <span className="text-foreground font-semibold text-sm">✓ 100% Originais</span>
           </div>
         </div>
         
@@ -88,7 +88,7 @@ export const BrandCarousel = ({ brand, title, description }: BrandCarouselProps)
           <CarouselContent className="-ml-4 pr-4">
             {products.map((product) => (
               <CarouselItem key={product.id} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
-                <div className="h-[400px]">
+                <div className="h-[480px]">
                   <ProductCard
                     product={product}
                     onProductClick={handleProductClick}

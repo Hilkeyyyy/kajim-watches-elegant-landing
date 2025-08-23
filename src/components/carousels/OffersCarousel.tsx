@@ -47,7 +47,7 @@ export const OffersCarousel = () => {
   }, []);
 
   const handleProductClick = (id: string) => {
-    navigate(`/product/${id}`);
+    navigate(`/produto/${id}`);
   };
 
   if (loading) {
@@ -98,7 +98,7 @@ export const OffersCarousel = () => {
           <CarouselContent className="-ml-4">
             {products.map((product) => (
               <CarouselItem key={product.id} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
-                <div className="h-[500px]">
+                <div className="h-[480px]">
                   <ProductCard 
                     product={product} 
                     onProductClick={handleProductClick}

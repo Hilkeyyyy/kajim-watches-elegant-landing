@@ -6,6 +6,7 @@ import { OffersCarousel } from "@/components/carousels/OffersCarousel";
 import { NewProductsCarousel } from "@/components/carousels/NewProductsCarousel";
 import { FeaturedCarousel } from "@/components/carousels/FeaturedCarousel";
 import AboutSection from "@/components/AboutSection";
+import Footer from "@/components/Footer";
 
 const Index = () => {
   return (
@@ -32,6 +33,7 @@ const Index = () => {
       <OffersCarousel />
       <NewProductsCarousel />
       <AboutSection />
+      <Footer />
     </div>
   );
 };
