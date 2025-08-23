@@ -558,11 +558,17 @@ export type Database = {
           additional_info: string | null
           contact_info: string | null
           created_at: string
+          footer_links: Json
           footer_text: string | null
+          hero_gallery: Json
           hero_image_url: string | null
           hero_subtitle: string | null
           hero_title: string | null
+          homepage_blocks: Json
           id: string
+          mid_banners: Json
+          show_category_carousel: boolean
+          show_mid_banners: boolean
           site_title: string | null
           updated_at: string
         }
@@ -571,11 +577,17 @@ export type Database = {
           additional_info?: string | null
           contact_info?: string | null
           created_at?: string
+          footer_links?: Json
           footer_text?: string | null
+          hero_gallery?: Json
           hero_image_url?: string | null
           hero_subtitle?: string | null
           hero_title?: string | null
+          homepage_blocks?: Json
           id?: string
+          mid_banners?: Json
+          show_category_carousel?: boolean
+          show_mid_banners?: boolean
           site_title?: string | null
           updated_at?: string
         }
@@ -584,11 +596,17 @@ export type Database = {
           additional_info?: string | null
           contact_info?: string | null
           created_at?: string
+          footer_links?: Json
           footer_text?: string | null
+          hero_gallery?: Json
           hero_image_url?: string | null
           hero_subtitle?: string | null
           hero_title?: string | null
+          homepage_blocks?: Json
           id?: string
+          mid_banners?: Json
+          show_category_carousel?: boolean
+          show_mid_banners?: boolean
           site_title?: string | null
           updated_at?: string
         }

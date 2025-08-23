@@ -26,11 +26,11 @@ const Footer = () => {
             <p className="text-gray-300 leading-relaxed mb-4">
               {settings.about_text}
             </p>
-            <div className="bg-gradient-to-r from-emerald-500/20 to-green-500/20 backdrop-blur-sm border border-emerald-500/30 rounded-xl p-4">
-              <p className="text-emerald-300 font-semibold text-sm flex items-center gap-2">
+            <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-xl border border-white/20 rounded-xl p-4 shadow-lg">
+              <p className="text-white font-semibold text-sm flex items-center gap-2">
                 ✓ <span className="font-bold">100% ORIGINAIS</span>
               </p>
-              <p className="text-emerald-200/80 text-xs mt-1">
+              <p className="text-white/80 text-xs mt-1">
                 KAJIM trabalha exclusivamente com relógios originais, nunca réplicas ou clones.
               </p>
             </div>
@@ -62,9 +62,9 @@ const Footer = () => {
         {/* Footer Bottom */}
         <div className="border-t border-gray-700 mt-12 pt-8 text-center">
           <div className="mb-4">
-            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500/20 to-yellow-500/20 backdrop-blur-sm border border-amber-500/30 rounded-full px-6 py-2">
-              <span className="text-amber-300 text-lg">🏆</span>
-              <span className="text-amber-200 font-bold text-sm">GARANTIA DE ORIGINALIDADE</span>
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-xl border border-white/20 rounded-full px-6 py-2 shadow-lg">
+              <span className="text-white text-lg">🏆</span>
+              <span className="text-white font-bold text-sm">GARANTIA DE ORIGINALIDADE</span>
             </div>
           </div>
           <p className="text-gray-400 text-sm">
