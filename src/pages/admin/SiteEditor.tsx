@@ -10,7 +10,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ImageUpload } from '@/components/ImageUpload';
-import { Save, Settings, Image, Type, Layout } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Save, Settings, Image, Type, Layout, ToggleLeft } from 'lucide-react';
 
 const SiteEditor = () => {
   const { settings: currentSettings, isLoading, refetch } = useSiteSettings();
@@ -102,7 +103,7 @@ const SiteEditor = () => {
       </div>
 
       <Tabs defaultValue="general" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4 bg-muted/30">
+        <TabsList className="grid w-full grid-cols-5 bg-muted/30">
           <TabsTrigger value="general" className="gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary/10 data-[state=active]:to-accent/10 data-[state=active]:text-primary">
             <Type className="h-4 w-4" />
             <span className="hidden sm:inline">Geral</span>
@@ -114,6 +115,10 @@ const SiteEditor = () => {
           <TabsTrigger value="content" className="gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary/10 data-[state=active]:to-accent/10 data-[state=active]:text-primary">
             <Layout className="h-4 w-4" />
             <span className="hidden sm:inline">Conteúdo</span>
+          </TabsTrigger>
+          <TabsTrigger value="layout" className="gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary/10 data-[state=active]:to-accent/10 data-[state=active]:text-primary">
+            <ToggleLeft className="h-4 w-4" />
+            <span className="hidden sm:inline">Layout</span>
           </TabsTrigger>
           <TabsTrigger value="footer" className="gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary/10 data-[state=active]:to-accent/10 data-[state=active]:text-primary">
             <Settings className="h-4 w-4" />
@@ -217,6 +222,53 @@ const SiteEditor = () => {
                   placeholder="Telefone, e-mail, endereço..."
                   rows={3}
                 />
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="layout" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Controles de Layout</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-4 border border-border/50 rounded-lg bg-muted/30">
+                  <div className="space-y-1">
+                    <Label htmlFor="show_category_carousel" className="text-base font-medium">
+                      Carrossel de Categorias
+                    </Label>
+                    <p className="text-sm text-muted-foreground">
+                      Mostrar o carrossel com categorias de marcas na página inicial
+                    </p>
+                  </div>
+                  <Switch
+                    id="show_category_carousel"
+                    checked={settings.show_category_carousel ?? true}
+                    onCheckedChange={(checked) => 
+                      setSettings(prev => ({ ...prev, show_category_carousel: checked }))
+                    }
+                  />
+                </div>
+                
+                <div className="flex items-center justify-between p-4 border border-border/50 rounded-lg bg-muted/30">
+                  <div className="space-y-1">
+                    <Label htmlFor="show_mid_banners" className="text-base font-medium">
+                      Banners do Meio
+                    </Label>
+                    <p className="text-sm text-muted-foreground">
+                      Exibir banners promocionais no meio da página
+                    </p>
+                  </div>
+                  <Switch
+                    id="show_mid_banners"
+                    checked={settings.show_mid_banners ?? false}
+                    onCheckedChange={(checked) => 
+                      setSettings(prev => ({ ...prev, show_mid_banners: checked }))
+                    }
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>

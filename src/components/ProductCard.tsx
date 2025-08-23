@@ -43,7 +43,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
   const isLimitedStock = stockQuantity > 0 && stockQuantity <= 5;
 
   return (
-    <Card className="group cursor-pointer overflow-hidden border-0 bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] rounded-2xl w-full h-full relative flex flex-col min-h-[450px]">
+    <Card className="group cursor-pointer overflow-hidden border-0 bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] rounded-2xl w-full h-full relative flex flex-col min-h-[520px]">
       <Link to={`/produto/${product.id}`} className="block flex-1 flex flex-col">{/* Link com path correto */}
         {/* Product Image */}
         <div className="relative aspect-square">
@@ -106,7 +106,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
           </div>
         </div>
 
-        <CardContent className="p-4 space-y-2 flex flex-col flex-1">
+        <CardContent className="p-4 space-y-3 flex flex-col h-[280px]">
           {/* Brand */}
           <div className="flex items-center justify-between">
             <p className="text-xs text-primary/80 font-bold uppercase tracking-wider">
@@ -120,13 +120,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
           </h3>
           
           {/* Description - always show something */}
-          <p className="text-xs text-muted-foreground/80 line-clamp-2 leading-relaxed font-light flex-1">
+          <p className="text-xs text-muted-foreground/80 line-clamp-3 leading-relaxed font-light flex-1">
             {product.description || 
              `Relógio ${product.brand}${product.model ? ` ${product.model}` : ''}${product.case_size ? ` - ${product.case_size}` : ''}${product.movement ? ` - ${product.movement}` : ''}.`}
           </p>
           
           {/* Price Section */}
-          <div className="pt-1 space-y-1 mt-auto">
+          <div className="pt-2 space-y-1 mt-auto">
             {product.original_price && (
               <p className="text-sm text-muted-foreground line-through opacity-70">
                 {originalDisplay}
@@ -147,8 +147,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
       </Link>
       
       {/* Action Buttons - sempre visíveis */}
-      <div className="px-4 pb-4 mt-auto">
-        <div className="flex gap-2">
+      <div className="px-4 pb-4 mt-auto h-[60px] flex items-center">
+        <div className="flex gap-2 w-full">
           <AddToCartButtonAnimated
             product={{
               id: product.id,

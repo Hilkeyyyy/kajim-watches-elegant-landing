@@ -7,13 +7,16 @@ import { NewProductsCarousel } from "@/components/carousels/NewProductsCarousel"
 import { FeaturedCarousel } from "@/components/carousels/FeaturedCarousel";
 import AboutSection from "@/components/AboutSection";
 import Footer from "@/components/Footer";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const Index = () => {
+  const { settings } = useSiteSettings();
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <HeroSection />
-      <CategoryCarousel />
+      {settings.show_category_carousel && <CategoryCarousel />}
       <FeaturedCarousel />
       <BrandCarousel 
         brand="Rolex" 
