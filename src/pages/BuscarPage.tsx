@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Search, Filter, SlidersHorizontal } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { Button } from '@/components/ui/Button';
@@ -19,11 +19,14 @@ import {
 } from '@/components/ui/select';
 
 export const BuscarPage: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchParams] = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState('name');
+  const [brandFilter, setBrandFilter] = useState('all');
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,7 +35,7 @@ export const BuscarPage: React.FC = () => {
 
   useEffect(() => {
     filterAndSortProducts();
-  }, [searchTerm, products, sortBy]);
+  }, [searchTerm, products, sortBy, brandFilter, priceRange]);
 
   const fetchProducts = async () => {
     try {
@@ -66,6 +69,17 @@ export const BuscarPage: React.FC = () => {
       );
     }
 
+    // Filtrar por marca
+    if (brandFilter !== 'all') {
+      filtered = filtered.filter(product => product.brand === brandFilter);
+    }
+
+    // Filtrar por preço
+    filtered = filtered.filter(product => {
+      const price = Number(product.price);
+      return price >= priceRange[0] && price <= priceRange[1];
+    });
+
     // Ordenar
     filtered.sort((a, b) => {
       switch (sortBy) {
@@ -75,6 +89,8 @@ export const BuscarPage: React.FC = () => {
           return Number(b.price) - Number(a.price);
         case 'brand':
           return a.brand.localeCompare(b.brand);
+        case 'newest':
+          return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
         case 'name':
         default:
           return a.name.localeCompare(b.name);
@@ -83,6 +99,9 @@ export const BuscarPage: React.FC = () => {
 
     setFilteredProducts(filtered);
   };
+
+  // Extrair marcas únicas dos produtos
+  const availableBrands = Array.from(new Set(products.map(p => p.brand))).sort();
 
   const handleProductClick = (id: string) => {
     navigate(`/produto/${id}`);
@@ -135,6 +154,19 @@ export const BuscarPage: React.FC = () => {
                 </div>
                 
                 <div className="flex gap-2">
+                  <Select value={brandFilter} onValueChange={setBrandFilter}>
+                    <SelectTrigger className="w-full sm:w-48 h-12 border-0 bg-background/50 backdrop-blur-sm">
+                      <Filter className="w-4 h-4 mr-2" />
+                      <SelectValue placeholder="Filtrar por marca" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todas as marcas</SelectItem>
+                      {availableBrands.map(brand => (
+                        <SelectItem key={brand} value={brand}>{brand}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
                   <Select value={sortBy} onValueChange={setSortBy}>
                     <SelectTrigger className="w-full sm:w-48 h-12 border-0 bg-background/50 backdrop-blur-sm">
                       <SlidersHorizontal className="w-4 h-4 mr-2" />
@@ -145,6 +177,7 @@ export const BuscarPage: React.FC = () => {
                       <SelectItem value="brand">Marca A-Z</SelectItem>
                       <SelectItem value="price_asc">Preço: Menor → Maior</SelectItem>
                       <SelectItem value="price_desc">Preço: Maior → Menor</SelectItem>
+                      <SelectItem value="newest">Mais novos</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

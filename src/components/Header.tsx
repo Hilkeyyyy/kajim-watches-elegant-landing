@@ -1,9 +1,9 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Heart, ShoppingCart, User, Menu, X } from 'lucide-react';
+import { Heart, ShoppingCart, User, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
+import { SearchBar } from '@/components/SearchBar';
 import { useAuth } from '@/hooks/useAuth';
 import { useApp } from '@/contexts/AppContext';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -34,13 +34,10 @@ export const Header: React.FC = () => {
             <>
               {/* Search Bar - Desktop */}
               <div className="flex-1 max-w-md mx-8">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                  <Input
-                    placeholder="Buscar relógios premium..."
-                    className="pl-9 pr-4 bg-muted/50 border-border/50 focus:bg-background focus:border-primary/50 transition-all duration-300"
-                  />
-                </div>
+                <SearchBar 
+                  placeholder="Buscar relógios premium..."
+                  showResults={true}
+                />
               </div>
 
               {/* Desktop Actions */}
@@ -98,10 +95,6 @@ export const Header: React.FC = () => {
           {/* Mobile Actions */}
           {isMobile && (
             <div className="flex items-center space-x-2">
-              {/* Mobile Search Icon */}
-              <Button variant="ghost" size="sm" className="hover:bg-muted/50">
-                <Search className="w-5 h-5" />
-              </Button>
 
               {/* Mobile Favorites */}
               <Link to="/favoritos">
@@ -145,13 +138,10 @@ export const Header: React.FC = () => {
           <div className="border-t border-border/50 bg-background/98 backdrop-blur-md">
             <div className="py-4 space-y-3">
               {/* Mobile Search */}
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                <Input
-                  placeholder="Buscar relógios..."
-                  className="pl-9 pr-4 bg-muted/50 border-border/50"
-                />
-              </div>
+              <SearchBar 
+                placeholder="Buscar relógios..."
+                showResults={false}
+              />
 
               {/* Mobile User Menu */}
               <div className="flex flex-col space-y-2">

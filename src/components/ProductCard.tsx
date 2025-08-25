@@ -8,7 +8,7 @@ import { useApp } from '@/contexts/AppContext';
 import { parsePrice, formatPrice } from '@/utils/priceUtils';
 import { AddToCartButtonAnimated } from '@/components/AddToCartButtonAnimated';
 import { FavoriteButton } from '@/components/FavoriteButton';
-import { StockStatus } from '@/components/StockStatus';
+import { StockIndicator } from '@/components/StockIndicator';
 import { ProductBadge } from '@/components/ProductBadge';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 
@@ -83,25 +83,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
               />
             </div>
             
-            {/* Status do estoque - mais destacado */}
+            {/* Status do estoque - liquid glass design */}
             <div className="absolute bottom-3 right-3">
-              {isLimitedStock && (
-                <div className="bg-gradient-to-r from-amber-500/90 to-orange-500/90 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg border border-amber-400/30">
-                  <span className="flex items-center gap-1">
-                    ⚡ Últimas {stockQuantity}
-                  </span>
-                </div>
-              )}
-              {stockQuantity > 5 && (
-                <div className="bg-gradient-to-r from-emerald-500/90 to-green-500/90 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg border border-emerald-400/30">
-                  ✓ Estoque ({stockQuantity})
-                </div>
-              )}
-              {stockQuantity === 0 && (
-                <div className="bg-gradient-to-r from-red-500/90 to-rose-500/90 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg border border-red-400/30">
-                  ✗ Indisponível
-                </div>
-              )}
+              <StockIndicator 
+                stockQuantity={stockQuantity}
+                size="sm"
+              />
             </div>
           </div>
         </div>

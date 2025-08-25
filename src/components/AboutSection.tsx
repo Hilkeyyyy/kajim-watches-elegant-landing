@@ -36,32 +36,34 @@ const AboutSection = () => {
               </p>
             </div>
 
-            {/* Quality Features */}
+            {/* Quality Features - Dynamic from settings */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-              <div className="text-center">
-                <div className="inline-flex items-center justify-center w-20 h-20 bg-white/10 rounded-full mb-4 backdrop-blur-sm">
-                  <span className="text-2xl font-bold text-white">A++</span>
+              {settings.editable_sections?.quality_badges?.filter(badge => badge.enabled).map((badge) => (
+                <div key={badge.id} className="text-center">
+                  <div className="inline-flex items-center justify-center w-20 h-20 bg-white/10 rounded-full mb-4 backdrop-blur-sm">
+                    <span className="text-2xl font-bold text-white">{badge.icon}</span>
+                  </div>
+                  <h3 className="text-xl font-playfair font-semibold mb-2">
+                    {badge.title}
+                  </h3>
+                  <p className="text-gray-300 text-sm">
+                    {badge.description}
+                  </p>
                 </div>
-                <h3 className="text-xl font-playfair font-semibold mb-2">
-                  Qualidade A++
-                </h3>
-                <p className="text-gray-300 text-sm">
-                  Movimentos de alta precisão
-                </p>
-              </div>
-
-              <div className="text-center">
-                <div className="inline-flex items-center justify-center w-20 h-20 bg-white/10 rounded-full mb-4 backdrop-blur-sm">
-                  <span className="text-2xl">🛡️</span>
-                </div>
-                <h3 className="text-xl font-playfair font-semibold mb-2">
-                  Garantia
-                </h3>
-                <p className="text-gray-300 text-sm">
-                  Suporte completo e confiável
-                </p>
-              </div>
+              ))}
             </div>
+
+            {/* Custom Blocks */}
+            {settings.editable_sections?.custom_blocks?.map((block, index) => (
+              <div key={index} className="mt-8">
+                {block.type === 'text' && (
+                  <p className="text-lg text-gray-200 leading-relaxed">{block.content}</p>
+                )}
+                {block.type === 'html' && (
+                  <div dangerouslySetInnerHTML={{ __html: block.content }} />
+                )}
+              </div>
+            ))}
           </div>
 
           {/* Image */}

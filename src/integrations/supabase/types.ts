@@ -56,6 +56,48 @@ export type Database = {
         }
         Relationships: []
       }
+      brand_categories: {
+        Row: {
+          auto_generated: boolean | null
+          brand_name: string
+          created_at: string | null
+          custom_image_url: string | null
+          description: string | null
+          display_name: string
+          id: string
+          is_featured: boolean | null
+          is_visible: boolean | null
+          sort_order: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          auto_generated?: boolean | null
+          brand_name: string
+          created_at?: string | null
+          custom_image_url?: string | null
+          description?: string | null
+          display_name: string
+          id?: string
+          is_featured?: boolean | null
+          is_visible?: boolean | null
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          auto_generated?: boolean | null
+          brand_name?: string
+          created_at?: string | null
+          custom_image_url?: string | null
+          description?: string | null
+          display_name?: string
+          id?: string
+          is_featured?: boolean | null
+          is_visible?: boolean | null
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       cart_items: {
         Row: {
           created_at: string
@@ -558,14 +600,19 @@ export type Database = {
           additional_info: string | null
           contact_info: string | null
           created_at: string
+          editable_sections: Json | null
+          enable_hero_background_blur: boolean | null
           footer_links: Json
           footer_text: string | null
+          hero_background_image_url: string | null
           hero_gallery: Json
           hero_image_url: string | null
           hero_subtitle: string | null
           hero_title: string | null
+          hero_watch_image_url: string | null
           homepage_blocks: Json
           id: string
+          layout_options: Json | null
           mid_banners: Json
           show_category_carousel: boolean
           show_mid_banners: boolean
@@ -577,14 +624,19 @@ export type Database = {
           additional_info?: string | null
           contact_info?: string | null
           created_at?: string
+          editable_sections?: Json | null
+          enable_hero_background_blur?: boolean | null
           footer_links?: Json
           footer_text?: string | null
+          hero_background_image_url?: string | null
           hero_gallery?: Json
           hero_image_url?: string | null
           hero_subtitle?: string | null
           hero_title?: string | null
+          hero_watch_image_url?: string | null
           homepage_blocks?: Json
           id?: string
+          layout_options?: Json | null
           mid_banners?: Json
           show_category_carousel?: boolean
           show_mid_banners?: boolean
@@ -596,14 +648,19 @@ export type Database = {
           additional_info?: string | null
           contact_info?: string | null
           created_at?: string
+          editable_sections?: Json | null
+          enable_hero_background_blur?: boolean | null
           footer_links?: Json
           footer_text?: string | null
+          hero_background_image_url?: string | null
           hero_gallery?: Json
           hero_image_url?: string | null
           hero_subtitle?: string | null
           hero_title?: string | null
+          hero_watch_image_url?: string | null
           homepage_blocks?: Json
           id?: string
+          layout_options?: Json | null
           mid_banners?: Json
           show_category_carousel?: boolean
           show_mid_banners?: boolean
