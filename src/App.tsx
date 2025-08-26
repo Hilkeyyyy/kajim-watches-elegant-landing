@@ -4,7 +4,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import ErrorBoundary from '@/components/ErrorBoundary';
+import { ErrorBoundaryOptimized } from '@/components/ErrorBoundaryOptimized';
 import { AppProvider } from '@/contexts/AppContext';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
@@ -41,7 +41,7 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
-    <ErrorBoundary>
+    <ErrorBoundaryOptimized>
       <BrowserRouter>
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
@@ -83,7 +83,7 @@ function App() {
           </AuthProvider>
         </QueryClientProvider>
       </BrowserRouter>
-    </ErrorBoundary>
+    </ErrorBoundaryOptimized>
   );
 }
 

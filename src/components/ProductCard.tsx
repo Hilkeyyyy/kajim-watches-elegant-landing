@@ -43,7 +43,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
   const isLimitedStock = stockQuantity > 0 && stockQuantity <= 5;
 
   return (
-    <Card className="group cursor-pointer overflow-hidden border-0 bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] rounded-2xl w-full h-full relative flex flex-col min-h-[520px]">
+    <Card className="group cursor-pointer overflow-hidden border border-border/20 bg-gradient-to-br from-card/98 to-card/95 backdrop-blur-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.01] rounded-xl w-full h-full relative flex flex-col min-h-[480px]">
       <Link to={`/produto/${product.id}`} className="block flex-1 flex flex-col">{/* Link com path correto */}
         {/* Product Image */}
         <div className="relative aspect-square">
@@ -93,24 +93,37 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
           </div>
         </div>
 
-        <CardContent className="p-4 space-y-3 flex flex-col h-[280px]">
+        <CardContent className="p-4 space-y-2 flex flex-col h-[240px]">
           {/* Brand */}
           <div className="flex items-center justify-between">
-            <p className="text-xs text-primary/80 font-bold uppercase tracking-wider">
+            <p className="text-xs text-primary/90 font-bold uppercase tracking-wider">
               {product.brand}
             </p>
           </div>
           
           {/* Product Name */}
-          <h3 className="text-sm font-bold text-foreground line-clamp-2 leading-tight group-hover:text-primary transition-colors duration-300">
+          <h3 className="text-base font-bold text-foreground line-clamp-2 leading-tight group-hover:text-primary transition-colors duration-300">
             {product.name}
           </h3>
           
-          {/* Description - always show something */}
-          <p className="text-xs text-muted-foreground/80 line-clamp-3 leading-relaxed font-light flex-1">
-            {product.description || 
-             `Relógio ${product.brand}${product.model ? ` ${product.model}` : ''}${product.case_size ? ` - ${product.case_size}` : ''}${product.movement ? ` - ${product.movement}` : ''}.`}
-          </p>
+          {/* Key specs */}
+          <div className="flex-1 space-y-1">
+            {product.case_size && (
+              <p className="text-xs text-muted-foreground/80 font-medium">
+                <span className="text-foreground">Tamanho:</span> {product.case_size}
+              </p>
+            )}
+            {product.movement && (
+              <p className="text-xs text-muted-foreground/80 font-medium">
+                <span className="text-foreground">Movimento:</span> {product.movement}
+              </p>
+            )}
+            {product.material && (
+              <p className="text-xs text-muted-foreground/80 font-medium">
+                <span className="text-foreground">Material:</span> {product.material}
+              </p>
+            )}
+          </div>
           
           {/* Price Section */}
           <div className="pt-2 space-y-1 mt-auto">
@@ -120,7 +133,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
               </p>
             )}
             <div className="flex items-center gap-2">
-              <p className="text-base font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent leading-tight tracking-tight">
+              <p className="text-lg font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent leading-tight tracking-tight">
                 {priceDisplay || 'Consulte'}
               </p>
               {product.original_price && (

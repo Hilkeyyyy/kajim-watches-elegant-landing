@@ -4,6 +4,7 @@ import { useNotifications } from '@/hooks/useNotifications';
 import { errorHandler } from '@/utils/errorHandler';
 import { parsePrice, formatPrice, calculateItemTotal } from '@/utils/priceUtils';
 import { logCartAction, logFavoriteAction, logStorageAction } from '@/utils/auditLogger';
+import { supabase } from '@/integrations/supabase/client';
 
 // Interface para produtos que podem ser adicionados ao carrinho
 interface AddToCartProduct {
@@ -279,34 +280,62 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return state.favorites.length;
   }, [state.favorites]);
 
-  // WhatsApp (mantém código existente)
-  const sendCartToWhatsApp = useCallback(() => {
+  // WhatsApp com segurança melhorada
+  const sendCartToWhatsApp = useCallback(async () => {
     if (state.cart.length === 0) {
       notifyError('Carrinho vazio', 'Adicione produtos ao carrinho antes de enviar.');
       return;
     }
 
     try {
-      const currentDate = new Date().toLocaleString('pt-BR');
-      let message = 'Olá, gostaria de saber mais sobre estes produtos:\n\n';
+      // Preparar dados do carrinho com totais calculados
+      const cartData = state.cart.map(item => ({
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+        total: getItemTotal(item.price, item.quantity)
+      }));
 
-      state.cart.forEach((item, index) => {
-        message += `${index + 1}. ${item.name}\n`;
-        message += `Quantidade: ${item.quantity}\n`;
-        message += `Preço: ${item.price}\n`;
-        message += `Total: ${getItemTotal(item.price, item.quantity)}\n\n`;
-      });
+      // Usar função do banco para gerar link
+      const { data: whatsappLink, error } = await supabase
+        .rpc('generate_whatsapp_link', { cart_data: cartData });
 
-      message += `Total do pedido: ${getCartTotal()}\n`;
-      message += `Data/Hora do pedido: ${currentDate}`;
+      if (error) {
+        throw error;
+      }
 
-      const whatsappUrl = `https://wa.me/5586988388124?text=${encodeURIComponent(message)}`;
-      window.open(whatsappUrl, '_blank');
-      
-      notifySuccess('Pedido enviado', 'Seu pedido foi enviado para o WhatsApp!');
+      if (whatsappLink) {
+        window.open(whatsappLink, '_blank');
+        notifySuccess('Pedido enviado', 'Seu pedido foi enviado para o WhatsApp!');
+      } else {
+        throw new Error('Falha ao gerar link do WhatsApp');
+      }
     } catch (error) {
       console.error('Erro ao enviar pedido para WhatsApp:', error);
-      notifyError('Erro ao enviar pedido', 'Tente novamente.');
+      
+      // Fallback para método anterior
+      try {
+        const currentDate = new Date().toLocaleString('pt-BR');
+        let message = 'Olá, gostaria de saber mais sobre estes produtos:\n\n';
+
+        state.cart.forEach((item, index) => {
+          message += `${index + 1}. ${item.name}\n`;
+          message += `Quantidade: ${item.quantity}\n`;
+          message += `Preço: ${item.price}\n`;
+          message += `Total: ${getItemTotal(item.price, item.quantity)}\n\n`;
+        });
+
+        message += `Total do pedido: ${getCartTotal()}\n`;
+        message += `Data/Hora do pedido: ${currentDate}`;
+
+        const whatsappUrl = `https://wa.me/5586988388124?text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, '_blank');
+        
+        notifySuccess('Pedido enviado', 'Seu pedido foi enviado para o WhatsApp!');
+      } catch (fallbackError) {
+        console.error('Erro no fallback do WhatsApp:', fallbackError);
+        notifyError('Erro ao enviar pedido', 'Tente novamente.');
+      }
     }
   }, [state.cart, notifySuccess, notifyError, getItemTotal, getCartTotal]);
 

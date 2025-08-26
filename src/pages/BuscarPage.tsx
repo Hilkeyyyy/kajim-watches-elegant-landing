@@ -10,6 +10,7 @@ import { MobileNavigation } from '@/components/MobileNavigation';
 import { supabase } from '@/integrations/supabase/client';
 import { Product } from '@/types/product';
 import { SupabaseProduct, convertSupabaseToProduct } from '@/types/supabase-product';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { 
   Select,
   SelectContent,
@@ -27,6 +28,7 @@ export const BuscarPage: React.FC = () => {
   const [sortBy, setSortBy] = useState('name');
   const [brandFilter, setBrandFilter] = useState('all');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
+  const { handleError } = useErrorHandler();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -51,6 +53,7 @@ export const BuscarPage: React.FC = () => {
       setProducts(products);
     } catch (error) {
       console.error('Erro ao buscar produtos:', error);
+      handleError(error, 'Erro ao carregar produtos');
     } finally {
       setLoading(false);
     }

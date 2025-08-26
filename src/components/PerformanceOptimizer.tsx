@@ -1,63 +1,63 @@
-import React from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 
-/**
- * Componente otimizado para melhorar performance COM PROTEÇÃO TOTAL CONTRA removeChild
- */
-export const PerformanceOptimizer = React.memo(({ children }: { children: React.ReactNode }) => {
-  React.useEffect(() => {
-    const cleanupTasks: Array<() => void> = [];
+interface PerformanceOptimizerProps {
+  children: React.ReactNode;
+  threshold?: number;
+  debounceMs?: number;
+}
+
+export const PerformanceOptimizer: React.FC<PerformanceOptimizerProps> = ({
+  children,
+  threshold = 30, // 30fps threshold
+  debounceMs = 100
+}) => {
+  const [isOptimized, setIsOptimized] = useState(false);
+  const [frameRate, setFrameRate] = useState(60);
+
+  useEffect(() => {
+    let rafId: number;
+    let frameCount = 0;
+    let lastTime = performance.now();
     
-    try {
-      // Múltiplas verificações de segurança DOM
-      if (!document?.head) {
-        console.warn('PerformanceOptimizer: document.head não disponível');
-        return;
-      }
-
-      // Preload crítico com proteção total
-      const linkElement = document.createElement('link');
-      linkElement.rel = 'preload';
-      linkElement.href = '/api/products';
-      linkElement.as = 'fetch';
-      linkElement.setAttribute('data-performance-optimizer', 'true');
+    const measurePerformance = () => {
+      frameCount++;
+      const currentTime = performance.now();
       
-      // Verificação dupla antes de inserir
-      if (document.head && !document.head.querySelector('[data-performance-optimizer="true"]')) {
-        document.head.appendChild(linkElement);
+      if (currentTime >= lastTime + 1000) {
+        const fps = Math.round((frameCount * 1000) / (currentTime - lastTime));
+        setFrameRate(fps);
         
-        // Registrar cleanup seguro
-        cleanupTasks.push(() => {
-          try {
-            // Verificação tripla antes de remover
-            if (linkElement && 
-                linkElement.parentNode && 
-                linkElement.parentNode === document.head && 
-                document.head.contains(linkElement)) {
-              document.head.removeChild(linkElement);
-            }
-          } catch (cleanupError) {
-            // Falha silenciosa - elemento provavelmente já foi removido
-            console.debug('PerformanceOptimizer: Elemento já removido ou inacessível');
-          }
-        });
+        // Ativar otimizações se FPS estiver baixo
+        setIsOptimized(fps < threshold);
+        
+        frameCount = 0;
+        lastTime = currentTime;
       }
-    } catch (error) {
-      console.warn('PerformanceOptimizer: Erro durante inicialização', error);
-    }
-
-    // Cleanup robusto
-    return () => {
-      cleanupTasks.forEach(cleanup => {
-        try {
-          cleanup();
-        } catch (error) {
-          console.debug('PerformanceOptimizer: Cleanup task failed silently');
-        }
-      });
+      
+      rafId = requestAnimationFrame(measurePerformance);
     };
-  }, []);
 
-  return <>{children}</>;
-});
+    rafId = requestAnimationFrame(measurePerformance);
 
-PerformanceOptimizer.displayName = "PerformanceOptimizer";
+    return () => {
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+      }
+    };
+  }, [threshold]);
+
+  const optimizedChildren = useMemo(() => {
+    if (!isOptimized) return children;
+    
+    // Apply performance optimizations when needed
+    return React.cloneElement(children as React.ReactElement, {
+      style: {
+        ...((children as React.ReactElement).props?.style || {}),
+        willChange: 'auto',
+        transform: 'translateZ(0)', // Force hardware acceleration
+      }
+    });
+  }, [children, isOptimized]);
+
+  return <>{optimizedChildren}</>;
+};

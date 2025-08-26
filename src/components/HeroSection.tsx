@@ -15,7 +15,7 @@ const HeroSection = () => {
   };
 
   const exploreCollection = () => {
-    window.open('/buscar', '_blank');
+    navigate('/buscar');
   };
 
   if (isLoading) {
