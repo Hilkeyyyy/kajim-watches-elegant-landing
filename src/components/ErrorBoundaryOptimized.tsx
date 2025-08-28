@@ -3,6 +3,8 @@ import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
+const isDev = import.meta.env.MODE === 'development';
+
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
@@ -61,7 +63,7 @@ export class ErrorBoundaryOptimized extends Component<Props, State> {
                 Ocorreu um erro inesperado. Tente recarregar a página ou volte à página inicial.
               </p>
               
-              {process.env.NODE_ENV === 'development' && this.state.error && (
+              {isDev && this.state.error && (
                 <details className="bg-muted/30 p-3 rounded-lg text-sm">
                   <summary className="cursor-pointer font-medium">Detalhes do erro (desenvolvimento)</summary>
                   <pre className="mt-2 text-xs overflow-auto">
@@ -70,7 +72,7 @@ export class ErrorBoundaryOptimized extends Component<Props, State> {
                   </pre>
                 </details>
               )}
-              
+
               <div className="flex gap-2">
                 <Button
                   variant="outline"

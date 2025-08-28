@@ -8,6 +8,7 @@ import { ErrorBoundaryOptimized } from '@/components/ErrorBoundaryOptimized';
 import { AppProvider } from '@/contexts/AppContext';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { ThemeProvider } from 'next-themes';
 
 // Lazy load pages
 const Index = lazy(() => import('@/pages/Index'));
@@ -46,7 +47,8 @@ function App() {
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
             <AppProvider>
-              <TooltipProvider>
+              <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+                <TooltipProvider>
                 <div className="min-h-screen bg-background font-sans antialiased">
                   <Suspense fallback={<LoadingSpinner />}>
                     <Routes>
@@ -79,6 +81,7 @@ function App() {
                   <Toaster />
                 </div>
               </TooltipProvider>
+            </ThemeProvider>
             </AppProvider>
           </AuthProvider>
         </QueryClientProvider>
