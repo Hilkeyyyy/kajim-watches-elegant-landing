@@ -36,9 +36,13 @@ const AboutSection = () => {
               </p>
             </div>
 
-            {/* Quality Features - Dynamic from settings */}
+            {/* Quality Features - Filtradas */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-              {settings.editable_sections?.quality_badges?.filter(badge => badge.enabled).map((badge) => (
+              {settings.editable_sections?.quality_badges?.filter(badge => 
+                badge.enabled && 
+                !badge.title.toLowerCase().includes('a++') && 
+                !badge.title.toLowerCase().includes('garantia')
+              ).map((badge) => (
                 <div key={badge.id} className="text-center">
                   <div className="inline-flex items-center justify-center w-20 h-20 bg-white/10 rounded-full mb-4 backdrop-blur-sm">
                     <span className="text-2xl font-bold text-white">{badge.icon}</span>

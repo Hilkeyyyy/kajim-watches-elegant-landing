@@ -47,7 +47,7 @@ function App() {
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
             <AppProvider>
-              <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+              <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
                 <TooltipProvider>
                 <div className="min-h-screen bg-background font-sans antialiased">
                   <Suspense fallback={<LoadingSpinner />}>

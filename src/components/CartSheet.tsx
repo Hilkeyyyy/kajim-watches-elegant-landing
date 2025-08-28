@@ -57,56 +57,79 @@ export const CartSheet = React.memo(({ isOpen, onClose }: CartSheetProps) => {
               {cart.map((item) => (
                 <div
                   key={item.id}
-                  className="bg-card p-4 rounded-lg border space-y-4"
+                  className="bg-gradient-to-br from-card/98 to-card/95 p-3 rounded-xl border border-border/20 shadow-lg backdrop-blur-sm"
                 >
-                  <div className="flex items-start space-x-4">
-                    <div className="w-20 h-20 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-16 h-16 rounded-lg overflow-hidden bg-muted flex-shrink-0">
                       <img
                         src={item.image}
                         alt={item.name}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain"
                       />
                     </div>
                     
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-medium text-base truncate">{item.name}</h4>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Preço unitário: {item.price}
-                      </p>
-                      
-                      <div className="flex items-center justify-between mt-3">
-                        <div className="flex items-center space-x-3">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-8 w-8"
-                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                          >
-                            <Minus className="w-3 h-3" />
-                          </Button>
+                    <div className="flex-1 min-w-0 space-y-2">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1 space-y-1">
+                          <h4 className="font-bold text-sm text-foreground line-clamp-1">{item.name}</h4>
                           
-                          <span className="text-sm font-medium w-8 text-center">
-                            {item.quantity}
-                          </span>
+                          {/* Badges do produto */}
+                          {(item as any).badges && (item as any).badges.length > 0 && (
+                            <div className="flex flex-wrap gap-1">
+                              {(item as any).badges.slice(0, 2).map((badge: string, index: number) => (
+                                <span 
+                                  key={index}
+                                  className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-primary/10 to-accent/10 text-primary border border-primary/20"
+                                >
+                                  {badge}
+                                </span>
+                              ))}
+                            </div>
+                          )}
                           
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-8 w-8"
-                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                          >
-                            <Plus className="w-3 h-3" />
-                          </Button>
+                          <p className="text-xs text-muted-foreground">
+                            Unit.: {item.price}
+                          </p>
                         </div>
                         
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => removeFromCart(item.id)}
-                          className="text-destructive hover:text-destructive"
+                          className="text-destructive hover:text-destructive h-6 w-6 p-0"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-3 h-3" />
                         </Button>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-6 w-6 p-0"
+                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          >
+                            <Minus className="w-2 h-2" />
+                          </Button>
+                          
+                          <span className="text-xs font-bold w-6 text-center">
+                            {item.quantity}
+                          </span>
+                          
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-6 w-6 p-0"
+                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          >
+                            <Plus className="w-2 h-2" />
+                          </Button>
+                        </div>
+                        
+                        <div className="bg-gradient-to-r from-primary/10 to-accent/10 backdrop-blur-sm border border-primary/20 px-2 py-0.5 rounded-full">
+                          <span className="text-[10px] font-bold text-primary uppercase tracking-wide">Original</span>
+                        </div>
                       </div>
                     </div>
                   </div>

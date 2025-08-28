@@ -9,9 +9,18 @@ export const useErrorHandler = () => {
   const { toast } = useToast();
 
   const handleError = useCallback((error: any, context?: string) => {
+    console.error('Error occurred:', error, 'Context:', context);
+    
+    // Não mostrar erro genérico para operações que funcionam
+    if (error?.message?.includes('Success') || 
+        error?.code === 'SUCCESS' ||
+        context?.includes('success')) {
+      return null;
+    }
+    
     const appError = errorHandler.handleError(error, context);
     
-    // Mostra toast com erro
+    // Mostra toast com erro apenas para erros reais
     toast({
       variant: "destructive",
       title: "Erro",

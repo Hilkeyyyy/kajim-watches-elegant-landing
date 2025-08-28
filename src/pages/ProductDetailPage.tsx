@@ -156,24 +156,12 @@ export const ProductDetailPage: React.FC = () => {
                 <p className="text-muted-foreground mb-6">{product.description}</p>
               )}
               
-              {/* Original Guarantee - Elegante com glassmorphism */}
-              <div className="relative bg-gradient-to-r from-card/95 to-card/90 backdrop-blur-xl border border-border/20 rounded-2xl p-6 mb-6 shadow-xl">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-8 h-8 bg-gradient-to-r from-primary/80 to-accent/80 rounded-full flex items-center justify-center shadow-lg">
-                    <span className="text-white font-bold text-sm">✓</span>
-                  </div>
-                  <h3 className="font-bold text-foreground text-lg">
-                    100% ORIGINAL GARANTIDO
-                  </h3>
+              {/* Badge Original Minimalista */}
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-primary/10 to-accent/10 backdrop-blur-sm border border-primary/20 rounded-full px-4 py-2 mb-6">
+                <div className="w-3 h-3 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold text-[8px]">✓</span>
                 </div>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  Este relógio é <strong className="text-foreground">100% original</strong> e vem acompanhado de certificado de autenticidade. 
-                  A KAJIM trabalha exclusivamente com relógios originais, nunca réplicas ou clones.
-                </p>
-                <div className="flex items-center gap-2 mt-3 text-muted-foreground text-xs">
-                  <span>🏆</span>
-                  <span className="font-semibold">Certificado de Autenticidade Incluso</span>
-                </div>
+                <span className="text-sm font-bold text-primary uppercase tracking-wide">Original</span>
               </div>
             </div>
 

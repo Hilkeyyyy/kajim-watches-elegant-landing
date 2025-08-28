@@ -43,10 +43,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
   const isLimitedStock = stockQuantity > 0 && stockQuantity <= 5;
 
   return (
-    <Card className="group cursor-pointer overflow-hidden border border-border/20 bg-gradient-to-br from-card/98 to-card/95 backdrop-blur-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.01] rounded-xl w-full h-full relative flex flex-col min-h-[480px]">
+    <Card className="group cursor-pointer overflow-hidden border border-border/20 bg-gradient-to-br from-card/98 to-card/95 backdrop-blur-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.01] rounded-xl w-full h-full relative flex flex-col min-h-[420px] max-h-[420px]">
       <Link to={`/produto/${product.id}`} className="block flex-1 flex flex-col">{/* Link com path correto */}
         {/* Product Image */}
-        <div className="relative aspect-square">
+        <div className="relative h-[200px]">
           <div
             className="w-full h-full overflow-hidden bg-gradient-to-br from-muted/20 to-muted/5 rounded-t-2xl relative"
             onClick={(e) => {
@@ -59,7 +59,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
             <img
               src={mainImage}
               alt={`Relógio ${product.brand} ${product.name}`}
-              className="w-full h-full object-cover transition-all duration-700 group-hover:scale-[1.08] filter group-hover:brightness-110"
+              className="w-full h-full object-contain transition-all duration-700 group-hover:scale-[1.05] filter group-hover:brightness-110"
               loading="lazy"
             />
             
@@ -93,47 +93,39 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
           </div>
         </div>
 
-        <CardContent className="p-4 space-y-2 flex flex-col h-[240px]">
+        <CardContent className="p-4 space-y-2 flex flex-col flex-1">
           {/* Brand */}
           <div className="flex items-center justify-between">
             <p className="text-xs text-primary/90 font-bold uppercase tracking-wider">
               {product.brand}
             </p>
+            {/* Badge Original */}
+            <div className="bg-gradient-to-r from-primary/10 to-accent/10 backdrop-blur-sm border border-primary/20 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] font-bold text-primary uppercase tracking-wide">Original</span>
+            </div>
           </div>
           
           {/* Product Name */}
-          <h3 className="text-base font-bold text-foreground line-clamp-2 leading-tight group-hover:text-primary transition-colors duration-300">
+          <h3 className="text-sm font-bold text-foreground line-clamp-2 leading-tight group-hover:text-primary transition-colors duration-300">
             {product.name}
           </h3>
           
-          {/* Key specs */}
-          <div className="flex-1 space-y-1">
-            {product.case_size && (
-              <p className="text-xs text-muted-foreground/80 font-medium">
-                <span className="text-foreground">Tamanho:</span> {product.case_size}
-              </p>
-            )}
-            {product.movement && (
-              <p className="text-xs text-muted-foreground/80 font-medium">
-                <span className="text-foreground">Movimento:</span> {product.movement}
-              </p>
-            )}
-            {product.material && (
-              <p className="text-xs text-muted-foreground/80 font-medium">
-                <span className="text-foreground">Material:</span> {product.material}
-              </p>
-            )}
+          {/* Breve descrição */}
+          <div className="flex-1">
+            <p className="text-xs text-muted-foreground/80 line-clamp-2 leading-relaxed">
+              {product.description || `Relógio ${product.brand} ${product.case_size ? `- ${product.case_size}` : ''} ${product.movement ? `- ${product.movement}` : ''}`}
+            </p>
           </div>
           
           {/* Price Section */}
-          <div className="pt-2 space-y-1 mt-auto">
+          <div className="pt-1 space-y-1 mt-auto">
             {product.original_price && (
-              <p className="text-sm text-muted-foreground line-through opacity-70">
+              <p className="text-xs text-muted-foreground line-through opacity-70">
                 {originalDisplay}
               </p>
             )}
             <div className="flex items-center gap-2">
-              <p className="text-lg font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent leading-tight tracking-tight">
+              <p className="text-base font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent leading-tight tracking-tight">
                 {priceDisplay || 'Consulte'}
               </p>
               {product.original_price && (
@@ -147,8 +139,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
       </Link>
       
       {/* Action Buttons - sempre visíveis */}
-      <div className="px-4 pb-4 mt-auto h-[60px] flex items-center">
-        <div className="flex gap-2 w-full">
+      <div className="px-4 pb-4 mt-auto h-[50px] flex items-center">
+        <div className="flex gap-1.5 w-full">
           <AddToCartButtonAnimated
             product={{
               id: product.id,
@@ -158,14 +150,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
             }}
             variant="primary"
             size="sm"
-            className="flex-1 gap-1 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg font-bold rounded-xl bg-gradient-to-r from-primary to-accent hover:from-accent hover:to-primary text-white border-0 shadow-md text-xs py-2.5"
+            className="flex-1 gap-1 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg font-bold rounded-lg bg-gradient-to-r from-primary to-accent hover:from-accent hover:to-primary text-white border-0 shadow-md text-xs py-2"
             showText={true}
           />
           
           <Button
             variant="outline"
             size="sm"
-            className="px-3 py-2.5 transition-all duration-300 hover:bg-gradient-to-r hover:from-primary/10 hover:to-accent/10 hover:text-primary hover:border-primary/30 rounded-xl backdrop-blur-sm border-border/30 shadow-sm text-xs"
+            className="px-3 py-2 transition-all duration-300 hover:bg-gradient-to-r hover:from-primary/10 hover:to-accent/10 hover:text-primary hover:border-primary/30 rounded-lg backdrop-blur-sm border-border/30 shadow-sm text-xs"
             asChild
           >
             <Link to={`/produto/${product.id}`}>
