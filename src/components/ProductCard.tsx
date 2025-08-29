@@ -16,9 +16,10 @@ interface ProductCardProps {
   product: Product;
   onProductClick?: (id: string) => void;
   onClick?: () => void;
+  showBadgesAtBase?: boolean;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onClick }) => {
+export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onClick, showBadgesAtBase = false }) => {
   const { toggleFavorite, isFavorite } = useApp();
   const [lightboxOpen, setLightboxOpen] = useState(false);
 
@@ -43,12 +44,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
   const isLimitedStock = stockQuantity > 0 && stockQuantity <= 5;
 
   return (
-    <Card className="group cursor-pointer overflow-hidden border border-border/20 bg-gradient-to-br from-card/98 to-card/95 backdrop-blur-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.01] rounded-xl w-full h-full relative flex flex-col min-h-[420px] max-h-[420px]">
+    <Card className="group cursor-pointer overflow-hidden border border-border/20 bg-gradient-to-br from-card/98 to-card/95 backdrop-blur-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.01] rounded-xl w-full h-full relative flex flex-col">
       <Link to={`/produto/${product.id}`} className="block flex-1 flex flex-col">{/* Link com path correto */}
         {/* Product Image */}
-        <div className="relative h-[200px]">
+        <div className="relative h-[260px] sm:h-[280px]">
           <div
-            className="w-full h-full overflow-hidden bg-gradient-to-br from-muted/20 to-muted/5 rounded-t-2xl relative"
+            className="w-full h-full overflow-hidden rounded-t-2xl relative"
             onClick={(e) => {
               e.stopPropagation();
               setLightboxOpen(true);
@@ -59,8 +60,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
             <img
               src={mainImage}
               alt={`Relógio ${product.brand} ${product.name}`}
-              className="w-full h-full object-contain transition-all duration-700 group-hover:scale-[1.05] filter group-hover:brightness-110"
+              className="w-full h-full object-cover transition-all duration-700 group-hover:scale-[1.05]"
               loading="lazy"
+              decoding="async"
+              sizes="(max-width: 640px) 100vw, 33vw"
             />
             
             {/* Glass overlay effect */}

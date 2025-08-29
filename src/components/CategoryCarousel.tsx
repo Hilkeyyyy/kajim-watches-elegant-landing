@@ -67,6 +67,8 @@ export const CategoryCarousel = () => {
                       src={category.custom_image_url || category.default_image_url}
                       alt={category.display_name}
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      loading="lazy"
+                      decoding="async"
                     />
                   )}
                   

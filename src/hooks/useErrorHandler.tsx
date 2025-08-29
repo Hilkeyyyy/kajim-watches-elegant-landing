@@ -11,10 +11,16 @@ export const useErrorHandler = () => {
   const handleError = useCallback((error: any, context?: string) => {
     console.error('Error occurred:', error, 'Context:', context);
     
-    // Não mostrar erro genérico para operações que funcionam
+    // Ignorar erros nulos/abortados/sucesso aparentes
+    if (!error || error === null || error === undefined) {
+      return null;
+    }
+    if (error?.name === 'AbortError' || error?.message?.toLowerCase?.().includes('abort')) {
+      return null;
+    }
     if (error?.message?.includes('Success') || 
         error?.code === 'SUCCESS' ||
-        context?.includes('success')) {
+        context?.toLowerCase?.().includes('success')) {
       return null;
     }
     

@@ -116,6 +116,27 @@ export const useBrandCategories = () => {
 
   useEffect(() => {
     fetchCategories();
+
+    // Real-time updates for brand_categories and products
+    const categoriesChannel = supabase
+      .channel('brand_categories_changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'brand_categories' }, () => {
+        fetchCategories();
+      })
+      .subscribe();
+
+    const productsChannel = supabase
+      .channel('products_brand_watch')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'products' }, async () => {
+        await generateCategoriesFromProducts();
+        await fetchCategories();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(categoriesChannel);
+      supabase.removeChannel(productsChannel);
+    };
   }, []);
 
   return {

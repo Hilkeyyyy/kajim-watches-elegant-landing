@@ -152,6 +152,7 @@ export const FavoritesPage: React.FC = () => {
                   <ProductCard
                     product={product}
                     onProductClick={handleProductClick}
+                    showBadgesAtBase
                   />
                 </div>
               ))}

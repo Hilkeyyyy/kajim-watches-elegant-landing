@@ -97,13 +97,14 @@ const Favorites = () => {
           {/* Favorites Grid */}
           {favoriteProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-               {favoriteProducts.map((product) => (
-                 <ProductCard 
-                   key={product.id} 
-                   product={product}
-                   onProductClick={(id) => navigate(`/produto/${id}`)}
-                 />
-               ))}
+                 {favoriteProducts.map((product) => (
+                   <ProductCard 
+                     key={product.id} 
+                     product={product}
+                     onProductClick={(id) => navigate(`/produto/${id}`)}
+                     showBadgesAtBase
+                   />
+                 ))}
             </div>
           ) : (
             <div className="text-center py-16">
