@@ -48,11 +48,8 @@ const Auth = () => {
         });
       } else {
         console.log('Auth page - Sign in successful, redirecting');
-        toast({
-          title: "Login realizado com sucesso!",
-          description: "Redirecionando...",
-        });
-        navigate('/');
+        // Não mostrar toast de sucesso pois vai redirecionar imediatamente
+        navigate('/', { replace: true });
       }
     } catch (exception) {
       console.error('Auth page - Sign in exception:', exception);
@@ -107,6 +104,8 @@ const Auth = () => {
         title: "Conta criada com sucesso!",
         description: "Verifique seu email para confirmar a conta.",
       });
+      // Aguardar e redirecionar
+      setTimeout(() => navigate('/', { replace: true }), 2000);
     }
     setLoading(false);
   };

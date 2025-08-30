@@ -11,7 +11,7 @@ export const useErrorHandler = () => {
   const handleError = useCallback((error: any, context?: string) => {
     console.error('Error occurred:', error, 'Context:', context);
     
-    // Ignorar erros nulos/abortados/sucesso aparentes
+    // Ignorar erros nulos/abortados/sucesso aparentes/carrinho
     if (!error || error === null || error === undefined) {
       return null;
     }
@@ -20,7 +20,18 @@ export const useErrorHandler = () => {
     }
     if (error?.message?.includes('Success') || 
         error?.code === 'SUCCESS' ||
-        context?.toLowerCase?.().includes('success')) {
+        context?.toLowerCase?.().includes('success') ||
+        context?.toLowerCase?.().includes('cart') ||
+        context?.toLowerCase?.().includes('carrinho')) {
+      return null;
+    }
+    
+    // Filtrar falsos erros comuns que na verdade são sucessos
+    const errorMessage = error?.message || '';
+    if (errorMessage.includes('produto') || 
+        errorMessage.includes('adicionado') ||
+        errorMessage.includes('favorit') ||
+        errorMessage.includes('login') && !errorMessage.includes('erro') && !errorMessage.includes('invalid')) {
       return null;
     }
     

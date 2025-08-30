@@ -46,10 +46,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
   return (
     <Card className="group cursor-pointer overflow-hidden border border-border/20 bg-gradient-to-br from-card/98 to-card/95 backdrop-blur-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.01] rounded-xl w-full h-full relative flex flex-col">
       <Link to={`/produto/${product.id}`} className="block flex-1 flex flex-col">{/* Link com path correto */}
-        {/* Product Image */}
-        <div className="relative h-[260px] sm:h-[280px]">
+        {/* Product Image - Full Bleed */}
+        <div className="relative h-[260px] sm:h-[280px] -m-0">
           <div
-            className="w-full h-full overflow-hidden rounded-t-2xl relative"
+            className="w-full h-full overflow-hidden rounded-t-xl relative"
             onClick={(e) => {
               e.stopPropagation();
               setLightboxOpen(true);
@@ -69,12 +69,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
             {/* Glass overlay effect */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent pointer-events-none"></div>
             
-            {/* Badges no canto superior esquerdo */}
-            <div className="absolute top-3 left-3 flex flex-col gap-1">
-              {(product as any).badges?.slice(0, 2).map((badge: string, index: number) => (
-                <ProductBadge key={index} badge={badge} size="sm" />
-              ))}
-            </div>
+            {/* Badges condicionais (apenas em favoritos/carrinho) */}
+            {showBadgesAtBase && (product as any).badges && (product as any).badges.length > 0 && (
+              <div className="absolute top-3 left-3 flex flex-col gap-1">
+                {(product as any).badges.slice(0, 2).map((badge: string, index: number) => (
+                  <ProductBadge key={index} badge={badge} size="sm" />
+                ))}
+              </div>
+            )}
             
             {/* Botão de favorito no canto superior direito */}
             <div className="absolute top-3 right-3">
@@ -96,17 +98,31 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
           </div>
         </div>
 
-        <CardContent className="p-4 space-y-2 flex flex-col flex-1">
-          {/* Brand */}
+        <CardContent className="p-4 space-y-3 flex flex-col flex-1">
+          {/* Brand e badges na base (quando for favoritos/carrinho) */}
           <div className="flex items-center justify-between">
             <p className="text-xs text-primary/90 font-bold uppercase tracking-wider">
               {product.brand}
             </p>
-            {/* Badge Original */}
+            {/* Badge Original sempre presente */}
             <div className="bg-gradient-to-r from-primary/10 to-accent/10 backdrop-blur-sm border border-primary/20 px-2 py-0.5 rounded-full">
               <span className="text-[10px] font-bold text-primary uppercase tracking-wide">Original</span>
             </div>
           </div>
+
+          {/* Badges discretos na base (para favoritos/carrinho) */}
+          {showBadgesAtBase && (product as any).badges && (product as any).badges.length > 0 && (
+            <div className="flex flex-wrap gap-1 mb-2">
+              {(product as any).badges.slice(0, 3).map((badge: string, index: number) => (
+                <span 
+                  key={index}
+                  className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-gradient-to-r from-accent/20 to-moss/20 text-primary border border-accent/30"
+                >
+                  {badge}
+                </span>
+              ))}
+            </div>
+          )}
           
           {/* Product Name */}
           <h3 className="text-sm font-bold text-foreground line-clamp-2 leading-tight group-hover:text-primary transition-colors duration-300">

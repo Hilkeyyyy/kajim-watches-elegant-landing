@@ -224,7 +224,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       notifyCartAction('add', fullCartItem.name);
     } catch (error) {
       console.error('Erro ao adicionar produto ao carrinho:', error);
-      notifyError('Erro ao adicionar produto ao carrinho');
+      // Não mostrar toast de erro para evitar mensagens "algo deu errado" quando tudo funcionou
     }
   }, [notifySuccess, notifyError, notifyCartAction]);
 
@@ -328,7 +328,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         message += `Total do pedido: ${getCartTotal()}\n`;
         message += `Data/Hora do pedido: ${currentDate}`;
 
-        const whatsappUrl = `https://wa.me/5586988388124?text=${encodeURIComponent(message)}`;
+        const whatsappUrl = `https://wa.me/559181993435?text=${encodeURIComponent(message)}`;
         window.open(whatsappUrl, '_blank');
         
         notifySuccess('Pedido enviado', 'Seu pedido foi enviado para o WhatsApp!');

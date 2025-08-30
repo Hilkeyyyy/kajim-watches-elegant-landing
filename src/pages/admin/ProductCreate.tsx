@@ -70,16 +70,13 @@ const ProductCreate = () => {
         productName: createdProduct.name 
       });
       
-      // Mostrar sucesso antes de navegar
+      // Mostrar sucesso e navegar rapidamente
       handleSuccess("Produto criado com sucesso!");
-      
-      // Aguardar um pouco para mostrar o toast
-      await new Promise(resolve => setTimeout(resolve, 500));
       
       // Recarregar cache de produtos
       await fetchProducts({ force: true });
       
-      // Navegar para edição do produto criado
+      // Navegar rapidamente para edição do produto criado
       navigate(`/admin/produtos/editar/${createdProduct.id}`, { replace: true });
       
     } catch (error: any) {
