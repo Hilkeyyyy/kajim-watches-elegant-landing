@@ -5,6 +5,7 @@ import { errorHandler } from '@/utils/errorHandler';
 import { parsePrice, formatPrice, calculateItemTotal } from '@/utils/priceUtils';
 import { logCartAction, logFavoriteAction, logStorageAction } from '@/utils/auditLogger';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 // Interface para produtos que podem ser adicionados ao carrinho
 interface AddToCartProduct {
@@ -153,9 +154,12 @@ const AppContext = createContext<AppContextType | null>(null);
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
   const { notifySuccess, notifyError, notifyCartAction, notifyFavoriteAction } = useNotifications();
+  const { user } = useAuth();
 
-  // Carregar dados iniciais
+  // Carregar dados iniciais e quando o usuário mudar (dados por usuário)
   useEffect(() => {
+    storage.setNamespace(user?.id ?? null);
+
     const loadInitialData = async () => {
       try {
         const [cart, favorites] = await Promise.all([
@@ -176,7 +180,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
 
     loadInitialData();
-  }, [notifyError]);
+  }, [notifyError, user?.id]);
 
   // Sincronizar com localStorage
   useEffect(() => {
@@ -191,13 +195,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, [state.favorites, state.isLoading, state.dataLoaded]);
 
-  // Sincronização entre abas
+  // Sincronização entre abas (ajustada para namespace do usuário)
   useEffect(() => {
-    const unsubscribeCart = storage.onStorageChange<CartItem[]>('kajim-cart', (cart) => {
+    const cartKey = storage.getKey('cart');
+    const favKey = storage.getKey('favorites');
+
+    const unsubscribeCart = storage.onStorageChange<CartItem[]>(cartKey, (cart) => {
       dispatch({ type: 'SET_CART', payload: cart });
     });
 
-    const unsubscribeFavorites = storage.onStorageChange<string[]>('kajim-favorites', (favorites) => {
+    const unsubscribeFavorites = storage.onStorageChange<string[]>(favKey, (favorites) => {
       dispatch({ type: 'SET_FAVORITES', payload: favorites });
     });
 
@@ -205,7 +212,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       unsubscribeCart();
       unsubscribeFavorites();
     };
-  }, []);
+  }, [user?.id]);
   
   // Ações do carrinho (memoizadas)
   const addToCart = useCallback((product: AddToCartProduct, quantity: number = 1) => {

@@ -43,13 +43,14 @@ export const ProductDetailPage: React.FC = () => {
     }
   };
 
-  const handleToggleFavorite = () => {
-    if (product) {
-      toggleFavorite(product.id, product.name);
-    }
+  const handleDirectPurchase = () => {
+    if (!product) return;
+    const productUrl = `${window.location.origin}/produto/${product.id}`;
+    const priceText = formatPrice(parseFloat(product.price));
+    const message = `Olá! Tenho interesse no ${product.name} (${priceText}). Link: ${productUrl}`;
+    const whatsappUrl = `https://wa.me/559181993435?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
   };
-
-  if (loading) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
@@ -170,6 +171,15 @@ export const ProductDetailPage: React.FC = () => {
               <Button size="lg" className="flex-1" onClick={handleAddToCart}>
                 <ShoppingCart className="w-5 h-5 mr-2" />
                 Adicionar ao Carrinho
+              </Button>
+              
+              <Button
+                variant="primary"
+                size="lg"
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                onClick={handleDirectPurchase}
+              >
+                Comprar via WhatsApp
               </Button>
               
               <Button

@@ -26,6 +26,7 @@ class OptimizedStorage {
   private debounceTimers: Map<string, NodeJS.Timeout> = new Map();
   private readonly STORAGE_VERSION = '1.0';
   private readonly DEBOUNCE_DELAY = 300;
+  private namespace: string = 'guest';
 
   static getInstance(): OptimizedStorage {
     if (!OptimizedStorage.instance) {
@@ -34,6 +35,13 @@ class OptimizedStorage {
     return OptimizedStorage.instance;
   }
 
+  public setNamespace(ns: string | null) {
+    this.namespace = ns || 'guest';
+  }
+
+  public getKey(base: 'cart' | 'favorites') {
+    return `kajim-${this.namespace}-${base}`;
+  }
   private validate<T>(data: unknown, schema: z.ZodSchema<T>): T | null {
     try {
       return schema.parse(data);
@@ -105,20 +113,20 @@ class OptimizedStorage {
 
   // Métodos específicos para carrinho
   async getCart(): Promise<CartItem[]> {
-    return (await this.safeGet('kajim-cart', CartDataSchema)) || [];
+    return (await this.safeGet(this.getKey('cart'), CartDataSchema)) || [];
   }
 
   setCart(cart: CartItem[]): void {
-    this.debouncedSet('kajim-cart', cart);
+    this.debouncedSet(this.getKey('cart'), cart);
   }
 
   // Métodos específicos para favoritos
   async getFavorites(): Promise<string[]> {
-    return (await this.safeGet('kajim-favorites', FavoritesDataSchema)) || [];
+    return (await this.safeGet(this.getKey('favorites'), FavoritesDataSchema)) || [];
   }
 
   setFavorites(favorites: string[]): void {
-    this.debouncedSet('kajim-favorites', favorites);
+    this.debouncedSet(this.getKey('favorites'), favorites);
   }
 
   // Backup e restore
@@ -147,8 +155,8 @@ class OptimizedStorage {
       const cart = this.validate(backup.cart, CartDataSchema);
       const favorites = this.validate(backup.favorites, FavoritesDataSchema);
 
-      if (cart) await this.safeSet('kajim-cart', cart);
-      if (favorites) await this.safeSet('kajim-favorites', favorites);
+      if (cart) await this.safeSet(this.getKey('cart'), cart);
+      if (favorites) await this.safeSet(this.getKey('favorites'), favorites);
 
       return true;
     } catch (error) {
@@ -159,6 +167,9 @@ class OptimizedStorage {
 
   // Limpeza
   clearAll(): void {
+    localStorage.removeItem(this.getKey('cart'));
+    localStorage.removeItem(this.getKey('favorites'));
+    // Remover chaves legadas
     localStorage.removeItem('kajim-cart');
     localStorage.removeItem('kajim-favorites');
   }

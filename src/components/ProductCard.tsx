@@ -31,6 +31,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
     }
   };
 
+  const handleDirectPurchase = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const productUrl = `${window.location.origin}/produto/${product.id}`;
+    const priceText = typeof product.price === 'string' ? product.price : formatPrice(product.price as number);
+    const message = `Olá! Tenho interesse no ${product.name} (${priceText}). Link: ${productUrl}`;
+    const whatsappUrl = `https://wa.me/559181993435?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
   const mainImage = (product as any).image_url || product.image || (product.images && product.images[0]) || '/placeholder.svg';
   
   const priceDisplay = typeof product.price === 'string' 
@@ -158,7 +168,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
       </Link>
       
       {/* Action Buttons - sempre visíveis */}
-      <div className="px-4 pb-4 mt-auto h-[50px] flex items-center">
+      <div className="px-4 pb-4 mt-auto min-h-[56px] flex items-center">
         <div className="flex gap-1.5 w-full">
           <AddToCartButtonAnimated
             product={{
@@ -172,6 +182,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
             className="flex-1 gap-1 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg font-bold rounded-lg bg-gradient-to-r from-primary to-accent hover:from-accent hover:to-primary text-white border-0 shadow-md text-xs py-2"
             showText={true}
           />
+
+          <Button
+            variant="default"
+            size="sm"
+            className="px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-all duration-300 shadow-sm text-xs"
+            onClick={handleDirectPurchase}
+          >
+            Comprar
+          </Button>
           
           <Button
             variant="outline"
