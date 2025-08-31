@@ -54,10 +54,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
   const isOfferActive = product.original_price && parseFloat(product.original_price.toString()) > parseFloat(product.price.toString());
 
   return (
-    // Card Container - Layout estilo Chronos Elite
-    <Card className="group relative w-full bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] overflow-hidden border border-gray-100">
-      {/* Imagem Principal - 65% do card */}
-      <div className="relative aspect-square overflow-hidden">
+    <Card className="group relative w-full bg-card rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] overflow-hidden border border-border/20">
+      {/* Imagem Principal - Chronos Elite Style */}
+      <div className="relative aspect-[4/3] overflow-hidden">
         <div
           className="w-full h-full cursor-pointer"
           onClick={(e) => {
@@ -72,76 +71,81 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
             loading="lazy"
           />
           
-          {/* Overlay gradiente sutil */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/5 via-transparent to-transparent"></div>
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent"></div>
         </div>
 
         {/* Badge ORIGINAL - Canto superior direito */}
-        <div className="absolute top-3 right-3">
-          <div className="bg-black text-white px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
+        <div className="absolute top-4 right-4 z-10">
+          <div className="bg-black text-white px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg backdrop-blur-sm">
             ORIGINAL
           </div>
         </div>
 
-        {/* Badge de Oferta - Canto superior esquerdo (se houver) */}
+        {/* Badge de Oferta - Canto superior esquerdo */}
         {isOfferActive && (
-          <div className="absolute top-3 left-3">
-            <div className="bg-red-500 text-white px-2.5 py-1 rounded-full text-xs font-bold uppercase">
-              OFERTA
+          <div className="absolute top-4 left-4 z-10">
+            <div className="bg-red-500 text-white px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg">
+              OFERTA - 10%
             </div>
           </div>
         )}
 
         {/* Coração de Favorito - Canto inferior direito */}
-        <div className="absolute bottom-3 right-3">
+        <div className="absolute bottom-4 right-4 z-10">
           <FavoriteButton 
             productId={product.id} 
             productName={product.name}
             size="sm"
-            className="bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg border-0"
+            className="bg-white/95 backdrop-blur-sm hover:bg-white shadow-lg border-0 rounded-full w-10 h-10"
           />
         </div>
       </div>
 
-      {/* Área de Informações - 35% do card */}
-      <div className="p-4 space-y-3">
+      {/* Área de Informações - Chronos Elite Style */}
+      <div className="p-6 space-y-4">
         {/* Brand */}
-        <p className="text-sm font-bold text-gray-600 uppercase tracking-wider">
+        <p className="text-sm font-bold text-muted-foreground uppercase tracking-[0.1em]">
           {product.brand}
         </p>
 
         {/* Nome do Produto */}
-        <h3 className="text-base font-bold text-gray-900 line-clamp-2 leading-tight">
+        <h3 className="text-lg font-bold text-foreground line-clamp-2 leading-snug min-h-[3.5rem]">
           {product.name}
         </h3>
 
         {/* Preços */}
-        <div className="space-y-1">
+        <div className="space-y-2">
           {/* Preço original riscado */}
-          {isOfferActive && (
-            <p className="text-sm text-gray-400 line-through">
+          {isOfferActive && originalDisplay && (
+            <p className="text-sm text-muted-foreground line-through">
               {originalDisplay}
             </p>
           )}
           
-          {/* Preço atual + badge de oferta inline */}
-          <div className="flex items-center gap-2">
-            <p className="text-lg font-black text-gray-900">
+          {/* Preço atual */}
+          <div className="flex items-center justify-between">
+            <p className="text-2xl font-black text-foreground">
               {priceDisplay || 'Consulte'}
             </p>
             {isOfferActive && (
-              <span className="bg-green-500 text-white px-2 py-0.5 rounded-full text-xs font-bold">
-                -15%
+              <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
+                7% DE DESCONTO
               </span>
             )}
           </div>
         </div>
+
+        {/* Descrição breve */}
+        <p className="text-sm text-muted-foreground line-clamp-2 min-h-[2.5rem]">
+          {product.description || `Relógio ${product.brand} em excelente estado de conservação. Produto original com garantia.`}
+        </p>
       </div>
 
-      {/* Botões de Ação - Altura Fixa 48px */}
-      <div className="px-4 pb-4">
-        <div className="flex gap-2 h-12">
-          {/* Adicionar ao Carrinho - Flex 1 */}
+      {/* Botões de Ação - Estilo Chronos Elite */}
+      <div className="px-6 pb-6">
+        <div className="space-y-3">
+          {/* Botão Adicionar ao Carrinho - Gradiente elegante */}
           <AddToCartButtonAnimated
             product={{
               id: product.id,
@@ -149,28 +153,31 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
               price: priceDisplay || 'Consulte',
               image: mainImage
             }}
-            className="flex-1 bg-gray-900 hover:bg-gray-800 text-white font-medium text-sm rounded-lg transition-all duration-300"
+            className="w-full h-12 bg-gradient-to-r from-primary via-primary/90 to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-sm rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl"
             showText={true}
           />
 
-          {/* Comprar - Verde */}
-          <Button
-            className="px-4 bg-green-600 hover:bg-green-700 text-white font-medium text-sm rounded-lg transition-all duration-300"
-            onClick={handleDirectPurchase}
-          >
-            Comprar
-          </Button>
-          
-          {/* Ver - Outline */}
-          <Button
-            variant="outline"
-            className="px-4 border-gray-300 text-gray-700 hover:bg-gray-50 font-medium text-sm rounded-lg transition-all duration-300"
-            asChild
-          >
-            <Link to={`/produto/${product.id}`}>
-              Ver
-            </Link>
-          </Button>
+          {/* Botões secundários */}
+          <div className="flex gap-3">
+            {/* Comprar via WhatsApp */}
+            <Button
+              className="flex-1 h-12 bg-green-600 hover:bg-green-700 text-white font-semibold text-sm rounded-xl transition-all duration-300 shadow-md hover:shadow-lg"
+              onClick={handleDirectPurchase}
+            >
+              Comprar via WhatsApp
+            </Button>
+            
+            {/* Ver Detalhes */}
+            <Button
+              variant="outline"
+              className="px-6 h-12 border-border hover:bg-accent hover:text-accent-foreground font-semibold text-sm rounded-xl transition-all duration-300"
+              asChild
+            >
+              <Link to={`/produto/${product.id}`}>
+                Ver Detalhes
+              </Link>
+            </Button>
+          </div>
         </div>
       </div>
 
