@@ -51,6 +51,14 @@ export const ProductDetailPage: React.FC = () => {
     const whatsappUrl = `https://wa.me/559181993435?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
+
+  const handleToggleFavorite = () => {
+    if (product) {
+      toggleFavorite(product.id, product.name);
+    }
+  };
+
+  if (loading) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
