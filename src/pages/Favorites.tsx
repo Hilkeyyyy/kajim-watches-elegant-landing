@@ -94,9 +94,9 @@ const Favorites = () => {
             </div>
           </div>
 
-          {/* Favorites Grid */}
+          {/* Favorites Grid - Cards grandes e quadrados como Chronos Elite */}
           {favoriteProducts.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-screen-2xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-screen-2xl mx-auto">
               {favoriteProducts.map((product) => (
                 <div key={product.id} className="w-full">
                   <ProductCard 

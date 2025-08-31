@@ -51,125 +51,97 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
     : null;
 
   const stockQuantity = (product as any).stock_quantity || 0;
-  const isLimitedStock = stockQuantity > 0 && stockQuantity <= 5;
+  const isOfferActive = product.original_price && parseFloat(product.original_price.toString()) > parseFloat(product.price.toString());
 
   return (
-    <Card className="group cursor-pointer overflow-hidden border border-border/20 bg-gradient-to-br from-card/98 to-card/95 backdrop-blur-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.01] rounded-xl w-full h-full relative flex flex-col">
-      <Link to={`/produto/${product.id}`} className="block flex-1 flex flex-col">{/* Link com path correto */}
-        {/* Product Image - Full Bleed */}
-        <div className="relative h-[260px] sm:h-[280px] -m-0">
-          <div
-            className="w-full h-full overflow-hidden rounded-t-xl relative"
-            onClick={(e) => {
-              e.stopPropagation();
-              setLightboxOpen(true);
-            }}
-            role="button"
-            aria-label={`Ampliar imagem de ${product.name}`}
-          >
-            <img
-              src={mainImage}
-              alt={`Relógio ${product.brand} ${product.name}`}
-              className="w-full h-full object-cover transition-all duration-700 group-hover:scale-[1.05]"
-              loading="lazy"
-              decoding="async"
-              sizes="(max-width: 640px) 100vw, 33vw"
-            />
-            
-            {/* Glass overlay effect */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent pointer-events-none"></div>
-            
-            {/* Badges condicionais (apenas em favoritos/carrinho) */}
-            {showBadgesAtBase && (product as any).badges && (product as any).badges.length > 0 && (
-              <div className="absolute top-3 left-3 flex flex-col gap-1">
-                {(product as any).badges.slice(0, 2).map((badge: string, index: number) => (
-                  <ProductBadge key={index} badge={badge} size="sm" />
-                ))}
-              </div>
-            )}
-            
-            {/* Botão de favorito no canto superior direito */}
-            <div className="absolute top-3 right-3">
-              <FavoriteButton 
-                productId={product.id} 
-                productName={product.name}
-                size="sm"
-                className="bg-white/95 backdrop-blur-sm hover:bg-white shadow-xl border border-white/20"
-              />
-            </div>
-            
-            {/* Status do estoque - liquid glass design */}
-            <div className="absolute bottom-3 right-3">
-              <StockIndicator 
-                stockQuantity={stockQuantity}
-                size="sm"
-              />
-            </div>
+    // Card Container - Layout estilo Chronos Elite
+    <Card className="group relative w-full bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] overflow-hidden border border-gray-100">
+      {/* Imagem Principal - 65% do card */}
+      <div className="relative aspect-square overflow-hidden">
+        <div
+          className="w-full h-full cursor-pointer"
+          onClick={(e) => {
+            e.stopPropagation();
+            setLightboxOpen(true);
+          }}
+        >
+          <img
+            src={mainImage}
+            alt={`${product.brand} ${product.name}`}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            loading="lazy"
+          />
+          
+          {/* Overlay gradiente sutil */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/5 via-transparent to-transparent"></div>
+        </div>
+
+        {/* Badge ORIGINAL - Canto superior direito */}
+        <div className="absolute top-3 right-3">
+          <div className="bg-black text-white px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
+            ORIGINAL
           </div>
         </div>
 
-        <CardContent className="p-4 space-y-3 flex flex-col flex-1">
-          {/* Brand e badges na base (quando for favoritos/carrinho) */}
-          <div className="flex items-center justify-between">
-            <p className="text-xs text-primary/90 font-bold uppercase tracking-wider">
-              {product.brand}
-            </p>
-            {/* Badge Original sempre presente */}
-            <div className="bg-gradient-to-r from-primary/10 to-accent/10 backdrop-blur-sm border border-primary/20 px-2 py-0.5 rounded-full">
-              <span className="text-[10px] font-bold text-primary uppercase tracking-wide">Original</span>
+        {/* Badge de Oferta - Canto superior esquerdo (se houver) */}
+        {isOfferActive && (
+          <div className="absolute top-3 left-3">
+            <div className="bg-red-500 text-white px-2.5 py-1 rounded-full text-xs font-bold uppercase">
+              OFERTA
             </div>
           </div>
+        )}
 
-          {/* Badges discretos na base (para favoritos/carrinho) */}
-          {showBadgesAtBase && (product as any).badges && (product as any).badges.length > 0 && (
-            <div className="flex flex-wrap gap-1 mb-2">
-              {(product as any).badges.slice(0, 3).map((badge: string, index: number) => (
-                <span 
-                  key={index}
-                  className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-gradient-to-r from-accent/20 to-moss/20 text-primary border border-accent/30"
-                >
-                  {badge}
-                </span>
-              ))}
-            </div>
+        {/* Coração de Favorito - Canto inferior direito */}
+        <div className="absolute bottom-3 right-3">
+          <FavoriteButton 
+            productId={product.id} 
+            productName={product.name}
+            size="sm"
+            className="bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg border-0"
+          />
+        </div>
+      </div>
+
+      {/* Área de Informações - 35% do card */}
+      <div className="p-4 space-y-3">
+        {/* Brand */}
+        <p className="text-sm font-bold text-gray-600 uppercase tracking-wider">
+          {product.brand}
+        </p>
+
+        {/* Nome do Produto */}
+        <h3 className="text-base font-bold text-gray-900 line-clamp-2 leading-tight">
+          {product.name}
+        </h3>
+
+        {/* Preços */}
+        <div className="space-y-1">
+          {/* Preço original riscado */}
+          {isOfferActive && (
+            <p className="text-sm text-gray-400 line-through">
+              {originalDisplay}
+            </p>
           )}
           
-          {/* Product Name */}
-          <h3 className="text-sm font-bold text-foreground line-clamp-2 leading-tight group-hover:text-primary transition-colors duration-300">
-            {product.name}
-          </h3>
-          
-          {/* Breve descrição */}
-          <div className="flex-1">
-            <p className="text-xs text-muted-foreground/80 line-clamp-2 leading-relaxed">
-              {product.description || `Relógio ${product.brand} ${product.case_size ? `- ${product.case_size}` : ''} ${product.movement ? `- ${product.movement}` : ''}`}
+          {/* Preço atual + badge de oferta inline */}
+          <div className="flex items-center gap-2">
+            <p className="text-lg font-black text-gray-900">
+              {priceDisplay || 'Consulte'}
             </p>
-          </div>
-          
-          {/* Price Section */}
-          <div className="pt-1 space-y-1 mt-auto">
-            {product.original_price && (
-              <p className="text-xs text-muted-foreground line-through opacity-70">
-                {originalDisplay}
-              </p>
+            {isOfferActive && (
+              <span className="bg-green-500 text-white px-2 py-0.5 rounded-full text-xs font-bold">
+                -15%
+              </span>
             )}
-            <div className="flex items-center gap-2">
-              <p className="text-base font-black bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent leading-tight tracking-tight">
-                {priceDisplay || 'Consulte'}
-              </p>
-              {product.original_price && (
-                <span className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-1.5 py-0.5 rounded-full text-xs font-bold">
-                  OFERTA
-                </span>
-              )}
-            </div>
           </div>
-        </CardContent>
-      </Link>
-      
-      {/* Action Buttons - sempre visíveis */}
-      <div className="px-4 pb-4 mt-auto min-h-[56px] flex items-center">
-        <div className="flex gap-1.5 w-full">
+        </div>
+      </div>
+
+      {/* Botões de Ação - Altura Fixa 48px */}
+      <div className="px-4 pb-4">
+        <div className="flex gap-2 h-12">
+          {/* Adicionar ao Carrinho - Flex 1 */}
           <AddToCartButtonAnimated
             product={{
               id: product.id,
@@ -177,39 +149,38 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
               price: priceDisplay || 'Consulte',
               image: mainImage
             }}
-            variant="primary"
-            size="sm"
-            className="flex-1 gap-1 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg font-bold rounded-lg bg-gradient-to-r from-primary to-accent hover:from-accent hover:to-primary text-white border-0 shadow-md text-xs py-2"
+            className="flex-1 bg-gray-900 hover:bg-gray-800 text-white font-medium text-sm rounded-lg transition-all duration-300"
             showText={true}
           />
 
+          {/* Comprar - Verde */}
           <Button
-            size="sm"
-            className="px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-all duration-300 shadow-sm text-xs"
+            className="px-4 bg-green-600 hover:bg-green-700 text-white font-medium text-sm rounded-lg transition-all duration-300"
             onClick={handleDirectPurchase}
           >
             Comprar
           </Button>
           
+          {/* Ver - Outline */}
           <Button
             variant="outline"
-            size="sm"
-            className="px-3 py-2 transition-all duration-300 hover:bg-gradient-to-r hover:from-primary/10 hover:to-accent/10 hover:text-primary hover:border-primary/30 rounded-lg backdrop-blur-sm border-border/30 shadow-sm text-xs"
+            className="px-4 border-gray-300 text-gray-700 hover:bg-gray-50 font-medium text-sm rounded-lg transition-all duration-300"
             asChild
           >
             <Link to={`/produto/${product.id}`}>
-              <span className="font-semibold">Ver</span>
+              Ver
             </Link>
           </Button>
         </div>
       </div>
 
+      {/* Lightbox para zoom da imagem */}
       <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
         <DialogContent className="max-w-4xl p-0 bg-transparent border-none shadow-none">
           <div className="relative rounded-2xl overflow-hidden shadow-2xl">
             <img 
               src={mainImage} 
-              alt={`Relógio ${product.brand} ${product.name}`} 
+              alt={`${product.brand} ${product.name}`} 
               className="w-full h-auto"
             />
           </div>
