@@ -55,7 +55,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
   const isOfferActive = product.original_price && parseFloat(product.original_price.toString()) > parseFloat(product.price.toString());
 
   return (
-    <Card className="group relative w-full max-w-xs mx-auto bg-background rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 hover:scale-[1.02] overflow-hidden border border-border/50">
+    <Card className="group relative w-full max-w-xs lg:max-w-sm mx-auto bg-background rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 hover:scale-[1.02] overflow-hidden border border-border/50">
       {/* Área da Imagem - Formato quadrado mais compacto */}
       <div className="relative aspect-square overflow-hidden">
         <div
@@ -90,8 +90,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
           <FavoriteButton 
             productId={product.id} 
             productName={product.name}
-            size="sm"
-            className="bg-white/20 backdrop-blur-xl hover:bg-white/30 shadow-xl border border-white/30 rounded-xl w-9 h-9 transition-all duration-300 hover:scale-105"
+            size="md"
+            className="bg-white/20 backdrop-blur-xl hover:bg-white/30 shadow-xl border border-white/30 rounded-xl w-11 h-11 lg:w-12 lg:h-12 transition-all duration-300 hover:scale-105"
           />
         </div>
 
