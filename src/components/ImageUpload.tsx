@@ -57,14 +57,28 @@ export const ImageUpload = ({
 
     setUploading(true);
 
+    // Criar preview local imediato
+    const localUrl = URL.createObjectURL(file);
+    setPreviewUrl(localUrl);
+
     try {
+      // Se existe imagem anterior, remover
+      if (currentImageUrl && currentImageUrl.includes(bucket)) {
+        const oldPath = currentImageUrl.split(`${bucket}/`)[1];
+        if (oldPath) {
+          await supabase.storage
+            .from(bucket)
+            .remove([oldPath]);
+        }
+      }
+
       // Gerar nome único para o arquivo
       const timestamp = Date.now();
       const fileExt = file.name.split('.').pop();
       const fileName = `${timestamp}-${Math.random().toString(36).substring(2)}.${fileExt}`;
       const filePath = path ? `${path}/${fileName}` : fileName;
 
-      // Upload para o Supabase Storage (com upsert e contentType)
+      // Upload para o Supabase Storage
       const { data, error } = await supabase.storage
         .from(bucket)
         .upload(filePath, file, {
@@ -80,15 +94,22 @@ export const ImageUpload = ({
         .from(bucket)
         .getPublicUrl(data.path);
 
+      // Limpar preview local e usar URL oficial
+      URL.revokeObjectURL(localUrl);
       setPreviewUrl(publicUrl);
       onImageUploaded(publicUrl);
 
       toast({
-        title: "Imagem enviada",
-        description: "A imagem foi carregada com sucesso.",
+        title: "Imagem carregada",
+        description: "A imagem foi enviada com sucesso.",
       });
     } catch (error: any) {
       console.error('Erro ao fazer upload:', error);
+      
+      // Remover preview local em caso de erro
+      URL.revokeObjectURL(localUrl);
+      setPreviewUrl(currentImageUrl || null);
+      
       toast({
         title: "Erro no upload",
         description: error.message || "Não foi possível fazer o upload da imagem.",
@@ -121,13 +142,24 @@ export const ImageUpload = ({
               src={previewUrl}
               alt="Preview"
               className="w-full h-full object-cover"
+              onError={(e) => {
+                // Fallback para imagens com erro
+                const target = e.target as HTMLImageElement;
+                target.src = '/placeholder.svg';
+              }}
             />
+            {uploading && (
+              <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            )}
             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
               <Button
                 type="button"
                 variant="destructive"
                 size="sm"
                 onClick={handleRemoveImage}
+                disabled={uploading}
                 className="h-8 w-8 p-0 bg-red-500 hover:bg-red-600 text-white"
               >
                 <X className="h-4 w-4" />
@@ -136,7 +168,10 @@ export const ImageUpload = ({
           </div>
         </div>
       ) : (
-        <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary/50 transition-colors">
+        <div 
+          className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary/50 transition-colors cursor-pointer"
+          onClick={() => fileInputRef.current?.click()}
+        >
           <div className="flex flex-col items-center space-y-2">
             <ImageIcon className="h-8 w-8 text-muted-foreground" />
             <p className="text-sm text-muted-foreground">

@@ -75,50 +75,72 @@ export const BuscarPage: React.FC = () => {
       );
     }
 
-    // Filtrar por marca
+    // Filtrar por marca (case-insensitive e normalizado)
     if (brandFilter !== 'all') {
-      filtered = filtered.filter(product => product.brand === brandFilter);
+      const normalizedBrandFilter = brandFilter.toLowerCase().trim();
+      filtered = filtered.filter(product => 
+        product.brand.toLowerCase().trim() === normalizedBrandFilter
+      );
     }
 
-    // Filtrar por preço
+    // Filtrar por preço (com validação robusta)
     filtered = filtered.filter(product => {
-      const price = Number(product.price);
-      return price >= priceRange[0] && price <= priceRange[1];
+      const price = parseFloat(String(product.price)) || 0;
+      return !isNaN(price) && price >= priceRange[0] && price <= priceRange[1];
     });
 
-    // Filtrar por data de lançamento (created_at)
+    // Filtrar por data de lançamento (created_at) com validação robusta
     if (releaseFilter !== 'all') {
-      const days = Number(releaseFilter);
-      const threshold = new Date();
-      threshold.setDate(threshold.getDate() - days);
-      filtered = filtered.filter(product => {
-        const created = product.created_at ? new Date(product.created_at) : null;
-        return created ? created >= threshold : true;
-      });
+      const days = parseInt(releaseFilter, 10);
+      if (!isNaN(days)) {
+        const threshold = new Date();
+        threshold.setDate(threshold.getDate() - days);
+        filtered = filtered.filter(product => {
+          if (!product.created_at) return true;
+          try {
+            const created = new Date(product.created_at);
+            return !isNaN(created.getTime()) && created >= threshold;
+          } catch {
+            return true; // Manter produto se a data for inválida
+          }
+        });
+      }
     }
 
     // Ordenar
     filtered.sort((a, b) => {
       switch (sortBy) {
         case 'price_asc':
-          return Number(a.price) - Number(b.price);
+          const priceA = parseFloat(String(a.price)) || 0;
+          const priceB = parseFloat(String(b.price)) || 0;
+          return priceA - priceB;
         case 'price_desc':
-          return Number(b.price) - Number(a.price);
+          const priceA2 = parseFloat(String(a.price)) || 0;
+          const priceB2 = parseFloat(String(b.price)) || 0;
+          return priceB2 - priceA2;
         case 'brand':
-          return a.brand.localeCompare(b.brand);
+          return a.brand.localeCompare(b.brand, 'pt-BR', { sensitivity: 'base' });
         case 'newest':
-          return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+          const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+          const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+          return dateB - dateA;
         case 'name':
         default:
-          return a.name.localeCompare(b.name);
+          return a.name.localeCompare(b.name, 'pt-BR', { sensitivity: 'base' });
       }
     });
 
     setFilteredProducts(filtered);
   };
 
-  // Extrair marcas únicas dos produtos
-  const availableBrands = Array.from(new Set(products.map(p => p.brand))).sort();
+  // Extrair marcas únicas dos produtos (normalizado e limpo)
+  const availableBrands = Array.from(
+    new Set(
+      products
+        .map(p => p.brand?.trim())
+        .filter(Boolean)
+    )
+  ).sort((a, b) => a.localeCompare(b, 'pt-BR', { sensitivity: 'base' }));
 
   const handleProductClick = (id: string) => {
     navigate(`/produto/${id}`);
@@ -276,11 +298,17 @@ export const BuscarPage: React.FC = () => {
                     </p>
                   </div>
                   <Button 
-                    onClick={() => setSearchTerm('')}
+                    onClick={() => {
+                      setSearchTerm('');
+                      setBrandFilter('all');
+                      setPriceRange([0, Infinity]);
+                      setReleaseFilter('all');
+                      setSortBy('name');
+                    }}
                     variant="outline"
                     className="mt-4"
                   >
-                    Limpar Busca
+                    Limpar Todos os Filtros
                   </Button>
                 </div>
               </CardContent>
