@@ -58,8 +58,8 @@ export const CategoryCarousel = () => {
               >
                 <div
                   onClick={() => handleCategoryClick(category.brand_name)}
-                  className="group relative h-64 rounded-2xl overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-xl border border-border/20"
-                  style={{ animationDelay: `${index * 100}ms` }}
+                  className="group relative h-64 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-xl border border-border/20 animate-fade-in"
+                  style={{ animationDelay: `${index * 50}ms` }}
                 >
                   {/* Background Image */}
                   {(category.custom_image_url || category.default_image_url) && (

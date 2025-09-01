@@ -90,7 +90,7 @@ export const useBrandCategories = () => {
       // Gerar categorias automáticas primeiro
       const productCounts = await generateCategoriesFromProducts();
 
-      // Buscar todas as categorias
+      // Buscar todas as categorias visíveis
       const { data, error } = await supabase
         .from('brand_categories')
         .select('*')
@@ -99,12 +99,14 @@ export const useBrandCategories = () => {
 
       if (error) throw error;
 
-      // Combinar com contagens de produtos
-      const categoriesWithCounts = (data || []).map(category => ({
-        ...category,
-        product_count: productCounts[category.brand_name]?.count || 0,
-        default_image_url: productCounts[category.brand_name]?.image
-      }));
+      // Combinar com contagens de produtos e filtrar apenas categorias com produtos
+      const categoriesWithCounts = (data || [])
+        .map(category => ({
+          ...category,
+          product_count: productCounts[category.brand_name]?.count || 0,
+          default_image_url: productCounts[category.brand_name]?.image
+        }))
+        .filter(category => category.product_count > 0); // Só mostrar categorias com produtos
 
       setCategories(categoriesWithCounts);
     } catch (error) {

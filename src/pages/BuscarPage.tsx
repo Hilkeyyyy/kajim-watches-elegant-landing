@@ -45,11 +45,13 @@ export const BuscarPage: React.FC = () => {
         .from('products')
         .select('*')
         .eq('is_visible', true)
-        .eq('status', 'active');
+        .eq('status', 'active')
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
 
       const products = (productsData as SupabaseProduct[] || []).map(convertSupabaseToProduct);
+      console.log(`Produtos carregados: ${products.length}`); // Debug log
       setProducts(products);
     } catch (error) {
       console.error('Erro ao buscar produtos:', error);
@@ -205,8 +207,8 @@ export const BuscarPage: React.FC = () => {
               {filteredProducts.map((product, index) => (
                 <div
                   key={product.id}
-                  className="animate-fade-in w-full max-w-sm"
-                  style={{ animationDelay: `${index * 50}ms` }}
+                  className="animate-fade-in w-full max-w-sm transform transition-all duration-300 hover:scale-105"
+                  style={{ animationDelay: `${index * 30}ms` }}
                 >
                   <ProductCard
                     product={product}
