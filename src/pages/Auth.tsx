@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -14,9 +13,15 @@ const Auth = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, user } = useAuth();
   const { toast } = useToast();
-  const navigate = useNavigate();
+
+  // Redirecionar usuários já autenticados
+  useEffect(() => {
+    if (user) {
+      window.location.replace('/');
+    }
+  }, [user]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,12 +110,12 @@ const Auth = () => {
       setLoading(false);
       toast({
         title: "Conta criada com sucesso!",
-        description: "Verifique seu email para confirmar a conta.",
+        description: "Você já pode acessar sua conta.",
       });
-      // Aguardar e redirecionar usando window.location.replace
+      // Redirecionar imediatamente pois email confirmation foi desabilitado
       setTimeout(() => {
         window.location.replace('/');
-      }, 2000);
+      }, 1000);
       return;
     }
     setLoading(false);

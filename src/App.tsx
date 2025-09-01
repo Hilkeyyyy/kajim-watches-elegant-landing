@@ -87,11 +87,7 @@ function App() {
                           <BrandPage />
                         </ErrorBoundaryOptimized>
                       } />
-                      <Route path="/auth" element={
-                        <ErrorBoundaryOptimized>
-                          <Auth />
-                        </ErrorBoundaryOptimized>
-                      } />
+                      <Route path="/auth" element={<Auth />} />
 
                       {/* Admin routes */}
                       <Route path="/admin" element={<AdminLayout />}>

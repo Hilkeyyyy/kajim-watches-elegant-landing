@@ -28,6 +28,13 @@ export class ErrorBoundaryOptimized extends Component<Props, State> {
       const rawMsg = (error as any)?.message || '';
       const msg = rawMsg.toLowerCase?.() || '';
       const stack = ((error as any)?.stack || '').toLowerCase?.() || '';
+      const currentPath = window.location.pathname;
+      
+      // Ignorar todos os erros na página de auth
+      if (currentPath === '/auth') {
+        console.warn('ErrorBoundaryOptimized ignored error on /auth route:', rawMsg || error);
+        return null;
+      }
 
       const isIgnored =
         name === 'AbortError' ||
@@ -59,6 +66,10 @@ export class ErrorBoundaryOptimized extends Component<Props, State> {
         msg.includes('token refresh') ||
         msg.includes('supabase') ||
         msg.includes('invalid login credentials') ||
+        msg.includes('email not confirmed') ||
+        msg.includes('user already registered') ||
+        msg.includes('session not found') ||
+        msg.includes('authapierror') ||
         (rawMsg && rawMsg.length < 8) ||
         (rawMsg && rawMsg.trim() === '') ||
         stack.includes('resizeobserver') ||
@@ -80,6 +91,13 @@ export class ErrorBoundaryOptimized extends Component<Props, State> {
     const rawMsg = (error as any)?.message || '';
     const msg = rawMsg.toLowerCase?.() || '';
     const stack = ((error as any)?.stack || '').toLowerCase?.() || '';
+    const currentPath = window.location.pathname;
+    
+    // Ignorar todos os erros na página de auth
+    if (currentPath === '/auth') {
+      console.warn('ErrorBoundaryOptimized ignored error on /auth route:', rawMsg || error);
+      return;
+    }
 
     const isIgnored =
       name === 'AbortError' ||
@@ -111,6 +129,10 @@ export class ErrorBoundaryOptimized extends Component<Props, State> {
       msg.includes('token refresh') ||
       msg.includes('supabase') ||
       msg.includes('invalid login credentials') ||
+      msg.includes('email not confirmed') ||
+      msg.includes('user already registered') ||
+      msg.includes('session not found') ||
+      msg.includes('authapierror') ||
       (rawMsg && rawMsg.length < 8) ||
       (rawMsg && rawMsg.trim() === '') ||
       stack.includes('resizeobserver') ||
