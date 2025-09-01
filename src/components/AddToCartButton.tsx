@@ -16,13 +16,15 @@ interface AddToCartButtonProps {
   variant?: "default" | "liquid-glass";
   size?: "default" | "sm" | "lg" | "xl";
   className?: string;
+  disabled?: boolean;
 }
 
 export const AddToCartButton = React.memo(({ 
   product, 
   variant = "default",
   size = "default",
-  className = "" 
+  className = "",
+  disabled = false
 }: AddToCartButtonProps) => {
   const { addToCart } = useApp();
   const { getButtonState, triggerButtonFeedback } = useButtonStates();
@@ -31,6 +33,7 @@ export const AddToCartButton = React.memo(({
   const isAdded = getButtonState(buttonId);
 
   const handleAddToCart = React.useCallback(() => {
+    if (disabled) return;
     try {
       // Usar produto direto
       addToCart({
@@ -44,7 +47,7 @@ export const AddToCartButton = React.memo(({
     } catch (error) {
       console.error('AddToCartButton - ERRO:', error);
     }
-  }, [addToCart, product, triggerButtonFeedback, buttonId]);
+  }, [addToCart, product, triggerButtonFeedback, buttonId, disabled]);
 
   // Map variants and sizes to match shadcn/ui button
   const mappedVariant = variant === "liquid-glass" ? "outline" : "primary";
@@ -55,9 +58,15 @@ export const AddToCartButton = React.memo(({
       variant={mappedVariant}
       size={mappedSize}
       onClick={handleAddToCart}
-      className={`transition-all duration-300 ${isAdded ? "scale-95" : "hover:scale-105"} ${className}`}
+      disabled={disabled}
+      className={`transition-all duration-300 ${isAdded ? "scale-95" : "hover:scale-105"} ${disabled ? "opacity-50 cursor-not-allowed" : ""} ${className}`}
     >
-      {isAdded ? (
+      {disabled ? (
+        <>
+          <ShoppingCart className="w-5 h-5 mr-2" />
+          Produto Esgotado
+        </>
+      ) : isAdded ? (
         <>
           <Check className="w-5 h-5 mr-2" />
           Adicionado

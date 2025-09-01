@@ -128,6 +128,10 @@ Aguardo retorno para finalizar a compra!`;
     window.open(whatsappUrl, '_blank');
   };
 
+  // Verificar se produto está em estoque
+  const isOutOfStock = product.stock_quantity === 0;
+  const stockDisplay = isOutOfStock ? 'Esgotado' : `${product.stock_quantity} em estoque`;
+
   const handleAddToCart = () => {
     if (product) {
       addToCart({
@@ -212,6 +216,14 @@ Aguardo retorno para finalizar a compra!`;
               </div>
             </div>
 
+            {/* Stock Status */}
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-muted-foreground">Estoque:</span>
+              <span className={`text-sm font-semibold ${isOutOfStock ? 'text-red-500' : 'text-green-600'}`}>
+                {stockDisplay}
+              </span>
+            </div>
+
             {/* Action Buttons */}
             <div className="space-y-4">
               <AddToCartButton 
@@ -224,6 +236,7 @@ Aguardo retorno para finalizar a compra!`;
                 variant="default"
                 size="xl"
                 className="w-full font-inter font-semibold bg-primary text-primary-foreground hover:bg-primary/90"
+                disabled={isOutOfStock}
               />
               
               <Button 
@@ -231,9 +244,10 @@ Aguardo retorno para finalizar a compra!`;
                 size="lg"
                 className="w-full font-inter font-semibold bg-green-600 text-white hover:bg-green-700"
                 onClick={handleDirectPurchase}
+                disabled={isOutOfStock}
               >
                 <MessageCircle className="w-6 h-6 mr-3" />
-                Comprar
+                {isOutOfStock ? 'Produto Esgotado' : 'Comprar'}
               </Button>
             </div>
 

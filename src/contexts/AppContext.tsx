@@ -335,6 +335,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             `🟢 Item ${index + 1}
 ⌚ ${item.name}
 🔹 Marca: KAJIM
+🔢 Quantidade: ${item.quantity}x
 💰 Valor: ${item.price}
 📸 Imagem: ${item.image || 'Imagem não disponível'}`
           )

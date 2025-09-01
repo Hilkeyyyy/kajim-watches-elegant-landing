@@ -43,6 +43,7 @@ const OptimizedProductCard: React.FC<ProductCardProps> = memo(({
   const handleQuickAddToCart = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    if (isOutOfStock) return;
     addToCart({
       id: product.id,
       name: product.name,
@@ -85,6 +86,10 @@ const OptimizedProductCard: React.FC<ProductCardProps> = memo(({
     product.original_price && 
     parseFloat(product.original_price.toString()) > parseFloat(product.price.toString())
   , [product.original_price, product.price]);
+
+  const isOutOfStock = React.useMemo(() => 
+    (product as any).stock_quantity === 0
+  , [(product as any).stock_quantity]);
 
   return (
     <Card className="group relative w-full max-w-full mx-auto bg-gradient-to-br from-background to-background/95 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-700 hover:scale-[1.03] hover:-translate-y-2 overflow-hidden border border-border/30 backdrop-blur-sm">
@@ -143,19 +148,28 @@ const OptimizedProductCard: React.FC<ProductCardProps> = memo(({
           />
         </div>
 
-        {/* Badge ORIGINAL - Design sofisticado */}
+        {/* Badge Status - Design sofisticado */}
         <div className="absolute bottom-4 right-4 z-10">
-          <div className="bg-gradient-to-r from-foreground to-foreground/90 text-background px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide shadow-xl backdrop-blur-sm border border-foreground/20">
-            ORIGINAL
-          </div>
+          {isOutOfStock ? (
+            <div className="bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide shadow-xl backdrop-blur-sm border border-red-400/20">
+              ESGOTADO
+            </div>
+          ) : (
+            <div className="bg-gradient-to-r from-foreground to-foreground/90 text-background px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide shadow-xl backdrop-blur-sm border border-foreground/20">
+              ORIGINAL
+            </div>
+          )}
         </div>
 
         {/* Ícone de Carrinho Flutuante - Design premium */}
         <div className="absolute bottom-4 left-4 z-10">
           <button
             onClick={handleQuickAddToCart}
-            className="bg-gradient-to-r from-primary to-primary/90 text-primary-foreground hover:from-primary/90 hover:to-primary p-3 rounded-2xl shadow-xl transition-all duration-500 hover:scale-110 hover:-rotate-3 border border-primary/30 backdrop-blur-sm"
-            title="Adicionar ao carrinho"
+            disabled={isOutOfStock}
+            className={`bg-gradient-to-r from-primary to-primary/90 text-primary-foreground hover:from-primary/90 hover:to-primary p-3 rounded-2xl shadow-xl transition-all duration-500 hover:scale-110 hover:-rotate-3 border border-primary/30 backdrop-blur-sm ${
+              isOutOfStock ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+            title={isOutOfStock ? 'Produto esgotado' : 'Adicionar ao carrinho'}
           >
             <ShoppingCart className="w-5 h-5" />
           </button>
