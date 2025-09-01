@@ -23,7 +23,15 @@ export class ErrorBoundaryOptimized extends Component<Props, State> {
   }
 
   static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error };
+    const name = (error as any)?.name || '';
+    const msg = (error as any)?.message?.toLowerCase?.() || '';
+    const isIgnored = name === 'AbortError' || msg.includes('abort') || msg.includes('resizeobserver');
+    if (isIgnored) {
+      // Ignora erros não críticos comuns (Abort/ResizeObserver)
+      console.warn('ErrorBoundaryOptimized ignored error:', error);
+      return { hasError: false } as State;
+    }
+    return { hasError: true, error } as State;
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {

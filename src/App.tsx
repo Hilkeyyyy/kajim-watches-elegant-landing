@@ -42,7 +42,6 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
-    <ErrorBoundaryOptimized>
       <BrowserRouter>
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
@@ -53,17 +52,53 @@ function App() {
                   <Suspense fallback={<LoadingSpinner />}>
                     <Routes>
                       {/* Public routes */}
-                      <Route path="/" element={<Index />} />
-                      <Route path="/produto/:id" element={<ProductDetailPage />} />
-                      <Route path="/carrinho" element={<CartPage />} />
-                      <Route path="/favoritos" element={<FavoritesPage />} />
-                      <Route path="/buscar" element={<BuscarPage />} />
-                      <Route path="/categoria/:id" element={<CategoryPage />} />
-                      <Route path="/marca/:brand" element={<BrandPage />} />
-                      <Route path="/auth" element={<Auth />} />
+                      <Route path="/" element={
+                        <ErrorBoundaryOptimized>
+                          <Index />
+                        </ErrorBoundaryOptimized>
+                      } />
+                      <Route path="/produto/:id" element={
+                        <ErrorBoundaryOptimized>
+                          <ProductDetailPage />
+                        </ErrorBoundaryOptimized>
+                      } />
+                      <Route path="/carrinho" element={
+                        <ErrorBoundaryOptimized>
+                          <CartPage />
+                        </ErrorBoundaryOptimized>
+                      } />
+                      <Route path="/favoritos" element={
+                        <ErrorBoundaryOptimized>
+                          <FavoritesPage />
+                        </ErrorBoundaryOptimized>
+                      } />
+                      <Route path="/buscar" element={
+                        <ErrorBoundaryOptimized>
+                          <BuscarPage />
+                        </ErrorBoundaryOptimized>
+                      } />
+                      <Route path="/categoria/:id" element={
+                        <ErrorBoundaryOptimized>
+                          <CategoryPage />
+                        </ErrorBoundaryOptimized>
+                      } />
+                      <Route path="/marca/:brand" element={
+                        <ErrorBoundaryOptimized>
+                          <BrandPage />
+                        </ErrorBoundaryOptimized>
+                      } />
+                      <Route path="/auth" element={
+                        <ErrorBoundaryOptimized>
+                          <Auth />
+                        </ErrorBoundaryOptimized>
+                      } />
 
                       {/* Admin routes */}
-                      <Route path="/admin" element={<AdminLayout />}>
+                      <Route path="/admin" element={
+                        <ErrorBoundaryOptimized>
+                          <AdminLayout />
+                        </ErrorBoundaryOptimized>
+                      }>
                         <Route index element={<Dashboard />} />
                         <Route path="dashboard" element={<Dashboard />} />
                         <Route path="produtos" element={<Products />} />
@@ -75,7 +110,11 @@ function App() {
                       </Route>
 
                       {/* 404 */}
-                      <Route path="*" element={<NotFound />} />
+                      <Route path="*" element={
+                        <ErrorBoundaryOptimized>
+                          <NotFound />
+                        </ErrorBoundaryOptimized>
+                      } />
                     </Routes>
                   </Suspense>
                   <Toaster />
@@ -86,7 +125,6 @@ function App() {
           </AuthProvider>
         </QueryClientProvider>
       </BrowserRouter>
-    </ErrorBoundaryOptimized>
   );
 }
 
