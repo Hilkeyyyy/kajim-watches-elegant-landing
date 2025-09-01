@@ -133,39 +133,6 @@ export type Database = {
           },
         ]
       }
-      categories: {
-        Row: {
-          created_at: string
-          description: string | null
-          id: string
-          image_url: string | null
-          is_featured: boolean | null
-          name: string
-          sort_order: number | null
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          image_url?: string | null
-          is_featured?: boolean | null
-          name: string
-          sort_order?: number | null
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          image_url?: string | null
-          is_featured?: boolean | null
-          name?: string
-          sort_order?: number | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
       product_specifications: {
         Row: {
           created_at: string

@@ -40,50 +40,79 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-interface Category {
+interface BrandCategory {
   id: string;
-  name: string;
+  brand_name: string;
+  display_name: string;
   description?: string;
-  image_url?: string;
+  custom_image_url?: string;
   sort_order: number;
   is_featured: boolean;
+  is_visible: boolean;
+  auto_generated: boolean;
   created_at: string;
+  product_count?: number;
 }
 
 const Categories = () => {
   console.log('Categories - Component mounting');
   
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<BrandCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
+  const [editingCategory, setEditingCategory] = useState<BrandCategory | null>(null);
+  const [categoryToDelete, setCategoryToDelete] = useState<BrandCategory | null>(null);
   const [formData, setFormData] = useState({
-    name: '',
+    brand_name: '',
+    display_name: '',
     description: '',
-    image_url: '',
+    custom_image_url: '',
     is_featured: false,
+    is_visible: true,
   });
   const [submitting, setSubmitting] = useState(false);
   const { toast } = useToast();
 
   const fetchCategories = async () => {
     try {
-      console.log('Categories - Fetching categories from Supabase');
+      console.log('Categories - Fetching brand categories from Supabase');
       setLoading(true);
+      
+      // Buscar produtos únicos por marca para contar produtos
+      const { data: products, error: productsError } = await supabase
+        .from('products')
+        .select('brand')
+        .eq('is_visible', true)
+        .eq('status', 'active');
+
+      if (productsError) throw productsError;
+
+      // Contar produtos por marca
+      const productCounts = products?.reduce((acc: Record<string, number>, product) => {
+        acc[product.brand] = (acc[product.brand] || 0) + 1;
+        return acc;
+      }, {}) || {};
+
+      // Buscar todas as categorias de marca
       const { data, error } = await supabase
-        .from('categories')
+        .from('brand_categories')
         .select('*')
         .order('sort_order', { ascending: true });
 
       if (error) {
-        console.error('Categories - Error fetching categories:', error);
+        console.error('Categories - Error fetching brand categories:', error);
         throw error;
       }
       
-      console.log('Categories - Successfully fetched categories:', data?.length || 0);
-      setCategories(data || []);
+      // Adicionar contagem de produtos
+      const categoriesWithCounts = (data || []).map(category => ({
+        ...category,
+        product_count: productCounts[category.brand_name] || 0
+      }));
+      
+      console.log('Categories - Successfully fetched brand categories:', categoriesWithCounts.length);
+      setCategories(categoriesWithCounts);
     } catch (error) {
       console.error('Categories - Error in fetchCategories:', error);
       toast({
@@ -99,26 +128,30 @@ const Categories = () => {
   const openCreateDialog = () => {
     setEditingCategory(null);
     setFormData({
-      name: '',
+      brand_name: '',
+      display_name: '',
       description: '',
-      image_url: '',
+      custom_image_url: '',
       is_featured: false,
+      is_visible: true,
     });
     setDialogOpen(true);
   };
 
-  const openEditDialog = (category: Category) => {
+  const openEditDialog = (category: BrandCategory) => {
     setEditingCategory(category);
     setFormData({
-      name: category.name,
+      brand_name: category.brand_name,
+      display_name: category.display_name,
       description: category.description || '',
-      image_url: category.image_url || '',
+      custom_image_url: category.custom_image_url || '',
       is_featured: category.is_featured,
+      is_visible: category.is_visible,
     });
     setDialogOpen(true);
   };
 
-  const handleDeleteClick = (category: Category) => {
+  const handleDeleteClick = (category: BrandCategory) => {
     setCategoryToDelete(category);
     setDeleteDialogOpen(true);
   };
@@ -128,7 +161,7 @@ const Categories = () => {
 
     try {
       const { error } = await supabase
-        .from('categories')
+        .from('brand_categories')
         .delete()
         .eq('id', categoryToDelete.id);
 
@@ -155,10 +188,10 @@ const Categories = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name.trim()) {
+    if (!formData.brand_name.trim() || !formData.display_name.trim()) {
       toast({
         title: "Erro",
-        description: "Nome da categoria é obrigatório",
+        description: "Nome da marca e nome de exibição são obrigatórios",
         variant: "destructive"
       });
       return;
@@ -168,22 +201,25 @@ const Categories = () => {
       setSubmitting(true);
       
       const categoryData = {
-        name: formData.name.trim(),
+        brand_name: formData.brand_name.trim(),
+        display_name: formData.display_name.trim(),
         description: formData.description.trim() || null,
-        image_url: formData.image_url || null,
+        custom_image_url: formData.custom_image_url || null,
         is_featured: formData.is_featured,
+        is_visible: formData.is_visible,
         sort_order: editingCategory ? editingCategory.sort_order : categories.length,
+        auto_generated: false, // Marcamos como criado manualmente
       };
 
       let error;
       if (editingCategory) {
         ({ error } = await supabase
-          .from('categories')
+          .from('brand_categories')
           .update(categoryData)
           .eq('id', editingCategory.id));
       } else {
         ({ error } = await supabase
-          .from('categories')
+          .from('brand_categories')
           .insert(categoryData));
       }
 
@@ -213,7 +249,7 @@ const Categories = () => {
   const updateSortOrder = async (categoryId: string, newOrder: number) => {
     try {
       const { error } = await supabase
-        .from('categories')
+        .from('brand_categories')
         .update({ sort_order: newOrder })
         .eq('id', categoryId);
 
@@ -327,10 +363,10 @@ const Categories = () => {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-3">
-                        {category.image_url ? (
+                        {category.custom_image_url ? (
                           <img
-                            src={category.image_url}
-                            alt={category.name}
+                            src={category.custom_image_url}
+                            alt={category.display_name}
                             className="h-12 w-12 rounded object-cover"
                           />
                         ) : (
@@ -339,9 +375,15 @@ const Categories = () => {
                           </div>
                         )}
                         <div>
-                          <div className="font-medium">{category.name}</div>
+                          <div className="font-medium">{category.display_name}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {category.brand_name} • {category.product_count || 0} produtos
+                          </div>
                           {category.is_featured && (
                             <span className="text-xs text-primary">⭐ Destaque</span>
+                          )}
+                          {category.auto_generated && (
+                            <span className="text-xs text-blue-600">🤖 Auto</span>
                           )}
                         </div>
                       </div>
@@ -352,7 +394,11 @@ const Categories = () => {
                       </p>
                     </TableCell>
                     <TableCell>
-                      <span className="text-sm text-green-600">Ativa</span>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-sm ${category.is_visible ? 'text-green-600' : 'text-red-600'}`}>
+                          {category.is_visible ? 'Visível' : 'Oculta'}
+                        </span>
+                      </div>
                     </TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu>
@@ -397,23 +443,34 @@ const Categories = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Nome da Categoria *</Label>
+                <Label htmlFor="brand_name">Nome da Marca *</Label>
                 <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                  placeholder="Ex: Relógios Clássicos"
+                  id="brand_name"
+                  value={formData.brand_name}
+                  onChange={(e) => setFormData(prev => ({ ...prev, brand_name: e.target.value }))}
+                  placeholder="Ex: Rolex"
                   required
                 />
               </div>
               
               <div className="space-y-2">
+                <Label htmlFor="display_name">Nome de Exibição *</Label>
+                <Input
+                  id="display_name"
+                  value={formData.display_name}
+                  onChange={(e) => setFormData(prev => ({ ...prev, display_name: e.target.value }))}
+                  placeholder="Ex: Rolex - Precisão Suíça"
+                  required
+                />
+              </div>
+              
+              <div className="space-y-2 md:col-span-2">
                 <Label>Imagem da Categoria</Label>
                 <ImageUpload
                   bucket="category-images"
-                  onImageUploaded={(url) => setFormData(prev => ({ ...prev, image_url: url }))}
-                  onImageRemoved={() => setFormData(prev => ({ ...prev, image_url: '' }))}
-                  currentImageUrl={formData.image_url}
+                  onImageUploaded={(url) => setFormData(prev => ({ ...prev, custom_image_url: url }))}
+                  onImageRemoved={() => setFormData(prev => ({ ...prev, custom_image_url: '' }))}
+                  currentImageUrl={formData.custom_image_url}
                 />
               </div>
             </div>
@@ -451,8 +508,8 @@ const Categories = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
             <AlertDialogDescription>
-              Tem certeza que deseja excluir a categoria "{categoryToDelete?.name}"?
-              Esta ação não pode ser desfeita.
+              Tem certeza que deseja excluir a categoria "{categoryToDelete?.display_name}"?
+              Esta ação não pode ser desfeita e pode afetar a organização dos produtos.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

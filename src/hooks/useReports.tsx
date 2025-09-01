@@ -49,7 +49,7 @@ export const useReports = () => {
 
       // Buscar categorias
       const { data: categories, error: categoriesError } = await supabase
-        .from('categories')
+        .from('brand_categories')
         .select('*');
 
       if (categoriesError) throw categoriesError;

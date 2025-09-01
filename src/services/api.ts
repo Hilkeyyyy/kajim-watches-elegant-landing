@@ -189,14 +189,25 @@ class ApiService {
   async getCategories(): Promise<ApiResponse<Category[]>> {
     try {
       const { data, error } = await supabase
-        .from('categories')
+        .from('brand_categories')
         .select('*')
         .order('sort_order');
 
       if (error) throw error;
 
+      // Converter brand_categories para Category format
+      const categories: Category[] = (data || []).map(item => ({
+        id: item.id,
+        name: item.display_name,
+        description: item.description,
+        image_url: item.custom_image_url,
+        sort_order: item.sort_order,
+        is_featured: item.is_featured,
+        created_at: item.created_at
+      }));
+
       return {
-        data: data || [],
+        data: categories,
         success: true
       };
     } catch (error) {

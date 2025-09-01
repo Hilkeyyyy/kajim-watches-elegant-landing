@@ -15,6 +15,9 @@ interface Category {
   name: string;
   description?: string;
   image_url?: string;
+  sort_order?: number;
+  is_featured?: boolean;
+  created_at?: string;
 }
 
 const CategoryPage = () => {
@@ -32,21 +35,33 @@ const CategoryPage = () => {
 
   const fetchCategoryAndProducts = async () => {
     try {
-      // Buscar categoria
+      // Buscar categoria de marca
       const { data: categoryData, error: categoryError } = await supabase
-        .from('categories')
+        .from('brand_categories')
         .select('*')
-        .eq('id', categoryId)
+        .eq('brand_name', categoryId)
         .maybeSingle();
 
       if (categoryError) throw categoryError;
-      setCategory(categoryData);
+      
+      // Converter para formato compatível com Category
+      if (categoryData) {
+        setCategory({
+          id: categoryData.id,
+          name: categoryData.display_name,
+          description: categoryData.description,
+          image_url: categoryData.custom_image_url,
+          sort_order: categoryData.sort_order,
+          is_featured: categoryData.is_featured,
+          created_at: categoryData.created_at
+        });
+      }
 
-      // Já que removemos category_id, vamos buscar todos os produtos ativos
-      // Em uma implementação real, você poderia usar tags ou outro sistema de classificação
+      // Buscar produtos da marca específica
       const { data: productsData, error: productsError } = await supabase
         .from('products')
         .select('*')
+        .eq('brand', categoryId)
         .eq('is_visible', true)
         .eq('status', 'active')
         .order('sort_order', { ascending: true })

@@ -40,7 +40,7 @@ const Dashboard = () => {
         supabase.from('products').select('*', { count: 'exact', head: true }).eq('status', 'active'),
         supabase.from('products').select('*', { count: 'exact', head: true }).eq('is_featured', true),
         supabase.from('products').select('*', { count: 'exact', head: true }).lt('stock_quantity', 10),
-        supabase.from('categories').select('*', { count: 'exact', head: true }),
+        supabase.from('brand_categories').select('*', { count: 'exact', head: true }),
         supabase.from('profiles').select('*', { count: 'exact', head: true })
       ]);
 
