@@ -163,7 +163,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
           </div>
         </div>
 
-        {/* Descrição breve - Compacta e elegante */}
+        {/* Descrição breve - Design sofisticado */}
         <p className="text-sm text-muted-foreground line-clamp-1 leading-tight font-medium">
           {product.description || `Relógio ${product.brand} original em excelente estado`}
         </p>
