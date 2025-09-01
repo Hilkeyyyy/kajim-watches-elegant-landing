@@ -55,11 +55,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
   const isOfferActive = product.original_price && parseFloat(product.original_price.toString()) > parseFloat(product.price.toString());
 
   return (
-    <Card className="group relative w-full max-w-xs lg:max-w-sm mx-auto bg-background rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 hover:scale-[1.02] overflow-hidden border border-border/50">
-      {/* Área da Imagem - Formato quadrado mais compacto */}
-      <div className="relative aspect-square overflow-hidden">
+    <Card className="group relative w-full max-w-sm lg:max-w-md xl:max-w-lg mx-auto bg-gradient-to-br from-background to-background/95 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-700 hover:scale-[1.03] hover:-translate-y-2 overflow-hidden border border-border/30 backdrop-blur-sm">
+      {/* Área da Imagem - Design sofisticado quadrado */}
+      <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-muted/20 to-muted/5">
         <div
-          className="w-full h-full cursor-pointer"
+          className="w-full h-full cursor-pointer group/image"
           onClick={(e) => {
             e.stopPropagation();
             setLightboxOpen(true);
@@ -68,88 +68,112 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
           <img
             src={mainImage}
             alt={`${product.brand} ${product.name}`}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-110"
             loading="lazy"
           />
           
-          {/* Overlay elegante no hover */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          {/* Overlay elegante multicamadas */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/10 opacity-0 group-hover:opacity-70 transition-all duration-500"></div>
+          
+          {/* Indicador de zoom sutil */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
+            <div className="bg-white/20 backdrop-blur-lg rounded-full p-3 border border-white/30 shadow-xl">
+              <div className="w-6 h-6 border-2 border-white rounded-full relative">
+                <div className="absolute -top-1 -right-1 w-3 h-3 border-2 border-white rounded-full rotate-45 transform translate-x-1 translate-y-1"></div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Badge de Oferta - Canto superior esquerdo */}
+        {/* Badge de Oferta - Design sofisticado */}
         {isOfferActive && (
-          <div className="absolute top-3 left-3 z-10">
-            <div className="bg-red-500 text-white px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wide shadow-lg">
+          <div className="absolute top-4 left-4 z-10">
+            <div className="bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide shadow-xl backdrop-blur-sm border border-red-400/30">
               OFERTA
             </div>
           </div>
         )}
 
-        {/* Coração de Favorito - Liquid Glass Effect no canto superior direito */}
-        <div className="absolute top-3 right-3 z-10">
+        {/* Coração de Favorito - Premium Glass Effect */}
+        <div className="absolute top-4 right-4 z-10">
           <FavoriteButton 
             productId={product.id} 
             productName={product.name}
             size="md"
-            className="bg-white/20 backdrop-blur-xl hover:bg-white/30 shadow-xl border border-white/30 rounded-xl w-11 h-11 lg:w-12 lg:h-12 transition-all duration-300 hover:scale-105"
+            className="bg-white/25 backdrop-blur-2xl hover:bg-white/40 shadow-2xl border border-white/40 rounded-2xl w-12 h-12 lg:w-14 lg:h-14 transition-all duration-500 hover:scale-110 hover:rotate-3"
           />
         </div>
 
-        {/* Badge ORIGINAL - Canto inferior direito */}
-        <div className="absolute bottom-3 right-3 z-10">
-          <div className="bg-foreground/90 text-background px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wide shadow-lg backdrop-blur-sm">
+        {/* Badge ORIGINAL - Design sofisticado */}
+        <div className="absolute bottom-4 right-4 z-10">
+          <div className="bg-gradient-to-r from-foreground to-foreground/90 text-background px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide shadow-xl backdrop-blur-sm border border-foreground/20">
             ORIGINAL
           </div>
         </div>
 
-        {/* Ícone de Carrinho Flutuante - Posição elegante */}
-        <div className="absolute bottom-3 left-3 z-10">
+        {/* Ícone de Carrinho Flutuante - Design premium */}
+        <div className="absolute bottom-4 left-4 z-10">
           <button
             onClick={handleQuickAddToCart}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 p-2.5 rounded-xl shadow-lg transition-all duration-300 hover:scale-110 border border-primary/20"
+            className="bg-gradient-to-r from-primary to-primary/90 text-primary-foreground hover:from-primary/90 hover:to-primary p-3 rounded-2xl shadow-xl transition-all duration-500 hover:scale-110 hover:-rotate-3 border border-primary/30 backdrop-blur-sm"
             title="Adicionar ao carrinho"
           >
-            <ShoppingCart className="w-4 h-4" />
+            <ShoppingCart className="w-5 h-5" />
           </button>
         </div>
       </div>
 
-      {/* Área de Informações - Layout compacto */}
-      <CardContent className="p-4 space-y-2">
-        {/* Marca - Estilo sofisticado */}
-        <p className="text-xs font-bold text-muted-foreground uppercase tracking-[0.1em] mb-2">
-          {product.brand}
-        </p>
+      {/* Área de Informações - Layout sofisticado premium */}
+      <CardContent className="p-6 lg:p-8 space-y-4 bg-gradient-to-t from-muted/10 to-transparent">
+        {/* Marca - Design luxuoso */}
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-bold text-primary uppercase tracking-[0.15em] mb-1 bg-primary/10 px-3 py-1 rounded-full">
+            {product.brand}
+          </p>
+          {isOfferActive && (
+            <div className="text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded-full border border-red-200">
+              PROMOÇÃO
+            </div>
+          )}
+        </div>
 
-        {/* Nome do Produto - Tipografia elegante */}
-        <h3 className="font-serif text-lg font-semibold text-foreground line-clamp-2 leading-snug min-h-[3.5rem]">
+        {/* Nome do Produto - Tipografia premium */}
+        <h3 className="font-serif text-xl lg:text-2xl font-bold text-foreground line-clamp-2 leading-tight min-h-[3.5rem] group-hover:text-primary transition-colors duration-300">
           {product.name}
         </h3>
 
-        {/* Preços - Design clean */}
-        <div className="space-y-2">
+        {/* Preços - Design luxuoso */}
+        <div className="space-y-2 py-2">
           {isOfferActive && originalDisplay && (
-            <p className="text-base text-muted-foreground line-through font-medium">
+            <p className="text-lg text-muted-foreground line-through font-medium opacity-70">
               {originalDisplay}
             </p>
           )}
           
-          <p className="text-2xl font-bold text-foreground">
-            {priceDisplay || 'Consulte'}
-          </p>
+          <div className="flex items-baseline gap-2">
+            <p className="text-3xl lg:text-4xl font-bold text-foreground bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+              {priceDisplay || 'Consulte'}
+            </p>
+            {isOfferActive && (
+              <span className="text-sm text-green-600 font-semibold bg-green-50 px-2 py-1 rounded-full">
+                ECONOMIA
+              </span>
+            )}
+          </div>
         </div>
 
-        {/* Descrição breve - Tipografia clean */}
-        <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed">
+        {/* Descrição breve - Tipografia sofisticada */}
+        <p className="text-base text-muted-foreground line-clamp-2 leading-relaxed font-medium">
           {product.description || `Relógio ${product.brand} original em excelente estado. Produto com garantia de autenticidade.`}
         </p>
 
-        {/* Botão Ver Detalhes - Design refinado */}
-        <div className="pt-4">
+        {/* Botão Ver Detalhes - Design premium */}
+        <div className="pt-6">
           <Button
             variant="outline"
             size="lg"
-            className="w-full h-12 text-base font-semibold border-2 border-border hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300 rounded-xl"
+            className="w-full h-14 text-lg font-bold bg-gradient-to-r from-background to-muted/50 border-2 border-primary/30 hover:from-primary hover:to-primary/90 hover:text-primary-foreground hover:border-primary transition-all duration-500 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
             asChild
           >
             <Link to={`/produto/${product.id}`}>
