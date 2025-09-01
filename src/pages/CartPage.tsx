@@ -31,7 +31,7 @@ export const CartPage: React.FC = () => {
     const total = getCartTotal();
     const fullMessage = `🛒 *Pedido KAJIM Watches*\n\n${message}\n\n💰 *Total: ${total}*\n\nGostaria de finalizar esta compra!`;
     
-    const whatsappUrl = `https://wa.me/5511999999999?text=${encodeURIComponent(fullMessage)}`;
+    const whatsappUrl = `https://wa.me/559181993435?text=${encodeURIComponent(fullMessage)}`;
     window.open(whatsappUrl, '_blank');
   };
 
