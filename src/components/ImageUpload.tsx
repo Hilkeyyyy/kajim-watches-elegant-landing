@@ -31,6 +31,22 @@ export const ImageUpload = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
+  // Extrai o caminho do objeto a partir da URL pública do Supabase
+  const getObjectPathFromPublicUrl = (url: string, bucketName: string): string | null => {
+    try {
+      const u = new URL(url);
+      const marker = `/storage/v1/object/public/${bucketName}/`;
+      const idx = u.pathname.indexOf(marker);
+      if (idx !== -1) return u.pathname.slice(idx + marker.length);
+      // Fallback simples
+      if (url.includes(`${bucketName}/`)) return url.split(`${bucketName}/`)[1];
+      return null;
+    } catch {
+      if (url.includes(`${bucketName}/`)) return url.split(`${bucketName}/`)[1];
+      return null;
+    }
+  };
+
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -62,16 +78,6 @@ export const ImageUpload = ({
     setPreviewUrl(localUrl);
 
     try {
-      // Se existe imagem anterior, remover
-      if (currentImageUrl && currentImageUrl.includes(bucket)) {
-        const oldPath = currentImageUrl.split(`${bucket}/`)[1];
-        if (oldPath) {
-          await supabase.storage
-            .from(bucket)
-            .remove([oldPath]);
-        }
-      }
-
       // Gerar nome único para o arquivo
       const timestamp = Date.now();
       const fileExt = file.name.split('.').pop();
@@ -98,6 +104,19 @@ export const ImageUpload = ({
       URL.revokeObjectURL(localUrl);
       setPreviewUrl(publicUrl);
       onImageUploaded(publicUrl);
+
+      // Remover imagem anterior somente após upload bem-sucedido
+      if (currentImageUrl) {
+        const oldPath = getObjectPathFromPublicUrl(currentImageUrl, bucket);
+        if (oldPath) {
+          const { error: removeErr } = await supabase.storage
+            .from(bucket)
+            .remove([oldPath]);
+          if (removeErr) {
+            console.warn('Não foi possível remover a imagem antiga:', removeErr.message);
+          }
+        }
+      }
 
       toast({
         title: "Imagem carregada",

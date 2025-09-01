@@ -175,6 +175,7 @@ const SiteEditor = () => {
                 <Label>Imagem</Label>
                 <ImageUpload
                   bucket="category-images"
+                  path={`site/hero/main`}
                   currentImageUrl={settings.hero_image_url}
                   onImageUploaded={handleImageUpload('hero_image_url')}
                   onImageRemoved={handleImageRemove('hero_image_url')}
@@ -186,6 +187,7 @@ const SiteEditor = () => {
                 <Label>Imagem de Fundo</Label>
                 <ImageUpload
                   bucket="category-images"
+                  path={`site/hero/background`}
                   currentImageUrl={settings.hero_background_image_url}
                   onImageUploaded={handleImageUpload('hero_background_image_url')}
                   onImageRemoved={handleImageRemove('hero_background_image_url')}

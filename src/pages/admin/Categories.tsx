@@ -469,6 +469,7 @@ const Categories = () => {
                 <ImageUpload
                   bucket="category-images"
                   path={`brands/${formData.brand_name.replace(/\s+/g, '-').toLowerCase()}`}
+                  maxSizeInMB={15}
                   onImageUploaded={(url) => setFormData(prev => ({ ...prev, custom_image_url: url }))}
                   onImageRemoved={() => setFormData(prev => ({ ...prev, custom_image_url: '' }))}
                   currentImageUrl={formData.custom_image_url}
