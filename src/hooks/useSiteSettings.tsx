@@ -96,24 +96,23 @@ export const useSiteSettings = () => {
     try {
       setIsLoading(true);
       const { data, error } = await supabase
-        .from('site_settings')
-        .select('*')
-        .maybeSingle();
+        .rpc('get_site_settings_public');
 
-      if (error && error.code !== 'PGRST116') { // PGRST116 = não encontrado
+      if (error) {
         throw error;
       }
 
-      if (data) {
+      if (data && data.length > 0) {
+        const settingsData = data[0];
         setSettings({
           ...defaultSettings,
-          ...data,
-          hero_gallery: (Array.isArray(data.hero_gallery) ? data.hero_gallery : defaultSettings.hero_gallery),
-          mid_banners: (Array.isArray(data.mid_banners) ? data.mid_banners : defaultSettings.mid_banners),
-          homepage_blocks: (Array.isArray(data.homepage_blocks) ? data.homepage_blocks : defaultSettings.homepage_blocks),
-          footer_links: (Array.isArray(data.footer_links) ? data.footer_links : defaultSettings.footer_links),
-          layout_options: (typeof data.layout_options === 'object' && data.layout_options ? data.layout_options : defaultSettings.layout_options) as any,
-          editable_sections: (typeof data.editable_sections === 'object' && data.editable_sections ? data.editable_sections : defaultSettings.editable_sections) as any,
+          ...settingsData,
+          hero_gallery: (Array.isArray(settingsData.hero_gallery) ? settingsData.hero_gallery : defaultSettings.hero_gallery),
+          mid_banners: (Array.isArray(settingsData.mid_banners) ? settingsData.mid_banners : defaultSettings.mid_banners),
+          homepage_blocks: (Array.isArray(settingsData.homepage_blocks) ? settingsData.homepage_blocks : defaultSettings.homepage_blocks),
+          footer_links: (Array.isArray(settingsData.footer_links) ? settingsData.footer_links : defaultSettings.footer_links),
+          layout_options: (typeof settingsData.layout_options === 'object' && settingsData.layout_options ? settingsData.layout_options : defaultSettings.layout_options) as any,
+          editable_sections: (typeof settingsData.editable_sections === 'object' && settingsData.editable_sections ? settingsData.editable_sections : defaultSettings.editable_sections) as any,
         });
       }
     } catch (error) {

@@ -671,35 +671,36 @@ export type Database = {
       }
     }
     Views: {
-      site_settings_public: {
-        Row: {
-          about_text: string | null
-          additional_info: string | null
-          contact_info: string | null
-          editable_sections: Json | null
-          enable_hero_background_blur: boolean | null
-          footer_links: Json | null
-          footer_text: string | null
-          hero_background_image_url: string | null
-          hero_gallery: Json | null
-          hero_image_url: string | null
-          hero_subtitle: string | null
-          hero_title: string | null
-          hero_watch_image_url: string | null
-          homepage_blocks: Json | null
-          layout_options: Json | null
-          mid_banners: Json | null
-          show_category_carousel: boolean | null
-          show_mid_banners: boolean | null
-          site_title: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       generate_whatsapp_link: {
         Args: { cart_data: Json }
         Returns: string
+      }
+      get_site_settings_public: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          about_text: string
+          additional_info: string
+          contact_info: string
+          editable_sections: Json
+          enable_hero_background_blur: boolean
+          footer_links: Json
+          footer_text: string
+          hero_background_image_url: string
+          hero_gallery: Json
+          hero_image_url: string
+          hero_subtitle: string
+          hero_title: string
+          hero_watch_image_url: string
+          homepage_blocks: Json
+          layout_options: Json
+          mid_banners: Json
+          show_category_carousel: boolean
+          show_mid_banners: boolean
+          site_title: string
+        }[]
       }
       is_admin: {
         Args: { user_id: string }
