@@ -55,9 +55,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
   const isOfferActive = product.original_price && parseFloat(product.original_price.toString()) > parseFloat(product.price.toString());
 
   return (
-    <Card className="group relative w-full max-w-sm mx-auto bg-background rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 hover:scale-[1.02] overflow-hidden border border-border/50">
-      {/* Área da Imagem - Layout elegante inspirado na referência */}
-      <div className="relative aspect-[4/5] overflow-hidden">
+    <Card className="group relative w-full max-w-xs mx-auto bg-background rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 hover:scale-[1.02] overflow-hidden border border-border/50">
+      {/* Área da Imagem - Formato quadrado mais compacto */}
+      <div className="relative aspect-square overflow-hidden">
         <div
           className="w-full h-full cursor-pointer"
           onClick={(e) => {
@@ -76,46 +76,46 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
         </div>
 
-        {/* Badge ORIGINAL - Canto superior direito */}
-        <div className="absolute top-4 right-4 z-10">
-          <div className="bg-foreground text-background px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide shadow-lg backdrop-blur-sm">
-            ORIGINAL
-          </div>
-        </div>
-
         {/* Badge de Oferta - Canto superior esquerdo */}
         {isOfferActive && (
-          <div className="absolute top-4 left-4 z-10">
-            <div className="bg-red-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide shadow-lg">
+          <div className="absolute top-3 left-3 z-10">
+            <div className="bg-red-500 text-white px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wide shadow-lg">
               OFERTA
             </div>
           </div>
         )}
 
-        {/* Coração de Favorito - Elegante e posicionado */}
-        <div className="absolute top-4 right-16 z-10">
+        {/* Coração de Favorito - Liquid Glass Effect no canto superior direito */}
+        <div className="absolute top-3 right-3 z-10">
           <FavoriteButton 
             productId={product.id} 
             productName={product.name}
             size="sm"
-            className="bg-background/90 backdrop-blur-md hover:bg-background shadow-lg border border-border/30 rounded-xl w-10 h-10"
+            className="bg-white/20 backdrop-blur-xl hover:bg-white/30 shadow-xl border border-white/30 rounded-xl w-9 h-9 transition-all duration-300 hover:scale-105"
           />
         </div>
 
+        {/* Badge ORIGINAL - Canto inferior direito */}
+        <div className="absolute bottom-3 right-3 z-10">
+          <div className="bg-foreground/90 text-background px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wide shadow-lg backdrop-blur-sm">
+            ORIGINAL
+          </div>
+        </div>
+
         {/* Ícone de Carrinho Flutuante - Posição elegante */}
-        <div className="absolute bottom-4 right-4 z-10">
+        <div className="absolute bottom-3 left-3 z-10">
           <button
             onClick={handleQuickAddToCart}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 p-3 rounded-xl shadow-lg transition-all duration-300 hover:scale-110 border border-primary/20"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 p-2.5 rounded-xl shadow-lg transition-all duration-300 hover:scale-110 border border-primary/20"
             title="Adicionar ao carrinho"
           >
-            <ShoppingCart className="w-5 h-5" />
+            <ShoppingCart className="w-4 h-4" />
           </button>
         </div>
       </div>
 
-      {/* Área de Informações - Layout refinado */}
-      <CardContent className="p-6 space-y-4">
+      {/* Área de Informações - Layout compacto */}
+      <CardContent className="p-4 space-y-2">
         {/* Marca - Estilo sofisticado */}
         <p className="text-xs font-bold text-muted-foreground uppercase tracking-[0.1em] mb-2">
           {product.brand}
