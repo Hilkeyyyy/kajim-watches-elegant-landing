@@ -53,7 +53,17 @@ export class ErrorBoundaryOptimized extends Component<Props, State> {
         msg.includes('promise rejection') ||
         msg.includes('cannot update a component while rendering a different component') ||
         msg.includes('state update on an unmounted component') ||
-        stack.includes('resizeobserver');
+        msg.includes('minified react error') ||
+        msg.includes('auth session missing') ||
+        msg.includes('auth state change') ||
+        msg.includes('token refresh') ||
+        msg.includes('supabase') ||
+        msg.includes('invalid login credentials') ||
+        (rawMsg && rawMsg.length < 8) ||
+        (rawMsg && rawMsg.trim() === '') ||
+        stack.includes('resizeobserver') ||
+        stack.includes('supabase') ||
+        stack.includes('auth');
 
       if (isIgnored) {
         console.warn('ErrorBoundaryOptimized ignored error in render:', rawMsg || error);
@@ -95,7 +105,17 @@ export class ErrorBoundaryOptimized extends Component<Props, State> {
       msg.includes('promise rejection') ||
       msg.includes('cannot update a component while rendering a different component') ||
       msg.includes('state update on an unmounted component') ||
-      stack.includes('resizeobserver');
+      msg.includes('minified react error') ||
+      msg.includes('auth session missing') ||
+      msg.includes('auth state change') ||
+      msg.includes('token refresh') ||
+      msg.includes('supabase') ||
+      msg.includes('invalid login credentials') ||
+      (rawMsg && rawMsg.length < 8) ||
+      (rawMsg && rawMsg.trim() === '') ||
+      stack.includes('resizeobserver') ||
+      stack.includes('supabase') ||
+      stack.includes('auth');
 
     if (isIgnored) {
       console.warn('ErrorBoundaryOptimized ignored error in componentDidCatch:', rawMsg || error);

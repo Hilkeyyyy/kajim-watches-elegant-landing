@@ -48,8 +48,10 @@ const Auth = () => {
         });
       } else {
         console.log('Auth page - Sign in successful, redirecting');
-        // Não mostrar toast de sucesso pois vai redirecionar imediatamente
-        navigate('/', { replace: true });
+        setLoading(false);
+        // Usar window.location.replace para evitar issues com ErrorBoundary
+        window.location.replace('/');
+        return;
       }
     } catch (exception) {
       console.error('Auth page - Sign in exception:', exception);
@@ -100,12 +102,16 @@ const Auth = () => {
         });
       }
     } else {
+      setLoading(false);
       toast({
         title: "Conta criada com sucesso!",
         description: "Verifique seu email para confirmar a conta.",
       });
-      // Aguardar e redirecionar
-      setTimeout(() => navigate('/', { replace: true }), 2000);
+      // Aguardar e redirecionar usando window.location.replace
+      setTimeout(() => {
+        window.location.replace('/');
+      }, 2000);
+      return;
     }
     setLoading(false);
   };
