@@ -1,8 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
-import { useSiteSettings } from '@/hooks/useSiteSettings';
-import { supabase } from '@/integrations/supabase/client';
+import { useSiteSettingsContext } from '@/contexts/SiteSettingsContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -31,7 +30,7 @@ interface SiteSettings {
 }
 
 const SiteEditor = () => {
-  const { settings: currentSettings, isLoading, refetch } = useSiteSettings();
+  const { settings: currentSettings, isLoading, updateSettings } = useSiteSettingsContext();
   const [settings, setSettings] = useState<SiteSettings>(currentSettings || {});
   const [isSaving, setIsSaving] = useState(false);
   const { handleError, handleSuccess } = useErrorHandler();
@@ -39,6 +38,7 @@ const SiteEditor = () => {
   // Update local settings when current settings change
   useEffect(() => {
     if (currentSettings) {
+      console.log('📊 Configurações atualizadas no editor:', currentSettings);
       setSettings(currentSettings);
     }
   }, [currentSettings]);
@@ -46,32 +46,13 @@ const SiteEditor = () => {
   const handleSaveSettings = async () => {
     try {
       setIsSaving(true);
+      console.log('💾 Salvando no SiteEditor:', settings);
       
-      // Verificar se já existe configuração
-      const { data: existingSettings } = await supabase
-        .from('site_settings')
-        .select('id')
-        .maybeSingle();
-
-      let result;
-      if (existingSettings) {
-        // Atualizar configuração existente
-        result = await supabase
-          .from('site_settings')
-          .update(settings)
-          .eq('id', existingSettings.id);
-      } else {
-        // Criar nova configuração
-        result = await supabase
-          .from('site_settings')
-          .insert([settings]);
-      }
-
-      if (result.error) throw result.error;
-
-      handleSuccess('Configurações salvas com sucesso!');
-      await refetch(); // Refresh settings
+      await updateSettings(settings);
+      
+      handleSuccess('✅ Configurações salvas e aplicadas com sucesso!');
     } catch (error) {
+      console.error('❌ Erro no SiteEditor:', error);
       handleError(error, 'Erro ao salvar configurações');
     } finally {
       setIsSaving(false);

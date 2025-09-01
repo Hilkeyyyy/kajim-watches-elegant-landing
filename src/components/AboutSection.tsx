@@ -1,10 +1,10 @@
-import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useSiteSettingsContext } from "@/contexts/SiteSettingsContext";
 import { LoadingSpinner } from "./LoadingSpinner";
 import watchDetails from "@/assets/watch-details.jpg";
 import { useSecurity } from "@/hooks/useSecurity";
 
 const AboutSection = () => {
-  const { settings, isLoading } = useSiteSettings();
+  const { settings, isLoading } = useSiteSettingsContext();
   const { sanitizeHtml } = useSecurity();
 
   if (isLoading) {

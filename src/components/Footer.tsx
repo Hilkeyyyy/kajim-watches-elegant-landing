@@ -1,9 +1,9 @@
-import { useSiteSettings } from '@/hooks/useSiteSettings';
+import { useSiteSettingsContext } from '@/contexts/SiteSettingsContext';
 import { LoadingSpinner } from './LoadingSpinner';
 import { Shield, Award, Clock } from "lucide-react";
 
 const Footer = () => {
-  const { settings, isLoading } = useSiteSettings();
+  const { settings, isLoading } = useSiteSettingsContext();
 
   if (isLoading) {
     return (

@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ErrorBoundaryOptimized } from '@/components/ErrorBoundaryOptimized';
 import { AppProvider } from '@/contexts/AppContext';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { SiteSettingsProvider } from '@/contexts/SiteSettingsContext';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { ThemeProvider } from 'next-themes';
 
@@ -45,7 +46,8 @@ function App() {
       <BrowserRouter>
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
-            <AppProvider>
+            <SiteSettingsProvider>
+              <AppProvider>
               <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
                 <TooltipProvider>
                 <div className="min-h-screen bg-background font-sans antialiased">
@@ -112,8 +114,9 @@ function App() {
                   <Toaster />
                 </div>
               </TooltipProvider>
-            </ThemeProvider>
-            </AppProvider>
+               </ThemeProvider>
+              </AppProvider>
+            </SiteSettingsProvider>
           </AuthProvider>
         </QueryClientProvider>
       </BrowserRouter>

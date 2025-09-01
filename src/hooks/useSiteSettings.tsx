@@ -96,39 +96,22 @@ export const useSiteSettings = () => {
     try {
       setIsLoading(true);
       
-      // Primeiro tenta buscar usando a função pública
-      const { data, error } = await supabase
-        .rpc('get_site_settings_public');
-
-      // Se houver erro na função pública, tenta buscar diretamente da tabela
-      if (error) {
-        console.warn('Erro na função pública, tentando busca direta:', error);
-        const { data: directData, error: directError } = await supabase
-          .from('site_settings')
-          .select('*')
-          .limit(1);
+      // Busca direta da tabela para garantir dados atualizados
+      const { data: directData, error: directError } = await supabase
+        .from('site_settings')
+        .select('*')
+        .limit(1)
+        .single();
           
-        if (directError) {
-          throw directError;
-        }
-        
-        if (directData && directData.length > 0) {
-          const settingsData = directData[0];
-          setSettings({
-            ...defaultSettings,
-            ...settingsData,
-            hero_gallery: (Array.isArray(settingsData.hero_gallery) ? settingsData.hero_gallery : defaultSettings.hero_gallery),
-            mid_banners: (Array.isArray(settingsData.mid_banners) ? settingsData.mid_banners : defaultSettings.mid_banners),
-            homepage_blocks: (Array.isArray(settingsData.homepage_blocks) ? settingsData.homepage_blocks : defaultSettings.homepage_blocks),
-            footer_links: (Array.isArray(settingsData.footer_links) ? settingsData.footer_links : defaultSettings.footer_links),
-            layout_options: (typeof settingsData.layout_options === 'object' && settingsData.layout_options ? settingsData.layout_options : defaultSettings.layout_options) as any,
-            editable_sections: (typeof settingsData.editable_sections === 'object' && settingsData.editable_sections ? settingsData.editable_sections : defaultSettings.editable_sections) as any,
-          });
-        } else {
-          setSettings(defaultSettings);
-        }
-      } else if (data && data.length > 0) {
-        const settingsData = data[0];
+      if (directError && directError.code !== 'PGRST116') {
+        console.error('Erro ao carregar configurações:', directError);
+        setSettings(defaultSettings);
+        return;
+      }
+      
+      if (directData) {
+        console.log('Configurações carregadas do banco:', directData);
+        const settingsData = directData;
         setSettings({
           ...defaultSettings,
           ...settingsData,
@@ -140,12 +123,48 @@ export const useSiteSettings = () => {
           editable_sections: (typeof settingsData.editable_sections === 'object' && settingsData.editable_sections ? settingsData.editable_sections : defaultSettings.editable_sections) as any,
         });
       } else {
+        console.log('Nenhuma configuração encontrada, usando padrões');
         setSettings(defaultSettings);
       }
     } catch (error) {
       handleError(error, 'Erro ao carregar configurações do site');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const updateSettings = async (newSettings: Partial<SiteSettings>) => {
+    try {
+      const { data: existingSettings } = await supabase
+        .from('site_settings')
+        .select('id')
+        .maybeSingle();
+
+      const updatedSettings = { ...settings, ...newSettings };
+
+      let result;
+      if (existingSettings) {
+        result = await supabase
+          .from('site_settings')
+          .update(updatedSettings)
+          .eq('id', existingSettings.id)
+          .select()
+          .single();
+      } else {
+        result = await supabase
+          .from('site_settings')
+          .insert([updatedSettings])
+          .select()
+          .single();
+      }
+
+      if (result.error) throw result.error;
+
+      setSettings(updatedSettings);
+      return result.data;
+    } catch (error) {
+      handleError(error, 'Erro ao atualizar configurações');
+      throw error;
     }
   };
 
@@ -156,6 +175,7 @@ export const useSiteSettings = () => {
   return {
     settings,
     isLoading,
-    refetch: fetchSettings
+    refetch: fetchSettings,
+    updateSettings
   };
 };

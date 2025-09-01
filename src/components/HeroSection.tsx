@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/Button";
-import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useSiteSettingsContext } from "@/contexts/SiteSettingsContext";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { useNavigate } from "react-router-dom";
 import heroWatch from "@/assets/hero-watch.jpg";
 
 const HeroSection = () => {
-  const { settings, isLoading } = useSiteSettings();
+  const { settings, isLoading } = useSiteSettingsContext();
   const navigate = useNavigate();
   
   const scrollToProducts = () => {
