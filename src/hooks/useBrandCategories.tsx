@@ -68,13 +68,9 @@ export const useBrandCategories = () => {
           auto_generated: true
         }));
 
-      if (newCategories.length > 0) {
-        const { error: insertError } = await supabase
-          .from('brand_categories')
-          .insert(newCategories);
-
-        if (insertError) throw insertError;
-      }
+      // Importante: não recriar categorias excluídas automaticamente
+      // Para evitar que categorias reapareçam após exclusão, não inserimos novas categorias aqui.
+      // Apenas retornamos as contagens detectadas a partir dos produtos.
 
       return brandCounts;
     } catch (error) {

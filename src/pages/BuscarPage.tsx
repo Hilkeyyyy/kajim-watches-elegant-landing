@@ -27,7 +27,8 @@ export const BuscarPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState('name');
   const [brandFilter, setBrandFilter] = useState('all');
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, Infinity]);
+  const [releaseFilter, setReleaseFilter] = useState<'all' | '30' | '90' | '365'>('all');
   const { handleError } = useErrorHandler();
   const navigate = useNavigate();
 
@@ -37,7 +38,7 @@ export const BuscarPage: React.FC = () => {
 
   useEffect(() => {
     filterAndSortProducts();
-  }, [searchTerm, products, sortBy, brandFilter, priceRange]);
+  }, [searchTerm, products, sortBy, brandFilter, priceRange, releaseFilter]);
 
   const fetchProducts = async () => {
     try {
@@ -84,6 +85,17 @@ export const BuscarPage: React.FC = () => {
       const price = Number(product.price);
       return price >= priceRange[0] && price <= priceRange[1];
     });
+
+    // Filtrar por data de lançamento (created_at)
+    if (releaseFilter !== 'all') {
+      const days = Number(releaseFilter);
+      const threshold = new Date();
+      threshold.setDate(threshold.getDate() - days);
+      filtered = filtered.filter(product => {
+        const created = product.created_at ? new Date(product.created_at) : null;
+        return created ? created >= threshold : true;
+      });
+    }
 
     // Ordenar
     filtered.sort((a, b) => {
@@ -158,7 +170,7 @@ export const BuscarPage: React.FC = () => {
                   />
                 </div>
                 
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <Select value={brandFilter} onValueChange={setBrandFilter}>
                     <SelectTrigger className="w-full sm:w-48 h-12 border-0 bg-background/50 backdrop-blur-sm">
                       <Filter className="w-4 h-4 mr-2" />
@@ -183,6 +195,41 @@ export const BuscarPage: React.FC = () => {
                       <SelectItem value="price_asc">Preço: Menor → Maior</SelectItem>
                       <SelectItem value="price_desc">Preço: Maior → Menor</SelectItem>
                       <SelectItem value="newest">Mais novos</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <div className="flex gap-2 w-full sm:w-auto">
+                    <Input
+                      type="number"
+                      placeholder="Preço mín."
+                      value={priceRange[0] === 0 ? '' : String(priceRange[0])}
+                      onChange={(e) => {
+                        const val = e.target.value === '' ? 0 : Number(e.target.value);
+                        setPriceRange([val, priceRange[1]]);
+                      }}
+                      className="h-12 w-[120px] border-0 bg-background/50 backdrop-blur-sm"
+                    />
+                    <Input
+                      type="number"
+                      placeholder="Preço máx."
+                      value={priceRange[1] === Infinity ? '' : String(priceRange[1])}
+                      onChange={(e) => {
+                        const val = e.target.value === '' ? Infinity : Number(e.target.value);
+                        setPriceRange([priceRange[0], val]);
+                      }}
+                      className="h-12 w-[120px] border-0 bg-background/50 backdrop-blur-sm"
+                    />
+                  </div>
+
+                  <Select value={releaseFilter} onValueChange={(v) => setReleaseFilter(v as 'all' | '30' | '90' | '365')}>
+                    <SelectTrigger className="w-full sm:w-56 h-12 border-0 bg-background/50 backdrop-blur-sm">
+                      <SelectValue placeholder="Lançamento" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Qualquer data</SelectItem>
+                      <SelectItem value="30">Últimos 30 dias</SelectItem>
+                      <SelectItem value="90">Últimos 90 dias</SelectItem>
+                      <SelectItem value="365">Últimos 365 dias</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

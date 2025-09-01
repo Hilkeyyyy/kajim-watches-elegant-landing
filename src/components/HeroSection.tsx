@@ -45,7 +45,7 @@ const HeroSection = () => {
             style={{ backgroundImage: `url(${backgroundImageUrl})` }}
           />
           {enableBlur && (
-            <div className="absolute inset-0 backdrop-blur-sm md:backdrop-blur-md bg-background/70"></div>
+            <div className="absolute inset-0 backdrop-blur-[3px] md:backdrop-blur-md bg-background/70"></div>
           )}
         </>
       )}
@@ -85,7 +85,7 @@ const HeroSection = () => {
         <Button 
           size="lg"
           onClick={exploreCollection}
-          className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:from-accent hover:to-primary font-inter font-medium tracking-wide px-8 py-4 text-base transition-all duration-300 hover:scale-105 shadow-2xl hover:shadow-primary/20 border-0 backdrop-blur-xl"
+          className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:from-accent hover:to-primary font-inter font-medium tracking-wide px-8 py-4 text-base transition-all duration-300 hover:scale-105 shadow-2xl hover:shadow-primary/20 border-0 backdrop-blur-lg"
         >
           Explorar Coleção
         </Button>
