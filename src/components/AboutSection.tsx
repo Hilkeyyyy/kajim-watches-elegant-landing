@@ -1,9 +1,11 @@
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { LoadingSpinner } from "./LoadingSpinner";
 import watchDetails from "@/assets/watch-details.jpg";
+import { useSecurity } from "@/hooks/useSecurity";
 
 const AboutSection = () => {
   const { settings, isLoading } = useSiteSettings();
+  const { sanitizeHtml } = useSecurity();
 
   if (isLoading) {
     return (
@@ -57,14 +59,16 @@ const AboutSection = () => {
               ))}
             </div>
 
-            {/* Custom Blocks */}
+            {/* Custom Blocks - Sanitized for Security */}
             {settings.editable_sections?.custom_blocks?.map((block, index) => (
               <div key={index} className="mt-8">
                 {block.type === 'text' && (
                   <p className="text-lg text-gray-200 leading-relaxed">{block.content}</p>
                 )}
                 {block.type === 'html' && (
-                  <div dangerouslySetInnerHTML={{ __html: block.content }} />
+                  <div dangerouslySetInnerHTML={{ 
+                    __html: sanitizeHtml(block.content)
+                  }} />
                 )}
               </div>
             ))}
