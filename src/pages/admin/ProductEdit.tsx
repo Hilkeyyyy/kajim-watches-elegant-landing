@@ -150,11 +150,8 @@ const ProductEdit = () => {
           
           // Log admin action for audit trail
           logAdminAction('update_product', product.id, { 
-            productName: updatedProduct.name 
+            productName: updatedProduct?.name 
           });
-          
-          // Recarregar cache de produtos
-          await fetchProducts({ force: true });
           
           // Navegar diretamente para lista de produtos com mensagem de sucesso
           navigate('/admin/produtos', { 

@@ -86,9 +86,6 @@ const ProductCreate = () => {
         });
       }
       
-      // Recarregar cache de produtos
-      await fetchProducts({ force: true });
-      
       // Navegar diretamente para lista de produtos com mensagem de sucesso
       navigate('/admin/produtos', { 
         replace: true,
