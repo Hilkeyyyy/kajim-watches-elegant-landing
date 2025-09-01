@@ -45,9 +45,20 @@ export const ProductDetailPage: React.FC = () => {
 
   const handleDirectPurchase = () => {
     if (!product) return;
-    const productUrl = `${window.location.origin}/produto/${product.id}`;
-    const priceText = formatPrice(parseFloat(product.price));
-    const message = `Olá! Tenho interesse no ${product.name} (${priceText}). Link: ${productUrl}`;
+    const message = `🛒 INTERESSE CONFIRMADO NO PRODUTO!
+
+⌚ ${product.name}
+🔹 Marca: ${product.brand}
+💰 Valor: ${formatPrice(parseFloat(product.price))}
+
+📸 Imagem do produto:
+${product.image}
+
+📞 Gostaria de receber mais informações sobre este produto!
+💳 Quais são as formas de pagamento disponíveis?
+🚚 Como funciona a entrega?
+
+Aguardo retorno para finalizar a compra!`;
     const whatsappUrl = `https://wa.me/559181993435?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };

@@ -21,17 +21,29 @@ export const CartPage: React.FC = () => {
   };
 
   const handleSendToWhatsApp = () => {
-    const message = cart
-      .map(
-        (item) =>
-          `${item.name} - Qtd: ${item.quantity} - ${item.price}`
+    const itemsList = cart
+      .map((item, index) => 
+        `🟢 Item ${index + 1}
+⌚ ${item.name}
+🔹 Marca: KAJIM
+💰 Valor: ${item.price}
+📸 Imagem: ${item.image || 'Imagem não disponível'}`
       )
-      .join('\n');
+      .join('\n\n');
     
-    const total = getCartTotal();
-    const fullMessage = `🛒 *Pedido KAJIM Watches*\n\n${message}\n\n💰 *Total: ${total}*\n\nGostaria de finalizar esta compra!`;
+    const message = `🛍️ LISTA DE ITENS SALVOS
+
+${itemsList}
+
+🛒 Desejo prosseguir com a compra dos itens listados!
+
+📞 Preciso de mais informações sobre os produtos.
+💳 Quais as formas de pagamento disponíveis?
+🚚 Como funciona a entrega?
+
+Aguardo retorno!`;
     
-    const whatsappUrl = `https://wa.me/559181993435?text=${encodeURIComponent(fullMessage)}`;
+    const whatsappUrl = `https://wa.me/559181993435?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 

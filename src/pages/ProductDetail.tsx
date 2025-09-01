@@ -90,20 +90,39 @@ const ProductDetail = () => {
 
   const handleWhatsApp = () => {
     const productUrl = `${window.location.origin}/produto/${product.id}`;
-    const message = `Olá! Tenho interesse no ${product.name} (${formatPrice(parseFloat(product.price))}). Link: ${productUrl}`;
+    const message = `🛒 INTERESSE CONFIRMADO NO PRODUTO!
+
+⌚ ${product.name}
+🔹 Marca: ${product.brand}
+💰 Valor: ${formatPrice(parseFloat(product.price))}
+
+📸 Imagem do produto:
+${product.image}
+
+📞 Gostaria de receber mais informações sobre este produto!
+💳 Quais são as formas de pagamento disponíveis?
+🚚 Como funciona a entrega?
+
+Aguardo retorno para finalizar a compra!`;
     const whatsappUrl = `https://wa.me/559181993435?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, "_blank");
   };
 
   const handleDirectPurchase = () => {
-    const currentDate = new Date().toLocaleString('pt-BR');
-    const productUrl = `${window.location.origin}/produto/${product.id}`;
-    const message = `Olá! Tenho interesse no seguinte produto:%0A%0A` +
-      `1. ${product.name}%0A` +
-      `Quantidade: 1%0A` +
-      `Preço: ${formatPrice(parseFloat(product.price))}%0A` +
-      `Link: ${productUrl}%0A%0A` +
-      `Data/Hora do pedido: ${currentDate}`;
+    const message = `🛒 INTERESSE CONFIRMADO NO PRODUTO!
+
+⌚ ${product.name}
+🔹 Marca: ${product.brand}
+💰 Valor: ${formatPrice(parseFloat(product.price))}
+
+📸 Imagem do produto:
+${product.image}
+
+📞 Gostaria de receber mais informações sobre este produto!
+💳 Quais são as formas de pagamento disponíveis?
+🚚 Como funciona a entrega?
+
+Aguardo retorno para finalizar a compra!`;
 
     const whatsappUrl = `https://wa.me/559181993435?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');

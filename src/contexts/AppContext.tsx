@@ -330,18 +330,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       
       // Fallback para método anterior
       try {
-        const currentDate = new Date().toLocaleString('pt-BR');
-        let message = 'Olá, gostaria de saber mais sobre estes produtos:\n\n';
+        const itemsList = state.cart
+          .map((item, index) => 
+            `🟢 Item ${index + 1}
+⌚ ${item.name}
+🔹 Marca: KAJIM
+💰 Valor: ${item.price}
+📸 Imagem: ${item.image || 'Imagem não disponível'}`
+          )
+          .join('\n\n');
+        
+        const message = `🛍️ LISTA DE ITENS SALVOS
 
-        state.cart.forEach((item, index) => {
-          message += `${index + 1}. ${item.name}\n`;
-          message += `Quantidade: ${item.quantity}\n`;
-          message += `Preço: ${item.price}\n`;
-          message += `Total: ${getItemTotal(item.price, item.quantity)}\n\n`;
-        });
+${itemsList}
 
-        message += `Total do pedido: ${getCartTotal()}\n`;
-        message += `Data/Hora do pedido: ${currentDate}`;
+🛒 Desejo prosseguir com a compra dos itens listados!
+
+📞 Preciso de mais informações sobre os produtos.
+💳 Quais as formas de pagamento disponíveis?
+🚚 Como funciona a entrega?
+
+Aguardo retorno!`;
 
         const whatsappUrl = `https://wa.me/559181993435?text=${encodeURIComponent(message)}`;
         window.open(whatsappUrl, '_blank');
