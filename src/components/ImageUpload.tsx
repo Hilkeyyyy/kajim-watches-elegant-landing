@@ -64,12 +64,13 @@ export const ImageUpload = ({
       const fileName = `${timestamp}-${Math.random().toString(36).substring(2)}.${fileExt}`;
       const filePath = path ? `${path}/${fileName}` : fileName;
 
-      // Upload para o Supabase Storage
+      // Upload para o Supabase Storage (com upsert e contentType)
       const { data, error } = await supabase.storage
         .from(bucket)
         .upload(filePath, file, {
           cacheControl: '3600',
-          upsert: false
+          upsert: true,
+          contentType: file.type,
         });
 
       if (error) throw error;
