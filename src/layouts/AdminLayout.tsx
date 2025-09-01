@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/contexts/AuthContext';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { AdminErrorBoundary } from '@/components/admin/AdminErrorBoundary';
 import { 

@@ -37,7 +37,7 @@ const CategoryPage = () => {
         .from('categories')
         .select('*')
         .eq('id', categoryId)
-        .single();
+        .maybeSingle();
 
       if (categoryError) throw categoryError;
       setCategory(categoryData);

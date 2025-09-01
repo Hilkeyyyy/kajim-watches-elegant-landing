@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Heart, ShoppingCart, User, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { SearchBar } from '@/components/SearchBar';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/contexts/AuthContext';
 import { useApp } from '@/contexts/AppContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 

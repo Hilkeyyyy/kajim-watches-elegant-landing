@@ -59,7 +59,7 @@ class ApiService {
         .from('products')
         .select('*')
         .eq('id', id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 
@@ -200,7 +200,7 @@ class ApiService {
         .from('profiles')
         .select('*')
         .eq('user_id', data.user.id)
-        .single();
+        .maybeSingle();
 
       const user: User = {
         id: data.user.id,
@@ -255,7 +255,7 @@ class ApiService {
         .from('profiles')
         .select('*')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
       const userData: User = {
         id: user.id,

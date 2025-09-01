@@ -98,7 +98,7 @@ export const useSiteSettings = () => {
       const { data, error } = await supabase
         .from('site_settings')
         .select('*')
-        .single();
+        .maybeSingle();
 
       if (error && error.code !== 'PGRST116') { // PGRST116 = não encontrado
         throw error;

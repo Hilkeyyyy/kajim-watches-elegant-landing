@@ -32,7 +32,7 @@ const SiteEditor = () => {
       const { data: existingSettings } = await supabase
         .from('site_settings')
         .select('id')
-        .single();
+        .maybeSingle();
 
       let result;
       if (existingSettings) {

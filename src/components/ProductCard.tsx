@@ -55,7 +55,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
   const isOfferActive = product.original_price && parseFloat(product.original_price.toString()) > parseFloat(product.price.toString());
 
   return (
-    <Card className="group relative w-full max-w-sm lg:max-w-md xl:max-w-lg mx-auto bg-gradient-to-br from-background to-background/95 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-700 hover:scale-[1.03] hover:-translate-y-2 overflow-hidden border border-border/30 backdrop-blur-sm">
+    <Card className="group relative w-full max-w-full mx-auto bg-gradient-to-br from-background to-background/95 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-700 hover:scale-[1.03] hover:-translate-y-2 overflow-hidden border border-border/30 backdrop-blur-sm">
       {/* Área da Imagem - Design sofisticado quadrado */}
       <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-muted/20 to-muted/5">
         <div
@@ -125,7 +125,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
       </div>
 
       {/* Área de Informações - Layout sofisticado premium */}
-      <CardContent className="p-6 lg:p-8 space-y-4 bg-gradient-to-t from-muted/10 to-transparent">
+      <CardContent className="p-5 lg:p-6 space-y-4 bg-gradient-to-t from-muted/10 to-transparent">
         {/* Marca - Design luxuoso */}
         <div className="flex items-center justify-between">
           <p className="text-sm font-bold text-primary uppercase tracking-[0.15em] mb-1 bg-primary/10 px-3 py-1 rounded-full">
@@ -164,7 +164,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
         </div>
 
         {/* Descrição breve - Tipografia sofisticada */}
-        <p className="text-base text-muted-foreground line-clamp-2 leading-relaxed font-medium">
+        <p className="hidden md:block text-base text-muted-foreground line-clamp-2 leading-relaxed font-medium">
           {product.description || `Relógio ${product.brand} original em excelente estado. Produto com garantia de autenticidade.`}
         </p>
 

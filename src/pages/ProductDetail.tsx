@@ -39,7 +39,7 @@ const ProductDetail = () => {
           .select('*')
           .eq('id', id)
           .eq('is_visible', true)
-          .single();
+          .maybeSingle();
 
         if (error) {
           console.error('Error fetching product:', error);

@@ -96,15 +96,13 @@ export const NewProductsCarousel = () => {
           }}
           className="w-full"
         >
-          <CarouselContent className="-ml-2 lg:-ml-4">
+          <CarouselContent className="-ml-1 lg:-ml-2">
             {products.map((product) => (
-              <CarouselItem key={product.id} className="pl-2 lg:pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
-                <div className="h-[480px]">
-                  <ProductCard 
-                    product={product} 
-                    onProductClick={handleProductClick}
-                  />
-                </div>
+              <CarouselItem key={product.id} className="pl-2 lg:pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/3">
+                <ProductCard 
+                  product={product} 
+                  onProductClick={handleProductClick}
+                />
               </CarouselItem>
             ))}
           </CarouselContent>
