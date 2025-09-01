@@ -153,22 +153,14 @@ const ProductEdit = () => {
             productName: updatedProduct.name 
           });
           
-          // Aguardar atualização do cache antes da navegação
+          // Recarregar cache de produtos
           await fetchProducts({ force: true });
           
-          // Manter usuário na página de edição e mostrar sucesso
-          handleSuccess(`Produto "${data.name}" atualizado com sucesso!`);
-          
-          // Recarregar dados do produto atualizado
-          const { data: refreshedProduct } = await supabase
-            .from('products')
-            .select('*')
-            .eq('id', product.id)
-            .maybeSingle();
-            
-          if (refreshedProduct) {
-            setProduct(refreshedProduct);
-          }
+          // Navegar diretamente para lista de produtos com mensagem de sucesso
+          navigate('/admin/produtos', { 
+            replace: true,
+            state: { successMessage: `Produto "${data.name}" atualizado com sucesso!` }
+          });
           
           resolve();
         } catch (error: any) {

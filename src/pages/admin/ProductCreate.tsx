@@ -86,18 +86,14 @@ const ProductCreate = () => {
         });
       }
       
-      // Mostrar sucesso e navegar rapidamente
-      handleSuccess("Produto criado com sucesso!");
-      
       // Recarregar cache de produtos
       await fetchProducts({ force: true });
       
-      // Navegar para edição se tivermos o ID, senão volta para a lista
-      if (createdId) {
-        navigate(`/admin/produtos/editar/${createdId}`, { replace: true });
-      } else {
-        navigate(`/admin/produtos`, { replace: true });
-      }
+      // Navegar diretamente para lista de produtos com mensagem de sucesso
+      navigate('/admin/produtos', { 
+        replace: true,
+        state: { successMessage: `Produto "${data.name}" criado com sucesso!` }
+      });
       
     } catch (error: any) {
       console.error('ProductCreate - Erro completo:', error);
