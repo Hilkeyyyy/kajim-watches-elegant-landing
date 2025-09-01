@@ -4,6 +4,8 @@ import { Badge } from '@/components/ui/badge';
 import { Upload, X, Star, ArrowUp, ArrowDown } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useSecurity } from '@/hooks/useSecurity';
+import { logSecurityEvent } from '@/utils/auditLogger';
 
 interface ImageItem {
   id: string;
@@ -28,6 +30,7 @@ export const MultipleImageUpload = ({
 }: MultipleImageUploadProps) => {
   const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
+  const { validateFileUpload } = useSecurity();
 
   const handleFileSelect = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -45,16 +48,43 @@ export const MultipleImageUpload = ({
     setUploading(true);
 
     try {
-      const uploadPromises = Array.from(files).map(async (file) => {
-        // Validar tamanho
+      const validFiles: File[] = [];
+      
+      // Validar cada arquivo com proteções de segurança
+      for (const file of Array.from(files)) {
+        const validation = validateFileUpload(file);
+        
+        if (!validation.isValid) {
+          toast({
+            title: "Arquivo rejeitado",
+            description: `${file.name}: ${validation.error}`,
+            variant: "destructive"
+          });
+          continue;
+        }
+        
+        // Validação adicional de tamanho específica
         if (file.size > maxSizeInMB * 1024 * 1024) {
-          throw new Error(`Arquivo muito grande. Máximo: ${maxSizeInMB}MB`);
+          toast({
+            title: "Arquivo muito grande",
+            description: `${file.name}: Máximo ${maxSizeInMB}MB`,
+            variant: "destructive"
+          });
+          continue;
         }
+        
+        validFiles.push(file);
+      }
 
-        // Validar tipo
-        if (!file.type.startsWith('image/')) {
-          throw new Error('Apenas imagens são permitidas');
-        }
+      if (validFiles.length === 0) {
+        logSecurityEvent('all_upload_files_rejected', { 
+          attempted_count: files.length,
+          timestamp: Date.now()
+        });
+        return;
+      }
+
+      const uploadPromises = validFiles.map(async (file) => {
 
         // Gerar nome único
         const fileExt = file.name.split('.').pop();
@@ -99,7 +129,7 @@ export const MultipleImageUpload = ({
       // Limpar input
       event.target.value = '';
     }
-  }, [images, maxImages, maxSizeInMB, onImagesChange, toast]);
+  }, [images, maxImages, maxSizeInMB, onImagesChange, toast, validateFileUpload]);
 
   const removeImage = useCallback((id: string) => {
     const updatedImages = images.filter(img => img.id !== id);
