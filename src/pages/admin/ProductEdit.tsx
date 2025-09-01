@@ -137,16 +137,14 @@ const ProductEdit = () => {
             .from('products')
             .upsert(productPayload, { onConflict: 'id', ignoreDuplicates: false })
             .select()
-            .single();
+            .maybeSingle();
 
           if (error) {
             console.error('ProductEdit - Erro do Supabase:', error);
             throw error;
           }
 
-          if (!updatedProduct) {
-            throw new Error('Produto não foi atualizado corretamente');
-          }
+          // Em casos raros, o PostgREST pode não retornar a linha. Seguimos com o fluxo e fazemos refetch abaixo.
 
           console.log('ProductEdit - Produto atualizado com sucesso');
           

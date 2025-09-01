@@ -87,11 +87,25 @@ class ApiService {
         .from('products')
         .insert([supabaseProduct])
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 
-      const convertedProduct = convertSupabaseToProduct(data as SupabaseProduct);
+      let productRow = data as SupabaseProduct | null;
+      if (!productRow) {
+        const { data: refetched } = await supabase
+          .from('products')
+          .select('*')
+          .eq('name', (supabaseProduct as any).name)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        productRow = refetched as SupabaseProduct | null;
+      }
+
+      if (!productRow) throw new Error('Produto criado, mas não foi possível obter os dados imediatamente.');
+
+      const convertedProduct = convertSupabaseToProduct(productRow as SupabaseProduct);
       
       return {
         data: convertedProduct,
@@ -116,11 +130,23 @@ class ApiService {
         .update(supabaseUpdates)
         .eq('id', id)
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 
-      const convertedProduct = convertSupabaseToProduct(data as SupabaseProduct);
+      let productRow = data as SupabaseProduct | null;
+      if (!productRow) {
+        const { data: refetched } = await supabase
+          .from('products')
+          .select('*')
+          .eq('id', id)
+          .maybeSingle();
+        productRow = refetched as SupabaseProduct | null;
+      }
+
+      if (!productRow) throw new Error('Produto atualizado, mas não foi possível obter os dados imediatamente.');
+
+      const convertedProduct = convertSupabaseToProduct(productRow as SupabaseProduct);
       
       return {
         data: convertedProduct,

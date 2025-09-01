@@ -56,19 +56,35 @@ const ProductCreate = () => {
         .from('products')
         .insert(productPayload)
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error('Supabase error:', error);
         throw new Error(`Erro ao salvar: ${error.message}`);
       }
 
-      console.log('ProductCreate - Produto criado com sucesso:', createdProduct);
+      let finalProduct = createdProduct;
+      if (!finalProduct) {
+        // Fallback em casos raros onde o PostgREST não retorna a linha
+        const { data: refetched } = await supabase
+          .from('products')
+          .select('*')
+          .eq('name', productPayload.name)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        finalProduct = refetched as any;
+      }
+
+      console.log('ProductCreate - Produto criado com sucesso:', finalProduct);
       
       // Log admin action
-      logAdminAction('create_product', createdProduct.id, { 
-        productName: createdProduct.name 
-      });
+      const createdId = (finalProduct as any)?.id;
+      if (createdId) {
+        logAdminAction('create_product', createdId, { 
+          productName: (finalProduct as any)?.name 
+        });
+      }
       
       // Mostrar sucesso e navegar rapidamente
       handleSuccess("Produto criado com sucesso!");
@@ -76,8 +92,12 @@ const ProductCreate = () => {
       // Recarregar cache de produtos
       await fetchProducts({ force: true });
       
-      // Navegar rapidamente para edição do produto criado
-      navigate(`/admin/produtos/editar/${createdProduct.id}`, { replace: true });
+      // Navegar para edição se tivermos o ID, senão volta para a lista
+      if (createdId) {
+        navigate(`/admin/produtos/editar/${createdId}`, { replace: true });
+      } else {
+        navigate(`/admin/produtos`, { replace: true });
+      }
       
     } catch (error: any) {
       console.error('ProductCreate - Erro completo:', error);

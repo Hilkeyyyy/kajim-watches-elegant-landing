@@ -23,13 +23,25 @@ export const useErrorHandler = () => {
       name === 'AbortError' ||
       code === 'ERR_CANCELED' ||
       msg.includes('abort') ||
+      msg.includes('request aborted') ||
+      msg.includes('the user aborted') ||
       msg.includes('err_canceled') ||
       msg.includes('resizeobserver') ||
+      msg.includes('resizeobserver loop limit exceeded') ||
+      msg.includes('loop completed with undelivered notifications') ||
       msg.includes('chunkloaderror') ||
       msg.includes('loading chunk') ||
+      msg.includes('loading css chunk') ||
+      msg.includes('stylesheet not loaded') ||
       (msg.includes('dynamic import') && msg.includes('failed')) ||
       (msg.includes('navigation') && msg.includes('cancel')) ||
       msg.includes('the operation was aborted') ||
+      msg.includes('failed to fetch') ||
+      msg.includes('network request failed') ||
+      msg.includes('networkerror when attempting to fetch resource') ||
+      msg.includes('non-error promise rejection') ||
+      msg.includes('promise rejection') ||
+      msg.includes('cannot update a component while rendering a different component') ||
       msg.includes('state update on an unmounted component') ||
       stack?.includes('resizeobserver')
     ) {

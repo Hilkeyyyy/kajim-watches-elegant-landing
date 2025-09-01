@@ -94,11 +94,7 @@ function App() {
                       } />
 
                       {/* Admin routes */}
-                      <Route path="/admin" element={
-                        <ErrorBoundaryOptimized>
-                          <AdminLayout />
-                        </ErrorBoundaryOptimized>
-                      }>
+                      <Route path="/admin" element={<AdminLayout />}>
                         <Route index element={<Dashboard />} />
                         <Route path="dashboard" element={<Dashboard />} />
                         <Route path="produtos" element={<Products />} />
