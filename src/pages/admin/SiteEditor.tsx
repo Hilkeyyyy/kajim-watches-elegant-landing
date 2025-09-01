@@ -13,15 +13,34 @@ import { ImageUpload } from '@/components/ImageUpload';
 import { Switch } from '@/components/ui/switch';
 import { Save, Settings, Image, Type, Layout, ToggleLeft } from 'lucide-react';
 
+interface SiteSettings {
+  site_title?: string;
+  hero_title?: string;
+  hero_subtitle?: string;
+  hero_image_url?: string;
+  hero_background_image_url?: string;
+  hero_watch_image_url?: string;
+  enable_hero_background_blur?: boolean;
+  footer_text?: string;
+  about_text?: string;
+  contact_info?: string;
+  additional_info?: string;
+  show_category_carousel?: boolean;
+  show_mid_banners?: boolean;
+  [key: string]: any;
+}
+
 const SiteEditor = () => {
   const { settings: currentSettings, isLoading, refetch } = useSiteSettings();
-  const [settings, setSettings] = useState(currentSettings);
+  const [settings, setSettings] = useState<SiteSettings>(currentSettings || {});
   const [isSaving, setIsSaving] = useState(false);
   const { handleError, handleSuccess } = useErrorHandler();
 
   // Update local settings when current settings change
   useEffect(() => {
-    setSettings(currentSettings);
+    if (currentSettings) {
+      setSettings(currentSettings);
+    }
   }, [currentSettings]);
 
   const handleSaveSettings = async () => {
@@ -59,16 +78,16 @@ const SiteEditor = () => {
     }
   };
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: string | boolean) => {
     setSettings(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleImageUpload = (url: string) => {
-    handleInputChange('hero_image_url', url);
+  const handleImageUpload = (field: string) => (url: string) => {
+    handleInputChange(field, url);
   };
 
-  const handleImageRemove = () => {
-    handleInputChange('hero_image_url', '');
+  const handleImageRemove = (field: string) => () => {
+    handleInputChange(field, '');
   };
 
   if (isLoading) {
@@ -136,7 +155,7 @@ const SiteEditor = () => {
                 <Label htmlFor="site_title">Título do Site</Label>
                 <Input
                   id="site_title"
-                  value={settings.site_title}
+                  value={settings.site_title || ''}
                   onChange={(e) => handleInputChange('site_title', e.target.value)}
                   placeholder="KAJIM RELÓGIOS"
                 />
@@ -155,7 +174,7 @@ const SiteEditor = () => {
                 <Label htmlFor="hero_title">Título Principal</Label>
                 <Input
                   id="hero_title"
-                  value={settings.hero_title}
+                  value={settings.hero_title || ''}
                   onChange={(e) => handleInputChange('hero_title', e.target.value)}
                   placeholder="KAJIM RELÓGIOS"
                 />
@@ -165,9 +184,20 @@ const SiteEditor = () => {
                 <Label htmlFor="hero_subtitle">Subtítulo</Label>
                 <Input
                   id="hero_subtitle"
-                  value={settings.hero_subtitle}
+                  value={settings.hero_subtitle || ''}
                   onChange={(e) => handleInputChange('hero_subtitle', e.target.value)}
                   placeholder="Precisão. Estilo. Exclusividade."
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Imagem</Label>
+                <ImageUpload
+                  bucket="category-images"
+                  currentImageUrl={settings.hero_image_url}
+                  onImageUploaded={handleImageUpload('hero_image_url')}
+                  onImageRemoved={handleImageRemove('hero_image_url')}
+                  className="w-full h-48"
                 />
               </div>
               
@@ -175,11 +205,42 @@ const SiteEditor = () => {
                 <Label>Imagem de Fundo</Label>
                 <ImageUpload
                   bucket="category-images"
-                  currentImageUrl={settings.hero_image_url}
-                  onImageUploaded={handleImageUpload}
-                  onImageRemoved={handleImageRemove}
+                  currentImageUrl={settings.hero_background_image_url}
+                  onImageUploaded={handleImageUpload('hero_background_image_url')}
+                  onImageRemoved={handleImageRemove('hero_background_image_url')}
                   className="w-full h-48"
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Imagem do Relógio (Hero)</Label>
+                <ImageUpload
+                  bucket="category-images"
+                  currentImageUrl={settings.hero_watch_image_url}
+                  onImageUploaded={handleImageUpload('hero_watch_image_url')}
+                  onImageRemoved={handleImageRemove('hero_watch_image_url')}
+                  className="w-full h-48"
+                />
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-4 border border-border/50 rounded-lg bg-muted/30">
+                  <div className="space-y-1">
+                    <Label htmlFor="enable_hero_background_blur" className="text-base font-medium">
+                      Blur na Imagem de Fundo
+                    </Label>
+                    <p className="text-sm text-muted-foreground">
+                      Aplicar efeito de desfoque na imagem de fundo do Hero
+                    </p>
+                  </div>
+                  <Switch
+                    id="enable_hero_background_blur"
+                    checked={settings.enable_hero_background_blur ?? true}
+                    onCheckedChange={(checked) => 
+                      handleInputChange('enable_hero_background_blur', checked)
+                    }
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -195,7 +256,7 @@ const SiteEditor = () => {
                 <Label htmlFor="about_text">Texto Sobre a Empresa</Label>
                 <Textarea
                   id="about_text"
-                  value={settings.about_text}
+                  value={settings.about_text || ''}
                   onChange={(e) => handleInputChange('about_text', e.target.value)}
                   placeholder="Descrição da empresa..."
                   rows={4}
@@ -206,7 +267,7 @@ const SiteEditor = () => {
                 <Label htmlFor="additional_info">Informações Adicionais</Label>
                 <Textarea
                   id="additional_info"
-                  value={settings.additional_info}
+                  value={settings.additional_info || ''}
                   onChange={(e) => handleInputChange('additional_info', e.target.value)}
                   placeholder="Informações extras sobre qualidade, garantia, etc..."
                   rows={3}
@@ -217,7 +278,7 @@ const SiteEditor = () => {
                 <Label htmlFor="contact_info">Informações de Contato</Label>
                 <Textarea
                   id="contact_info"
-                  value={settings.contact_info}
+                  value={settings.contact_info || ''}
                   onChange={(e) => handleInputChange('contact_info', e.target.value)}
                   placeholder="Telefone, e-mail, endereço..."
                   rows={3}
@@ -284,7 +345,7 @@ const SiteEditor = () => {
                 <Label htmlFor="footer_text">Texto do Rodapé</Label>
                 <Textarea
                   id="footer_text"
-                  value={settings.footer_text}
+                  value={settings.footer_text || ''}
                   onChange={(e) => handleInputChange('footer_text', e.target.value)}
                   placeholder="Texto que aparece no rodapé do site..."
                   rows={2}

@@ -95,14 +95,39 @@ export const useSiteSettings = () => {
   const fetchSettings = async () => {
     try {
       setIsLoading(true);
+      
+      // Primeiro tenta buscar usando a função pública
       const { data, error } = await supabase
         .rpc('get_site_settings_public');
 
+      // Se houver erro na função pública, tenta buscar diretamente da tabela
       if (error) {
-        throw error;
-      }
-
-      if (data && data.length > 0) {
+        console.warn('Erro na função pública, tentando busca direta:', error);
+        const { data: directData, error: directError } = await supabase
+          .from('site_settings')
+          .select('*')
+          .limit(1);
+          
+        if (directError) {
+          throw directError;
+        }
+        
+        if (directData && directData.length > 0) {
+          const settingsData = directData[0];
+          setSettings({
+            ...defaultSettings,
+            ...settingsData,
+            hero_gallery: (Array.isArray(settingsData.hero_gallery) ? settingsData.hero_gallery : defaultSettings.hero_gallery),
+            mid_banners: (Array.isArray(settingsData.mid_banners) ? settingsData.mid_banners : defaultSettings.mid_banners),
+            homepage_blocks: (Array.isArray(settingsData.homepage_blocks) ? settingsData.homepage_blocks : defaultSettings.homepage_blocks),
+            footer_links: (Array.isArray(settingsData.footer_links) ? settingsData.footer_links : defaultSettings.footer_links),
+            layout_options: (typeof settingsData.layout_options === 'object' && settingsData.layout_options ? settingsData.layout_options : defaultSettings.layout_options) as any,
+            editable_sections: (typeof settingsData.editable_sections === 'object' && settingsData.editable_sections ? settingsData.editable_sections : defaultSettings.editable_sections) as any,
+          });
+        } else {
+          setSettings(defaultSettings);
+        }
+      } else if (data && data.length > 0) {
         const settingsData = data[0];
         setSettings({
           ...defaultSettings,
@@ -114,6 +139,8 @@ export const useSiteSettings = () => {
           layout_options: (typeof settingsData.layout_options === 'object' && settingsData.layout_options ? settingsData.layout_options : defaultSettings.layout_options) as any,
           editable_sections: (typeof settingsData.editable_sections === 'object' && settingsData.editable_sections ? settingsData.editable_sections : defaultSettings.editable_sections) as any,
         });
+      } else {
+        setSettings(defaultSettings);
       }
     } catch (error) {
       handleError(error, 'Erro ao carregar configurações do site');

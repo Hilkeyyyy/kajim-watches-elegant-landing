@@ -31,9 +31,9 @@ const Footer = () => {
           <div className="space-y-4">
             <h4 className="text-lg font-semibold text-white mb-4">Contato</h4>
             <div className="text-slate-300 text-sm space-y-2">
-              {settings.contact_info.split('\n').map((line, index) => (
+              {settings.contact_info?.split('\n').map((line, index) => (
                 <p key={index}>{line}</p>
-              ))}
+              )) || null}
             </div>
           </div>
 
