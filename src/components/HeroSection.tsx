@@ -45,7 +45,7 @@ const HeroSection = () => {
             style={{ backgroundImage: `url(${backgroundImageUrl})` }}
           />
           {enableBlur && (
-            <div className="absolute inset-0 backdrop-blur-md bg-background/70"></div>
+            <div className="absolute inset-0 backdrop-blur-sm md:backdrop-blur-md bg-background/70"></div>
           )}
         </>
       )}

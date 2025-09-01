@@ -84,7 +84,7 @@ const Footer = () => {
         {/* Copyright */}
         <div className="pt-8 border-t border-slate-800/50 text-center">
           <p className="text-slate-400 text-sm">
-            © 2024 {settings.footer_text}
+            © 2025 {settings.footer_text}
           </p>
         </div>
       </div>
