@@ -171,7 +171,7 @@ const OptimizedProductCard: React.FC<ProductCardProps> = memo(({
           </p>
           {isOfferActive && (
             <div className="text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded-full border border-red-200">
-              PROMOÇÃO
+              OFERTA EXCLUSIVA
             </div>
           )}
         </div>

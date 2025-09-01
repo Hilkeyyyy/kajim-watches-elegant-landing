@@ -40,7 +40,7 @@ export const ProductFormImages: React.FC<ProductFormImagesProps> = ({
   };
 
   const predefinedBadges = [
-    "Novidade", "Promoção", "Limitado", "Exclusivo", "Best Seller",
+    "Novidade", "Limitado", "Exclusivo", "Best Seller",
     "Luxo", "Esportivo", "Vintage", "Automático", "Cronógrafo"
   ];
 

@@ -23,7 +23,7 @@ export const ProductFormBadges: React.FC<ProductFormBadgesProps> = ({ badges, ad
   };
 
   const predefinedBadges = [
-    "Novidade", "Promoção", "Limitado", "Exclusivo", "Best Seller",
+    "Novidade", "Limitado", "Exclusivo", "Best Seller",
     "Luxo", "Esportivo", "Vintage", "Automático", "Cronógrafo"
   ];
 

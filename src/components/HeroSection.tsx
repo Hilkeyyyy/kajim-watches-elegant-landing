@@ -36,7 +36,7 @@ const HeroSection = () => {
   const enableBlur = settings.enable_hero_background_blur !== false;
 
   return (
-    <section className="min-h-screen bg-background flex flex-col justify-center items-center relative overflow-hidden px-4 py-12">
+    <section className="min-h-[70vh] md:min-h-[80vh] bg-background flex flex-col justify-center items-center relative overflow-hidden px-4 py-8 md:py-12">
       {/* Background Image with Blur */}
       {backgroundImageUrl && (
         <>
@@ -92,12 +92,12 @@ const HeroSection = () => {
       </div>
       
       {/* Hero Image */}
-      <div className="relative z-10 mt-16 w-full max-w-md mx-auto">
+      <div className="relative z-10 mt-8 md:mt-16 w-full max-w-sm md:max-w-md mx-auto">
         <div className="relative">
           <img 
             src={heroImageUrl} 
             alt="KAJIM Luxury Watch" 
-            className="w-full h-auto object-contain drop-shadow-2xl transform hover:scale-105 transition-transform duration-500"
+            className="w-full h-auto object-contain drop-shadow-2xl transform hover:scale-105 transition-transform duration-500 rounded-2xl md:rounded-none"
           />
         </div>
       </div>
