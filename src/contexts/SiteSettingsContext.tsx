@@ -90,13 +90,36 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const fetchSettings = async () => {
     try {
       setIsLoading(true);
-      console.log('🔄 Buscando configurações do banco...');
+      console.log('🔄 Buscando configurações via RPC público...');
       
+      // Primeiro tenta via função pública (sem autenticação)
+      const { data: publicData, error: publicError } = await supabase
+        .rpc('get_site_settings_public');
+
+      if (!publicError && publicData && publicData.length > 0) {
+        console.log('✅ Configurações carregadas via RPC público:', publicData[0]);
+        const mergedSettings = {
+          ...defaultSettings,
+          ...publicData[0],
+          hero_gallery: Array.isArray(publicData[0].hero_gallery) ? publicData[0].hero_gallery : defaultSettings.hero_gallery,
+          mid_banners: Array.isArray(publicData[0].mid_banners) ? publicData[0].mid_banners : defaultSettings.mid_banners,
+          homepage_blocks: Array.isArray(publicData[0].homepage_blocks) ? publicData[0].homepage_blocks : defaultSettings.homepage_blocks,
+          footer_links: Array.isArray(publicData[0].footer_links) ? publicData[0].footer_links : defaultSettings.footer_links,
+          layout_options: typeof publicData[0].layout_options === 'object' && publicData[0].layout_options ? publicData[0].layout_options : defaultSettings.layout_options,
+          editable_sections: typeof publicData[0].editable_sections === 'object' && publicData[0].editable_sections ? publicData[0].editable_sections : defaultSettings.editable_sections,
+        };
+        setSettings(mergedSettings);
+        return;
+      }
+
+      console.log('⚠️ RPC público falhou, tentando acesso direto (admin)...');
+      
+      // Fallback: acesso direto para admins
       const { data, error } = await supabase
         .from('site_settings')
         .select('*')
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (error && error.code !== 'PGRST116') {
         console.error('❌ Erro ao carregar configurações:', error);
@@ -105,7 +128,7 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ 
       }
 
       if (data) {
-        console.log('✅ Configurações carregadas:', data);
+        console.log('✅ Configurações carregadas via acesso direto:', data);
         const mergedSettings = {
           ...defaultSettings,
           ...data,
@@ -132,39 +155,29 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   const updateSettings = async (newSettings: Partial<SiteSettings>) => {
     try {
-      console.log('💾 Salvando configurações:', newSettings);
+      console.log('💾 Salvando configurações via RPC:', newSettings);
       
-      const { data: existingSettings } = await supabase
-        .from('site_settings')
-        .select('id')
-        .maybeSingle();
+      const { data, error } = await supabase
+        .rpc('upsert_site_settings', { new_settings: newSettings });
 
-      const updatedSettings = { ...settings, ...newSettings };
-      
-      let result;
-      if (existingSettings) {
-        console.log('🔄 Atualizando configuração existente');
-        result = await supabase
-          .from('site_settings')
-          .update(updatedSettings)
-          .eq('id', existingSettings.id)
-          .select()
-          .single();
-      } else {
-        console.log('➕ Criando nova configuração');
-        result = await supabase
-          .from('site_settings')
-          .insert([updatedSettings])
-          .select()
-          .single();
+      if (error) {
+        console.error('❌ Erro ao salvar via RPC:', error);
+        throw error;
       }
 
-      if (result.error) {
-        console.error('❌ Erro ao salvar:', result.error);
-        throw result.error;
-      }
-
-      console.log('✅ Configurações salvas com sucesso:', result.data);
+      console.log('✅ Configurações salvas com sucesso via RPC:', data);
+      
+      // Atualiza o estado local com os dados retornados
+      const updatedSettings = {
+        ...defaultSettings,
+        ...data,
+        hero_gallery: Array.isArray(data.hero_gallery) ? data.hero_gallery : defaultSettings.hero_gallery,
+        mid_banners: Array.isArray(data.mid_banners) ? data.mid_banners : defaultSettings.mid_banners,
+        homepage_blocks: Array.isArray(data.homepage_blocks) ? data.homepage_blocks : defaultSettings.homepage_blocks,
+        footer_links: Array.isArray(data.footer_links) ? data.footer_links : defaultSettings.footer_links,
+        layout_options: typeof data.layout_options === 'object' && data.layout_options ? data.layout_options : defaultSettings.layout_options,
+        editable_sections: typeof data.editable_sections === 'object' && data.editable_sections ? data.editable_sections : defaultSettings.editable_sections,
+      };
       setSettings(updatedSettings);
       
       // Notifica todos os componentes da mudança
