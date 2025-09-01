@@ -155,10 +155,10 @@ const ProductDetail = () => {
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <p className="font-inter text-sm text-muted-foreground mb-2">
-                    {product.brand}
+                    <span className="notranslate" translate="no">{product.brand}</span>
                   </p>
                   <h1 className="font-playfair text-3xl md:text-4xl font-bold text-primary">
-                    {product.name}
+                    <span className="notranslate" translate="no">{product.name}</span>
                   </h1>
                   
                   {/* All Badges in Detail Page */}

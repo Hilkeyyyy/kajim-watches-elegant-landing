@@ -129,7 +129,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
         {/* Marca - Design luxuoso */}
         <div className="flex items-center justify-between">
           <p className="text-sm font-bold text-primary uppercase tracking-[0.15em] mb-1 bg-primary/10 px-3 py-1 rounded-full">
-            {product.brand}
+            <span className="notranslate" translate="no">{product.brand}</span>
           </p>
           {isOfferActive && (
             <div className="text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded-full border border-red-200">
@@ -139,9 +139,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
         </div>
 
         {/* Nome do Produto - Tipografia premium */}
-        <h3 className="font-serif text-lg lg:text-xl font-bold text-foreground line-clamp-2 leading-tight min-h-[2.5rem] group-hover:text-primary transition-colors duration-300">
-          {product.name}
-        </h3>
+          <h3 className="font-serif text-lg lg:text-xl font-bold text-foreground line-clamp-2 leading-tight min-h-[2.5rem] group-hover:text-primary transition-colors duration-300">
+            <span className="notranslate" translate="no">{product.name}</span>
+          </h3>
 
         {/* Preços - Design luxuoso */}
         <div className="space-y-1 py-1">
@@ -165,7 +165,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
 
         {/* Descrição breve - Design sofisticado */}
         <p className="text-sm text-muted-foreground line-clamp-1 leading-tight font-medium">
-          {product.description || `Relógio ${product.brand} original em excelente estado`}
+          {product.description || (<>
+            Relógio <span className="notranslate" translate="no">{product.brand}</span> original em excelente estado
+          </>)}
         </p>
 
         {/* Botão Ver Detalhes - Design premium */}

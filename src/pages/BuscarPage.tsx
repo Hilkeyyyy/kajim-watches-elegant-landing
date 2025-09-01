@@ -179,7 +179,7 @@ export const BuscarPage: React.FC = () => {
                     <SelectContent>
                       <SelectItem value="all">Todas as marcas</SelectItem>
                       {availableBrands.map(brand => (
-                        <SelectItem key={brand} value={brand}>{brand}</SelectItem>
+                        <SelectItem key={brand} value={brand}><span className="notranslate" translate="no">{brand}</span></SelectItem>
                       ))}
                     </SelectContent>
                   </Select>

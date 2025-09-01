@@ -78,7 +78,7 @@ export const CategoryCarousel = () => {
                   {/* Content */}
                   <div className="absolute inset-0 flex flex-col justify-end p-6">
                     <h3 className="text-xl font-bold text-white mb-2 group-hover:text-primary transition-colors duration-300 font-serif">
-                      {category.display_name}
+                      <span className="notranslate" translate="no">{category.display_name}</span>
                     </h3>
                     <p className="text-white/90 text-sm font-medium">
                       {category.product_count || 0} {(category.product_count || 0) === 1 ? 'produto' : 'produtos'}

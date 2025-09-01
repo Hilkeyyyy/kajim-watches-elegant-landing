@@ -127,7 +127,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                       className="w-10 h-10 object-cover rounded-md"
                     />
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm truncate">{product.brand} {product.name}</p>
+                      <p className="font-medium text-sm truncate"><span className="notranslate" translate="no">{product.brand}</span> <span className="notranslate" translate="no">{product.name}</span></p>
                       <p className="text-xs text-muted-foreground truncate">
                         {typeof product.price === 'string' 
                           ? `R$ ${parseFloat(product.price).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`

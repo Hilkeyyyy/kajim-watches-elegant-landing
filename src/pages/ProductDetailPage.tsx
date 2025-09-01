@@ -147,8 +147,8 @@ export const ProductDetailPage: React.FC = () => {
           {/* Informações do Produto */}
           <div className="space-y-6">
             <div>
-              <p className="text-muted-foreground mb-2">{product.brand}</p>
-              <h1 className="text-3xl font-bold text-foreground mb-4">{product.name}</h1>
+              <p className="text-muted-foreground mb-2"><span className="notranslate" translate="no">{product.brand}</span></p>
+              <h1 className="text-3xl font-bold text-foreground mb-4"><span className="notranslate" translate="no">{product.name}</span></h1>
               
               <div className="flex items-center space-x-4 mb-6">
                 {product.original_price && (
