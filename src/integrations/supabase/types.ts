@@ -671,7 +671,30 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      site_settings_public: {
+        Row: {
+          about_text: string | null
+          additional_info: string | null
+          contact_info: string | null
+          editable_sections: Json | null
+          enable_hero_background_blur: boolean | null
+          footer_links: Json | null
+          footer_text: string | null
+          hero_background_image_url: string | null
+          hero_gallery: Json | null
+          hero_image_url: string | null
+          hero_subtitle: string | null
+          hero_title: string | null
+          hero_watch_image_url: string | null
+          homepage_blocks: Json | null
+          layout_options: Json | null
+          mid_banners: Json | null
+          show_category_carousel: boolean | null
+          show_mid_banners: boolean | null
+          site_title: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       generate_whatsapp_link: {
