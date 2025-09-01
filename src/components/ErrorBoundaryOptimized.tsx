@@ -22,10 +22,47 @@ export class ErrorBoundaryOptimized extends Component<Props, State> {
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(error: Error): State {
-    // Qualquer erro lançado durante o render deve exibir o fallback
+  static getDerivedStateFromError(error: Error): Partial<State> | null {
+    try {
+      const name = (error as any)?.name || '';
+      const rawMsg = (error as any)?.message || '';
+      const msg = rawMsg.toLowerCase?.() || '';
+      const stack = ((error as any)?.stack || '').toLowerCase?.() || '';
+
+      const isIgnored =
+        name === 'AbortError' ||
+        (error as any)?.code === 'ERR_CANCELED' ||
+        msg.includes('abort') ||
+        msg.includes('request aborted') ||
+        msg.includes('the user aborted') ||
+        msg.includes('err_canceled') ||
+        msg.includes('resizeobserver') ||
+        msg.includes('resizeobserver loop limit exceeded') ||
+        msg.includes('loop completed with undelivered notifications') ||
+        msg.includes('chunkloaderror') ||
+        msg.includes('loading chunk') ||
+        msg.includes('loading css chunk') ||
+        msg.includes('stylesheet not loaded') ||
+        (msg.includes('dynamic import') && msg.includes('failed')) ||
+        (msg.includes('navigation') && msg.includes('cancel')) ||
+        msg.includes('the operation was aborted') ||
+        msg.includes('failed to fetch') ||
+        msg.includes('network request failed') ||
+        msg.includes('networkerror when attempting to fetch resource') ||
+        msg.includes('non-error promise rejection') ||
+        msg.includes('promise rejection') ||
+        msg.includes('cannot update a component while rendering a different component') ||
+        msg.includes('state update on an unmounted component') ||
+        stack.includes('resizeobserver');
+
+      if (isIgnored) {
+        console.warn('ErrorBoundaryOptimized ignored error in render:', rawMsg || error);
+        return null;
+      }
+    } catch {}
+
     console.error('ErrorBoundaryOptimized - Erro em render:', error);
-    return { hasError: true, error } as State;
+    return { hasError: true, error } as Partial<State>;
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {

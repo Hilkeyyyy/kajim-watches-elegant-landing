@@ -14,6 +14,8 @@ interface AdminErrorBoundaryState {
   hasError: boolean;
   error?: Error;
   errorInfo?: React.ErrorInfo;
+  friendlyMessage?: string;
+  suggestions?: string[];
 }
 
 export class AdminErrorBoundary extends React.Component<
@@ -25,8 +27,45 @@ export class AdminErrorBoundary extends React.Component<
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(error: Error): AdminErrorBoundaryState {
-    // Qualquer erro durante o render é crítico e deve mostrar o fallback
+  static getDerivedStateFromError(error: Error): Partial<AdminErrorBoundaryState> | null {
+    try {
+      const name = (error as any)?.name || '';
+      const rawMsg = (error as any)?.message || '';
+      const msg = rawMsg.toLowerCase?.() || '';
+      const stack = ((error as any)?.stack || '').toLowerCase?.() || '';
+
+      const isIgnored =
+        name === 'AbortError' ||
+        (error as any)?.code === 'ERR_CANCELED' ||
+        msg.includes('abort') ||
+        msg.includes('request aborted') ||
+        msg.includes('the user aborted') ||
+        msg.includes('err_canceled') ||
+        msg.includes('resizeobserver') ||
+        msg.includes('resizeobserver loop limit exceeded') ||
+        msg.includes('loop completed with undelivered notifications') ||
+        msg.includes('chunkloaderror') ||
+        msg.includes('loading chunk') ||
+        msg.includes('loading css chunk') ||
+        msg.includes('stylesheet not loaded') ||
+        (msg.includes('dynamic import') && msg.includes('failed')) ||
+        (msg.includes('navigation') && msg.includes('cancel')) ||
+        msg.includes('the operation was aborted') ||
+        msg.includes('failed to fetch') ||
+        msg.includes('network request failed') ||
+        msg.includes('networkerror when attempting to fetch resource') ||
+        msg.includes('non-error promise rejection') ||
+        msg.includes('promise rejection') ||
+        msg.includes('cannot update a component while rendering a different component') ||
+        msg.includes('state update on an unmounted component') ||
+        stack.includes('resizeobserver');
+
+      if (isIgnored) {
+        console.warn('AdminErrorBoundary - Erro ignorado em render:', rawMsg || error);
+        return null;
+      }
+    } catch {}
+
     console.error('AdminErrorBoundary - Erro capturado em render:', error);
     return { hasError: true, error };
   }
@@ -69,10 +108,11 @@ export class AdminErrorBoundary extends React.Component<
     }
 
     console.error('AdminErrorBoundary - Detalhes do erro:', error, errorInfo);
-    this.setState({ errorInfo });
-    
-    // Processa o erro com o sistema unificado
-    errorHandler.handleError(error, 'AdminErrorBoundary');
+    // Processa o erro com o sistema unificado apenas uma vez
+    const appError = errorHandler.handleError(error, 'AdminErrorBoundary');
+    const friendlyMessage = errorHandler.getFriendlyMessage(appError);
+    const suggestions = errorHandler.getActionSuggestions(appError);
+    this.setState({ errorInfo, error, hasError: true, friendlyMessage, suggestions });
   }
 
   handleRetry = () => {
@@ -121,9 +161,8 @@ export class AdminErrorBoundary extends React.Component<
 
   render() {
     if (this.state.hasError) {
-      const appError = this.state.error ? errorHandler.handleError(this.state.error, 'Admin') : null;
-      const friendlyMessage = appError ? errorHandler.getFriendlyMessage(appError) : 'Erro inesperado na área administrativa';
-      const suggestions = appError ? errorHandler.getActionSuggestions(appError) : [];
+      const friendlyMessage = this.state.friendlyMessage || 'Erro inesperado na área administrativa';
+      const suggestions = this.state.suggestions || [];
 
       return (
         <div className="min-h-screen bg-background p-4 flex items-center justify-center">

@@ -28,6 +28,7 @@ const ProductCreate = () => {
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const handleSubmit = async (data: ProductFormData & { images: ImageItem[]; badges: string[] }) => {
+    let didNavigate = false;
     try {
       setIsLoading(true);
 
@@ -87,10 +88,13 @@ const ProductCreate = () => {
       }
       
       // Navegar diretamente para lista de produtos com mensagem de sucesso
+      setIsLoading(false);
+      didNavigate = true;
       navigate('/admin/produtos', { 
         replace: true,
         state: { successMessage: `Produto "${data.name}" criado com sucesso!` }
       });
+      return;
       
     } catch (error: any) {
       console.error('ProductCreate - Erro completo:', error);
@@ -104,7 +108,7 @@ const ProductCreate = () => {
       const errorMessage = error.message || 'Erro desconhecido ao criar produto';
       handleError(new Error(errorMessage), 'ProductCreate');
     } finally {
-      setIsLoading(false);
+      if (!didNavigate) setIsLoading(false);
     }
   };
 

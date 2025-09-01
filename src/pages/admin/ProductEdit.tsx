@@ -100,6 +100,7 @@ const ProductEdit = () => {
     
     return new Promise<void>((resolve, reject) => {
       debounceRef.current = setTimeout(async () => {
+        let didNavigate = false;
         // Cancelar operação anterior se existir
         if (abortControllerRef.current) {
           abortControllerRef.current.abort();
@@ -154,12 +155,14 @@ const ProductEdit = () => {
           });
           
           // Navegar diretamente para lista de produtos com mensagem de sucesso
+          setIsLoading(false);
+          didNavigate = true;
           navigate('/admin/produtos', { 
             replace: true,
             state: { successMessage: `Produto "${data.name}" atualizado com sucesso!` }
           });
-          
           resolve();
+          return;
         } catch (error: any) {
           if (error.name === 'AbortError') {
             console.log('ProductEdit - Operação cancelada');
@@ -170,7 +173,7 @@ const ProductEdit = () => {
           handleErrorToast(error, 'ProductEdit');
           reject(error);
         } finally {
-          setIsLoading(false);
+          if (!didNavigate) setIsLoading(false);
         }
       }, 300);
     });
