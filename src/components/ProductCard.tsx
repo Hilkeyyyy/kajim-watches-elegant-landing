@@ -125,7 +125,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
       </div>
 
       {/* Área de Informações - Layout sofisticado premium */}
-      <CardContent className="p-5 lg:p-6 space-y-4 bg-gradient-to-t from-muted/10 to-transparent">
+      <CardContent className="p-4 lg:p-5 space-y-3 bg-gradient-to-t from-muted/10 to-transparent">
         {/* Marca - Design luxuoso */}
         <div className="flex items-center justify-between">
           <p className="text-sm font-bold text-primary uppercase tracking-[0.15em] mb-1 bg-primary/10 px-3 py-1 rounded-full">
@@ -139,12 +139,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
         </div>
 
         {/* Nome do Produto - Tipografia premium */}
-        <h3 className="font-serif text-xl lg:text-2xl font-bold text-foreground line-clamp-2 leading-tight min-h-[3.5rem] group-hover:text-primary transition-colors duration-300">
+        <h3 className="font-serif text-lg lg:text-xl font-bold text-foreground line-clamp-2 leading-tight min-h-[2.5rem] group-hover:text-primary transition-colors duration-300">
           {product.name}
         </h3>
 
         {/* Preços - Design luxuoso */}
-        <div className="space-y-2 py-2">
+        <div className="space-y-1 py-1">
           {isOfferActive && originalDisplay && (
             <p className="text-lg text-muted-foreground line-through font-medium opacity-70">
               {originalDisplay}
@@ -152,7 +152,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
           )}
           
           <div className="flex items-baseline gap-2">
-            <p className="text-3xl lg:text-4xl font-bold text-foreground bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+            <p className="text-2xl lg:text-3xl font-bold text-foreground bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
               {priceDisplay || 'Consulte'}
             </p>
             {isOfferActive && (
@@ -169,7 +169,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
         </p>
 
         {/* Botão Ver Detalhes - Design premium */}
-        <div className="pt-6">
+        <div className="pt-4">
           <Button
             variant="outline"
             size="lg"
