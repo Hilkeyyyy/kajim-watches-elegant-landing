@@ -36,12 +36,21 @@ const Products = () => {
 
   // Mostrar mensagem de sucesso se veio de navegação
   useEffect(() => {
-    if (location.state?.successMessage) {
-      handleSuccess(location.state.successMessage);
-      // Limpar o estado para não mostrar novamente
-      window.history.replaceState({}, document.title);
+    const params = new URLSearchParams(location.search);
+    const msg = params.get('m');
+    if (msg) {
+      handleSuccess(decodeURIComponent(msg));
+      params.delete('m');
+      const newQuery = params.toString();
+      const newUrl = `${location.pathname}${newQuery ? `?${newQuery}` : ''}`;
+      window.history.replaceState({}, '', newUrl);
     }
-  }, [location.state, handleSuccess]);
+
+    if ((location as any).state?.successMessage) {
+      handleSuccess((location as any).state.successMessage);
+      window.history.replaceState({}, '', location.pathname + location.search);
+    }
+  }, [location, handleSuccess]);
 
   const handleDeleteClick = (product: any) => {
     // Debounce para evitar múltiplos cliques

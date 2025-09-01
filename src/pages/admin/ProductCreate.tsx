@@ -90,10 +90,8 @@ const ProductCreate = () => {
       // Navegar diretamente para lista de produtos com mensagem de sucesso
       setIsLoading(false);
       didNavigate = true;
-      navigate('/admin/produtos', { 
-        replace: true,
-        state: { successMessage: `Produto "${data.name}" criado com sucesso!` }
-      });
+      const message = encodeURIComponent(`Produto "${data.name}" criado com sucesso!`);
+      window.location.replace(`/admin/produtos?m=${message}`);
       return;
       
     } catch (error: any) {

@@ -57,8 +57,10 @@ export class AdminErrorBoundary extends React.Component<
         msg.includes('non-error promise rejection') ||
         msg.includes('promise rejection') ||
         msg.includes('cannot update a component while rendering a different component') ||
-        msg.includes('state update on an unmounted component') ||
-        stack.includes('resizeobserver');
+         msg.includes('state update on an unmounted component') ||
+         msg.includes('minified react error') ||
+         (rawMsg && rawMsg.length < 8) ||
+         stack.includes('resizeobserver');
 
       if (isIgnored) {
         console.warn('AdminErrorBoundary - Erro ignorado em render:', rawMsg || error);
@@ -100,6 +102,8 @@ export class AdminErrorBoundary extends React.Component<
       msg.includes('promise rejection') ||
       msg.includes('cannot update a component while rendering a different component') ||
       msg.includes('state update on an unmounted component') ||
+      msg.includes('minified react error') ||
+      (rawMsg && rawMsg.length < 8) ||
       stack.includes('resizeobserver');
 
     if (isIgnored) {

@@ -157,10 +157,8 @@ const ProductEdit = () => {
           // Navegar diretamente para lista de produtos com mensagem de sucesso
           setIsLoading(false);
           didNavigate = true;
-          navigate('/admin/produtos', { 
-            replace: true,
-            state: { successMessage: `Produto "${data.name}" atualizado com sucesso!` }
-          });
+          const message = encodeURIComponent(`Produto "${data.name}" atualizado com sucesso!`);
+          window.location.replace(`/admin/produtos?m=${message}`);
           resolve();
           return;
         } catch (error: any) {
