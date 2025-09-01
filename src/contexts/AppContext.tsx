@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useEffect, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useCallback, useMemo, memo } from 'react';
 import { storage, type CartItem } from '@/utils/storage';
 import { useNotifications } from '@/hooks/useNotifications';
 import { errorHandler } from '@/utils/errorHandler';
@@ -182,17 +182,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     loadInitialData();
   }, [notifyError, user?.id]);
 
-  // Sincronizar com localStorage
+  // Sincronizar com localStorage usando debouncing otimizado
   useEffect(() => {
-    if (state.dataLoaded && !state.isLoading) {
+    if (!state.dataLoaded || state.isLoading) return;
+    
+    const timeoutId = setTimeout(() => {
       storage.setCart(state.cart);
-    }
+    }, 300); // Debounce de 300ms
+    
+    return () => clearTimeout(timeoutId);
   }, [state.cart, state.isLoading, state.dataLoaded]);
 
   useEffect(() => {
-    if (state.dataLoaded && !state.isLoading) {
+    if (!state.dataLoaded || state.isLoading) return;
+    
+    const timeoutId = setTimeout(() => {
       storage.setFavorites(state.favorites);
-    }
+    }, 300); // Debounce de 300ms
+    
+    return () => clearTimeout(timeoutId);
   }, [state.favorites, state.isLoading, state.dataLoaded]);
 
   // Sincronização entre abas (ajustada para namespace do usuário)
@@ -346,7 +354,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, [state.cart, notifySuccess, notifyError, getItemTotal, getCartTotal]);
 
-  const contextValue: AppContextType = {
+  // Memoizar o contexto para evitar re-renders desnecessários
+  const contextValue = useMemo<AppContextType>(() => ({
     // Estado
     cart: state.cart,
     favorites: state.favorites,
@@ -369,7 +378,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     
     // WhatsApp
     sendCartToWhatsApp,
-  };
+  }), [
+    state.cart, 
+    state.favorites, 
+    state.isLoading, 
+    state.dataLoaded,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    clearCart,
+    toggleFavorite,
+    isFavorite,
+    getTotalItems,
+    getCartTotal,
+    getItemTotal,
+    getFavoritesCount,
+    sendCartToWhatsApp
+  ]);
 
   return (
     <AppContext.Provider value={contextValue}>

@@ -1,16 +1,19 @@
 import { Header } from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import { CategoryCarousel } from "@/components/CategoryCarousel";
-import { BrandCarousel } from "@/components/carousels/BrandCarousel";
-import { OffersCarousel } from "@/components/carousels/OffersCarousel";
-import { NewProductsCarousel } from "@/components/carousels/NewProductsCarousel";
-import { FeaturedCarousel } from "@/components/carousels/FeaturedCarousel";
+import { BrandCarousel } from "@/components/carousels/OptimizedBrandCarousel";
+import { OffersCarousel, NewProductsCarousel } from "@/components/carousels/OptimizedCarousels";
+import { FeaturedCarousel } from "@/components/carousels/OptimizedFeaturedCarousel";
 import AboutSection from "@/components/AboutSection";
 import Footer from "@/components/Footer";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useProductPrefetch } from "@/hooks/useProductPrefetch";
 
 const Index = () => {
   const { settings } = useSiteSettings();
+  
+  // Prefetch inteligente de produtos para melhor performance
+  useProductPrefetch();
 
   return (
     <div className="min-h-screen bg-background">
