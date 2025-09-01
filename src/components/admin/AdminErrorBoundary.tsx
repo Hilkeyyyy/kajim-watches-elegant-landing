@@ -26,11 +26,57 @@ export class AdminErrorBoundary extends React.Component<
   }
 
   static getDerivedStateFromError(error: Error): AdminErrorBoundaryState {
+    const name = (error as any)?.name || '';
+    const msg = ((error as any)?.message || '').toLowerCase?.() || '';
+    const stack = ((error as any)?.stack || '').toLowerCase?.() || '';
+
+    const isIgnored =
+      name === 'AbortError' ||
+      (error as any)?.code === 'ERR_CANCELED' ||
+      msg.includes('abort') ||
+      msg.includes('err_canceled') ||
+      msg.includes('resizeobserver') ||
+      msg.includes('chunkloaderror') ||
+      msg.includes('loading chunk') ||
+      (msg.includes('dynamic import') && msg.includes('failed')) ||
+      (msg.includes('navigation') && msg.includes('cancel')) ||
+      msg.includes('the operation was aborted') ||
+      msg.includes('state update on an unmounted component') ||
+      stack.includes('resizeobserver');
+
+    if (isIgnored) {
+      console.warn('AdminErrorBoundary - Erro não crítico ignorado:', error);
+      return { hasError: false } as AdminErrorBoundaryState;
+    }
+
     console.error('AdminErrorBoundary - Erro capturado:', error);
     return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    const name = (error as any)?.name || '';
+    const msg = ((error as any)?.message || '').toLowerCase?.() || '';
+    const stack = ((error as any)?.stack || '').toLowerCase?.() || '';
+
+    const isIgnored =
+      name === 'AbortError' ||
+      (error as any)?.code === 'ERR_CANCELED' ||
+      msg.includes('abort') ||
+      msg.includes('err_canceled') ||
+      msg.includes('resizeobserver') ||
+      msg.includes('chunkloaderror') ||
+      msg.includes('loading chunk') ||
+      (msg.includes('dynamic import') && msg.includes('failed')) ||
+      (msg.includes('navigation') && msg.includes('cancel')) ||
+      msg.includes('the operation was aborted') ||
+      msg.includes('state update on an unmounted component') ||
+      stack.includes('resizeobserver');
+
+    if (isIgnored) {
+      console.warn('AdminErrorBoundary - Erro ignorado:', error);
+      return;
+    }
+
     console.error('AdminErrorBoundary - Detalhes do erro:', error, errorInfo);
     this.setState({ errorInfo });
     

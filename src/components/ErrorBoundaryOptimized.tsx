@@ -24,23 +24,60 @@ export class ErrorBoundaryOptimized extends Component<Props, State> {
 
   static getDerivedStateFromError(error: Error): State {
     const name = (error as any)?.name || '';
-    const msg = (error as any)?.message?.toLowerCase?.() || '';
-    const isIgnored = name === 'AbortError' || msg.includes('abort') || msg.includes('resizeobserver');
+    const msg = ((error as any)?.message || '').toLowerCase?.() || '';
+    const stack = ((error as any)?.stack || '').toLowerCase?.() || '';
+
+    const isIgnored =
+      name === 'AbortError' ||
+      (error as any)?.code === 'ERR_CANCELED' ||
+      msg.includes('abort') ||
+      msg.includes('err_canceled') ||
+      msg.includes('resizeobserver') ||
+      msg.includes('chunkloaderror') ||
+      msg.includes('loading chunk') ||
+      (msg.includes('dynamic import') && msg.includes('failed')) ||
+      (msg.includes('navigation') && msg.includes('cancel')) ||
+      msg.includes('the operation was aborted') ||
+      msg.includes("state update on an unmounted component") ||
+      stack.includes('resizeobserver');
+
     if (isIgnored) {
-      // Ignora erros não críticos comuns (Abort/ResizeObserver)
+      // Ignora erros não críticos/transientes (Abort, Chunk, ResizeObserver, navegação cancelada)
       console.warn('ErrorBoundaryOptimized ignored error:', error);
       return { hasError: false } as State;
     }
+
     return { hasError: true, error } as State;
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    const name = (error as any)?.name || '';
+    const msg = ((error as any)?.message || '').toLowerCase?.() || '';
+    const stack = ((error as any)?.stack || '').toLowerCase?.() || '';
+
+    const isIgnored =
+      name === 'AbortError' ||
+      (error as any)?.code === 'ERR_CANCELED' ||
+      msg.includes('abort') ||
+      msg.includes('err_canceled') ||
+      msg.includes('resizeobserver') ||
+      msg.includes('chunkloaderror') ||
+      msg.includes('loading chunk') ||
+      (msg.includes('dynamic import') && msg.includes('failed')) ||
+      (msg.includes('navigation') && msg.includes('cancel')) ||
+      msg.includes('the operation was aborted') ||
+      msg.includes('state update on an unmounted component') ||
+      stack.includes('resizeobserver');
+
+    if (isIgnored) {
+      console.warn('ErrorBoundaryOptimized ignored error in componentDidCatch:', error);
+      return;
+    }
+
     this.setState({ error, errorInfo });
-    
+
     // Log error for debugging
     console.error('ErrorBoundary caught an error:', error, errorInfo);
-    
-    // You could also send error to monitoring service here
   }
 
   handleReset = () => {

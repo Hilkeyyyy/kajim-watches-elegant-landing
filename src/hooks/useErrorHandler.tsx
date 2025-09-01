@@ -11,27 +11,41 @@ export const useErrorHandler = () => {
   const handleError = useCallback((error: any, context?: string) => {
     console.error('Error occurred:', error, 'Context:', context);
     
-    // Ignorar erros nulos/abortados/sucesso aparentes/carrinho
-    if (!error || error === null || error === undefined) {
+    const toLower = (v: any) => (typeof v === 'string' ? v.toLowerCase() : '');
+    const name = error?.name || '';
+    const msg = toLower(error?.message || (typeof error === 'string' ? error : ''));
+    const code = error?.code || '';
+    const stack = toLower(error?.stack);
+
+    // Ignorar erros nulos/abortados/transientes/navegação
+    if (!error) return null;
+    if (
+      name === 'AbortError' ||
+      code === 'ERR_CANCELED' ||
+      msg.includes('abort') ||
+      msg.includes('err_canceled') ||
+      msg.includes('resizeobserver') ||
+      msg.includes('chunkloaderror') ||
+      msg.includes('loading chunk') ||
+      (msg.includes('dynamic import') && msg.includes('failed')) ||
+      (msg.includes('navigation') && msg.includes('cancel')) ||
+      msg.includes('the operation was aborted') ||
+      msg.includes('state update on an unmounted component') ||
+      stack?.includes('resizeobserver')
+    ) {
       return null;
     }
-    if (error?.name === 'AbortError' || error?.message?.toLowerCase?.().includes('abort')) {
-      return null;
-    }
-    if (error?.message?.includes('Success') || 
-        error?.code === 'SUCCESS' ||
-        context?.toLowerCase?.().includes('success') ||
-        context?.toLowerCase?.().includes('cart') ||
-        context?.toLowerCase?.().includes('carrinho')) {
-      return null;
-    }
-    
-    // Filtrar falsos erros comuns que na verdade são sucessos
-    const errorMessage = error?.message || '';
-    if (errorMessage.includes('produto') || 
-        errorMessage.includes('adicionado') ||
-        errorMessage.includes('favorit') ||
-        errorMessage.includes('login') && !errorMessage.includes('erro') && !errorMessage.includes('invalid')) {
+
+    // Ignorar mensagens que indicam sucesso aparente ou ações esperadas
+    const ctx = toLower(context || '');
+    if (
+      msg.includes('sucesso') ||
+      msg.includes('success') ||
+      code === 'SUCCESS' ||
+      ctx.includes('success') ||
+      ctx.includes('cart') ||
+      ctx.includes('carrinho')
+    ) {
       return null;
     }
     
