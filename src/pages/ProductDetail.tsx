@@ -134,12 +134,13 @@ Aguardo retorno para finalizar a compra!`;
 
   const handleAddToCart = () => {
     if (product) {
-      addToCart({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        image: product.image
-      });
+        addToCart({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.image,
+          brand: product.brand
+        });
     }
   };
 
@@ -231,7 +232,8 @@ Aguardo retorno para finalizar a compra!`;
                   id: product.id,
                   name: product.name,
                   price: product.price,
-                  image: product.image
+                  image: product.image,
+                  brand: product.brand
                 }}
                 variant="default"
                 size="xl"

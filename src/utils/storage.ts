@@ -7,6 +7,7 @@ const CartItemSchema = z.object({
   name: z.string(),
   price: z.string(),
   image: z.string(),
+  brand: z.string().optional(),
   quantity: z.number().positive(),
 });
 

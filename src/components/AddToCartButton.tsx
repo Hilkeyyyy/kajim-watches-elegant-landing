@@ -12,6 +12,7 @@ interface AddToCartButtonProps {
     name: string;
     price: string | number;
     image: string;
+    brand?: string;
   };
   variant?: "default" | "liquid-glass";
   size?: "default" | "sm" | "lg" | "xl";
@@ -40,7 +41,8 @@ export const AddToCartButton = React.memo(({
         id: product.id,
         name: product.name,
         price: typeof product.price === 'string' ? product.price : formatPrice(product.price),
-        image: product.image
+        image: product.image,
+        brand: product.brand
       });
       
       triggerButtonFeedback(buttonId, 1500);

@@ -39,7 +39,10 @@ export const ProductDetailPage: React.FC = () => {
 
   const handleAddToCart = () => {
     if (product) {
-      addToCart(product);
+      addToCart({
+        ...product,
+        brand: product.brand
+      });
     }
   };
 

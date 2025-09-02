@@ -15,6 +15,7 @@ interface AddToCartProduct {
   price?: string;
   image?: string;
   image_url?: string;
+  brand?: string;
 }
 
 // Estados da aplicação
@@ -231,6 +232,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         name: product.name || 'Produto',
         price: product.price || 'R$ 0,00',
         image: product.image || product.image_url || '',
+        brand: product.brand || 'Marca não informada',
         quantity: 0 // será sobrescrito pelo reducer
       };
       
@@ -334,7 +336,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           .map((item, index) => 
             `🟢 Item ${index + 1}
 ⌚ ${item.name}
-🔹 Marca: KAJIM
+🔹 Marca: ${item.brand || 'Marca não informada'}
 🔢 Quantidade: ${item.quantity}x
 💰 Valor: ${item.price}
 📸 Imagem: ${item.image || 'Imagem não disponível'}`
