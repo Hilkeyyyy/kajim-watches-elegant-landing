@@ -155,11 +155,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
             <p className="text-2xl lg:text-3xl font-bold text-foreground bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
               {priceDisplay || 'Consulte'}
             </p>
-            {isOfferActive && (
-              <span className="text-sm text-green-600 font-semibold bg-green-50 px-2 py-1 rounded-full">
-                ECONOMIA
-              </span>
-            )}
           </div>
         </div>
 

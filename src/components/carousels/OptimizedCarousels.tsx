@@ -40,7 +40,7 @@ export const OffersCarousel = memo(() => {
   if (products.length === 0) {
     return (
       <div className="mb-12 xs:mb-16 px-4">
-        <h2 className="text-display bg-gradient-to-r from-red-500 via-red-600 to-red-500 bg-clip-text text-transparent text-center mb-6 xs:mb-8">Ofertas Especiais</h2>
+        <h2 className="text-display bg-gradient-to-r from-primary via-primary-foreground to-primary bg-clip-text text-transparent text-center mb-6 xs:mb-8">Ofertas Especiais</h2>
         <div className="text-center py-8 text-muted-foreground">
           <p>Nenhuma oferta disponível no momento.</p>
           <p className="text-sm mt-2">Fique atento às nossas promoções!</p>
@@ -53,7 +53,7 @@ export const OffersCarousel = memo(() => {
     <section className="py-16 px-4 bg-gradient-to-br from-red-50/50 via-background to-red-50/50">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-display bg-gradient-to-r from-red-500 via-red-600 to-red-500 bg-clip-text text-transparent mb-4">
+          <h2 className="text-display bg-gradient-to-r from-primary via-primary-foreground to-primary bg-clip-text text-transparent mb-4">
             Ofertas Especiais
           </h2>
           <p className="text-subtitle text-muted-foreground max-w-2xl mx-auto font-serif-elegant">
@@ -120,7 +120,7 @@ export const NewProductsCarousel = memo(() => {
   if (products.length === 0) {
     return (
       <div className="mb-12 xs:mb-16 px-4">
-        <h2 className="text-display bg-gradient-to-r from-green-500 via-green-600 to-green-500 bg-clip-text text-transparent text-center mb-6 xs:mb-8">Produtos Novos</h2>
+        <h2 className="text-display bg-gradient-to-r from-primary via-primary-foreground to-primary bg-clip-text text-transparent text-center mb-6 xs:mb-8">Produtos Novos</h2>
         <div className="text-center py-8 text-muted-foreground">
           <p>Nenhum produto novo disponível no momento.</p>
           <p className="text-sm mt-2">Novidades chegam em breve!</p>
@@ -133,7 +133,7 @@ export const NewProductsCarousel = memo(() => {
     <section className="py-16 px-4 bg-gradient-to-br from-green-50/50 via-background to-green-50/50">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-display bg-gradient-to-r from-green-500 via-green-600 to-green-500 bg-clip-text text-transparent mb-4">
+          <h2 className="text-display bg-gradient-to-r from-primary via-primary-foreground to-primary bg-clip-text text-transparent mb-4">
             Produtos Novos
           </h2>
           <p className="text-subtitle text-muted-foreground max-w-2xl mx-auto font-serif-elegant">

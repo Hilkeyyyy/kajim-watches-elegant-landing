@@ -211,11 +211,6 @@ const OptimizedProductCard: React.FC<ProductCardProps> = memo(({
             <p className="text-2xl lg:text-3xl font-bold text-foreground bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
               {priceDisplay || 'Consulte'}
             </p>
-            {isOfferActive && (
-            <span className="text-sm font-semibold px-2 py-1 rounded-full bg-gradient-to-r from-teal-800/20 to-cyan-700/20 text-teal-200 border border-teal-500/30 backdrop-blur-xl">
-              ECONOMIA
-            </span>
-            )}
           </div>
         </div>
 
