@@ -72,7 +72,7 @@ export const Header: React.FC = () => {
                     {isAdmin && (
                       <Link to="/admin">
                         <Button variant="outline" size="sm" className="border-primary/50 text-primary hover:bg-primary hover:text-primary-foreground">
-                          Admin
+                          Administrador
                         </Button>
                       </Link>
                     )}
@@ -150,7 +150,7 @@ export const Header: React.FC = () => {
                     {isAdmin && (
                       <Link to="/admin" onClick={() => setMobileMenuOpen(false)}>
                         <Button variant="ghost" className="w-full justify-start">
-                          Admin Panel
+                          Administrador
                         </Button>
                       </Link>
                     )}
