@@ -143,6 +143,11 @@ Typography: Playfair Display (elegant serif), Inter (modern sans), Crimson Text 
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  html {
+    scroll-behavior: smooth;
   }
 
   /* Typography Utilities */
@@ -290,6 +295,48 @@ Typography: Playfair Display (elegant serif), Inter (modern sans), Crimson Text 
   
   .smooth-transitions * {
     transition: var(--transition-smooth);
+  }
+
+  /* Smooth carousel interactions */
+  .carousel-smooth {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Enhanced button feedback */
+  .btn-fluid {
+    @apply transition-all duration-200 ease-out;
+    transform-origin: center;
+  }
+
+  .btn-fluid:hover {
+    @apply scale-105;
+    transition-duration: 150ms;
+  }
+
+  .btn-fluid:active {
+    @apply scale-95;
+    transition-duration: 100ms;
+  }
+
+  /* Cart animation */
+  .cart-feedback {
+    animation: cart-bounce 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  @keyframes cart-bounce {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
+
+  /* Improved glassmorphism */
+  .glass-elegant {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   }
 }
 

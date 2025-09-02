@@ -14,19 +14,21 @@ export const ProductBadge = ({ badge, size = "md", className }: ProductBadgeProp
     switch (normalizedBadge) {
       case 'OFERTA':
       case 'PROMOCAO':
-        return 'bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-100 border-amber-400/30 shadow-amber-500/20';
+        return 'bg-gradient-to-r from-slate-800/30 to-slate-700/30 text-slate-200 border-slate-500/40 shadow-slate-800/30';
       case 'ESGOTADO':
-        return 'bg-gradient-to-r from-slate-500/20 to-gray-500/20 text-slate-200 border-slate-400/30 shadow-slate-500/20';
+        return 'bg-gradient-to-r from-stone-600/30 to-stone-500/30 text-stone-200 border-stone-400/40 shadow-stone-600/30';
       case 'LIMITADO':
-        return 'bg-gradient-to-r from-purple-500/20 to-violet-500/20 text-purple-100 border-purple-400/30 shadow-purple-500/20';
+        return 'bg-gradient-to-r from-purple-800/30 to-violet-700/30 text-purple-200 border-purple-500/40 shadow-purple-800/30';
       case 'NOVIDADE':
-        return 'bg-gradient-to-r from-emerald-500/20 to-teal-500/20 text-emerald-100 border-emerald-400/30 shadow-emerald-500/20';
+        return 'bg-gradient-to-r from-teal-800/30 to-cyan-700/30 text-teal-200 border-teal-500/40 shadow-teal-800/30';
       case 'DESTAQUE':
       case 'EXCLUSIVO':
       case 'LUXO':
-        return 'bg-gradient-to-r from-blue-500/20 to-indigo-500/20 text-blue-100 border-blue-400/30 shadow-blue-500/20';
+        return 'bg-gradient-to-r from-indigo-800/30 to-blue-700/30 text-indigo-200 border-indigo-500/40 shadow-indigo-800/30';
+      case 'OFERTA EXCLUSIVA':
+        return 'bg-gradient-to-r from-rose-800/30 to-pink-700/30 text-rose-200 border-rose-500/40 shadow-rose-800/30';
       default:
-        return 'bg-gradient-to-r from-slate-500/20 to-gray-500/20 text-slate-200 border-slate-400/30 shadow-slate-500/20';
+        return 'bg-gradient-to-r from-stone-600/30 to-stone-500/30 text-stone-200 border-stone-400/40 shadow-stone-600/30';
     }
   };
 

@@ -61,7 +61,7 @@ export const AddToCartButton = React.memo(({
       size={mappedSize}
       onClick={handleAddToCart}
       disabled={disabled}
-      className={`transition-all duration-300 ${isAdded ? "scale-95" : "hover:scale-105"} ${disabled ? "opacity-50 cursor-not-allowed" : ""} ${className}`}
+      className={`btn-fluid ${isAdded ? "cart-feedback scale-95" : ""} ${disabled ? "opacity-50 cursor-not-allowed" : ""} ${className}`}
     >
       {disabled ? (
         <>

@@ -16,7 +16,7 @@ export const StockStatus = ({ stockStatus = 'in_stock', quantity, size = "md", c
         label: 'Esgotado',
         variant: 'outline' as const,
         icon: XCircle,
-        className: 'text-slate-300 bg-gradient-to-r from-slate-500/20 to-gray-500/20 border-slate-400/30 backdrop-blur-xl'
+        className: 'text-stone-200 bg-gradient-to-r from-stone-600/30 to-stone-500/30 border-stone-400/40 backdrop-blur-xl'
       };
     }
     
@@ -25,7 +25,7 @@ export const StockStatus = ({ stockStatus = 'in_stock', quantity, size = "md", c
         label: 'Estoque Baixo',
         variant: 'outline' as const,
         icon: AlertTriangle,
-        className: 'text-amber-200 bg-gradient-to-r from-amber-500/20 to-orange-500/20 border-amber-400/30 backdrop-blur-xl'
+        className: 'text-slate-200 bg-gradient-to-r from-slate-700/30 to-slate-600/30 border-slate-500/40 backdrop-blur-xl'
       };
     }
     
@@ -33,7 +33,7 @@ export const StockStatus = ({ stockStatus = 'in_stock', quantity, size = "md", c
       label: 'Em Estoque',
       variant: 'outline' as const,
       icon: CheckCircle,
-      className: 'text-emerald-200 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border-emerald-400/30 backdrop-blur-xl'
+      className: 'text-teal-200 bg-gradient-to-r from-teal-800/30 to-cyan-700/30 border-teal-500/40 backdrop-blur-xl'
     };
   };
 
