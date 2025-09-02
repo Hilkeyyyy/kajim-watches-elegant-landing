@@ -72,23 +72,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const checkAdminStatus = async (userId: string) => {
     try {
       console.log('Checking admin status for user:', userId);
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('user_id', userId)
-        .maybeSingle();
-      
+      // Usa a função RPC is_admin, que já considera super admins
+      const { data, error } = await supabase.rpc('is_admin', { user_id: userId });
       if (error) {
-        console.error('Error checking admin status:', error);
+        console.error('Error checking admin status via RPC:', error);
         setIsAdmin(false);
         return;
       }
-      
-      const isUserAdmin = data?.role === 'admin';
-      console.log('Admin status result:', isUserAdmin);
+      const isUserAdmin = data === true;
+      console.log('Admin status result (RPC):', isUserAdmin);
       setIsAdmin(isUserAdmin);
     } catch (error) {
-      console.error('Exception checking admin status:', error);
+      console.error('Exception checking admin status (RPC):', error);
       setIsAdmin(false);
     }
   };

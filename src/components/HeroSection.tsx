@@ -1,21 +1,15 @@
 import { Button } from "@/components/ui/Button";
 import { useSiteSettingsContext } from "@/contexts/SiteSettingsContext";
 import { LoadingSpinner } from "./LoadingSpinner";
-import { useNavigate } from "react-router-dom";
 import heroWatch from "@/assets/hero-watch.jpg";
 
 const HeroSection = () => {
   const { settings, isLoading } = useSiteSettingsContext();
-  const navigate = useNavigate();
   
   const scrollToProducts = () => {
     document.getElementById('products')?.scrollIntoView({ 
       behavior: 'smooth' 
     });
-  };
-
-  const exploreCollection = () => {
-    navigate('/buscar');
   };
 
   if (isLoading) {
@@ -84,7 +78,7 @@ const HeroSection = () => {
         {/* CTA Button */}
         <Button 
           size="lg"
-          onClick={exploreCollection}
+          onClick={scrollToProducts}
           className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:from-accent hover:to-primary font-inter font-medium tracking-wide px-8 py-4 text-base transition-all duration-300 hover:scale-105 shadow-2xl hover:shadow-primary/20 border-0 backdrop-blur-lg"
         >
           Explorar Coleção
