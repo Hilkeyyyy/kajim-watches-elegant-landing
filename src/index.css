@@ -301,7 +301,7 @@ Typography: Playfair Display (elegant serif), Inter (modern sans), Crimson Text 
   .carousel-smooth {
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
-    touch-action: pan-x;
+    touch-action: pan-x pan-y;
     will-change: transform;
     transform: translate3d(0, 0, 0);
   }
@@ -314,7 +314,7 @@ Typography: Playfair Display (elegant serif), Inter (modern sans), Crimson Text 
 
   .embla__container {
     display: flex;
-    touch-action: pan-y;
+    touch-action: pan-x pan-y;
     transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 

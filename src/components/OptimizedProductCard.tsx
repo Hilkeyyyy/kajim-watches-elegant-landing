@@ -126,11 +126,11 @@ const OptimizedProductCard: React.FC<ProductCardProps> = memo(({
           />
           
           {/* Overlay elegante multicamadas */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/10 opacity-0 group-hover:opacity-70 transition-all duration-500"></div>
+          <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/30 via-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
+          <div className="absolute inset-0 pointer-events-none bg-gradient-to-br from-primary/10 via-transparent to-accent/10 opacity-0 group-hover:opacity-70 transition-all duration-500"></div>
           
           {/* Indicador de zoom sutil */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none">
             <div className="bg-white/20 backdrop-blur-lg rounded-full p-3 border border-white/30 shadow-xl">
               <div className="w-6 h-6 border-2 border-white rounded-full relative">
                 <div className="absolute -top-1 -right-1 w-3 h-3 border-2 border-white rounded-full rotate-45 transform translate-x-1 translate-y-1"></div>
