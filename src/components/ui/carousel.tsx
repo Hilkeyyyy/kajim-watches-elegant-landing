@@ -58,7 +58,12 @@ const Carousel = React.forwardRef<
   ) => {
     const [carouselRef, api] = useEmblaCarousel(
       {
-        ...opts,
+        align: "start",
+        dragFree: true,
+        containScroll: "trimSnaps",
+        inViewThreshold: 0.6,
+        skipSnaps: false,
+        ...(opts || {}),
         axis: orientation === "horizontal" ? "x" : "y",
       },
       plugins
@@ -155,7 +160,7 @@ const CarouselContent = React.forwardRef<
   const { carouselRef, orientation } = useCarousel()
 
   return (
-    <div ref={carouselRef} className="overflow-hidden">
+    <div ref={carouselRef} className="overflow-hidden carousel-smooth">
       <div
         ref={ref}
         className={cn(

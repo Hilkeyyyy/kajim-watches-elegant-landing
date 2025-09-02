@@ -7,7 +7,7 @@ import { useApp } from '@/contexts/AppContext';
 import { parsePrice, formatPrice } from '@/utils/priceUtils';
 import { FavoriteButton } from '@/components/FavoriteButton';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, Check } from 'lucide-react';
 import { useNotifications } from '@/hooks/useNotifications';
 
 interface ProductCardProps {
@@ -30,39 +30,9 @@ const OptimizedProductCard: React.FC<ProductCardProps> = memo(({
   const { notifyCartAction } = useNotifications();
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [justAdded, setJustAdded] = useState(false);
 
-  // Memoized handlers
-  const handleClick = useCallback(() => {
-    if (onProductClick) {
-      onProductClick(product.id);
-    } else if (onClick) {
-      onClick();
-    }
-  }, [onProductClick, onClick, product.id]);
-
-  const handleQuickAddToCart = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (isOutOfStock) return;
-    addToCart({
-      id: product.id,
-      name: product.name,
-      price: priceDisplay || 'Consulte',
-      image: mainImage
-    });
-    notifyCartAction('add', product.name);
-  }, [addToCart, product.id, product.name, notifyCartAction]);
-
-  const handleImageClick = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    setLightboxOpen(true);
-  }, []);
-
-  const handleImageLoad = useCallback(() => {
-    setImageLoaded(true);
-  }, []);
-
-  // Memoized calculations
+  // Memoized calculations (placed before handlers to satisfy TS)
   const mainImage = React.useMemo(() => 
     (product as any).image_url || product.image || 
     (product.images && product.images[0]) || '/placeholder.svg'
@@ -90,6 +60,40 @@ const OptimizedProductCard: React.FC<ProductCardProps> = memo(({
   const isOutOfStock = React.useMemo(() => 
     (product as any).stock_quantity === 0
   , [(product as any).stock_quantity]);
+
+  // Memoized handlers
+  const handleClick = useCallback(() => {
+    if (onProductClick) {
+      onProductClick(product.id);
+    } else if (onClick) {
+      onClick();
+    }
+  }, [onProductClick, onClick, product.id]);
+
+  const handleQuickAddToCart = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isOutOfStock) return;
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: priceDisplay || 'Consulte',
+      image: mainImage
+    });
+    notifyCartAction('add', product.name);
+    setJustAdded(true);
+    setTimeout(() => setJustAdded(false), 700);
+  }, [addToCart, product.id, product.name, notifyCartAction, isOutOfStock, priceDisplay, mainImage]);
+
+  const handleImageClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    setLightboxOpen(true);
+  }, []);
+
+  const handleImageLoad = useCallback(() => {
+    setImageLoaded(true);
+  }, []);
+
 
   return (
     <Card className="group relative w-full max-w-full mx-auto bg-gradient-to-br from-background to-background/95 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-700 hover:scale-[1.03] hover:-translate-y-2 overflow-hidden border border-border/30 backdrop-blur-sm">
@@ -132,7 +136,7 @@ const OptimizedProductCard: React.FC<ProductCardProps> = memo(({
         {/* Badge de Oferta - Design sofisticado */}
         {isOfferActive && (
           <div className="absolute top-4 left-4 z-10">
-            <div className="bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide shadow-xl backdrop-blur-sm border border-red-400/30">
+            <div className="px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wide shadow-xl glass-elegant border border-border/40 text-foreground/90">
               OFERTA
             </div>
           </div>
@@ -151,7 +155,7 @@ const OptimizedProductCard: React.FC<ProductCardProps> = memo(({
         {/* Badge Status - Design sofisticado */}
         <div className="absolute bottom-4 right-4 z-10">
           {isOutOfStock ? (
-            <div className="bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide shadow-xl backdrop-blur-sm border border-red-400/20">
+            <div className="px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wide shadow-xl bg-gradient-to-r from-stone-600/30 to-stone-500/30 text-stone-100 border border-stone-400/40 backdrop-blur-xl">
               ESGOTADO
             </div>
           ) : (
@@ -166,12 +170,12 @@ const OptimizedProductCard: React.FC<ProductCardProps> = memo(({
           <button
             onClick={handleQuickAddToCart}
             disabled={isOutOfStock}
-            className={`bg-gradient-to-r from-primary to-primary/90 text-primary-foreground hover:from-primary/90 hover:to-primary p-3 rounded-2xl shadow-xl transition-all duration-500 hover:scale-110 hover:-rotate-3 border border-primary/30 backdrop-blur-sm ${
+            className={`btn-fluid ${justAdded ? 'cart-feedback' : ''} bg-gradient-to-r from-primary to-primary/90 text-primary-foreground p-3 rounded-2xl shadow-xl border border-primary/30 backdrop-blur-sm ${
               isOutOfStock ? 'opacity-50 cursor-not-allowed' : ''
             }`}
             title={isOutOfStock ? 'Produto esgotado' : 'Adicionar ao carrinho'}
           >
-            <ShoppingCart className="w-5 h-5" />
+            {justAdded ? <Check className="w-5 h-5" /> : <ShoppingCart className="w-5 h-5" />}
           </button>
         </div>
       </div>
@@ -184,7 +188,7 @@ const OptimizedProductCard: React.FC<ProductCardProps> = memo(({
             <span className="notranslate" translate="no">{product.brand}</span>
           </p>
           {isOfferActive && (
-            <div className="text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded-full border border-red-200">
+            <div className="text-xs font-semibold text-foreground/80 glass-elegant px-2 py-1 rounded-full border border-border/40">
               OFERTA EXCLUSIVA
             </div>
           )}
@@ -208,9 +212,9 @@ const OptimizedProductCard: React.FC<ProductCardProps> = memo(({
               {priceDisplay || 'Consulte'}
             </p>
             {isOfferActive && (
-              <span className="text-sm text-green-600 font-semibold bg-green-50 px-2 py-1 rounded-full">
-                ECONOMIA
-              </span>
+            <span className="text-sm font-semibold px-2 py-1 rounded-full bg-gradient-to-r from-teal-800/20 to-cyan-700/20 text-teal-200 border border-teal-500/30 backdrop-blur-xl">
+              ECONOMIA
+            </span>
             )}
           </div>
         </div>
