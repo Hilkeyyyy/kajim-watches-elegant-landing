@@ -49,7 +49,7 @@ const OptimizedBrandCarousel = memo(({ brand, title, description }: BrandCarouse
 
   return (
     <section className="py-16 px-4 bg-gradient-to-br from-background via-muted/10 to-background relative">
-      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-primary/5 to-transparent backdrop-blur-sm"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-primary/5 to-transparent"></div>
       <div className="max-w-7xl mx-auto relative">
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent mb-4 font-serif">

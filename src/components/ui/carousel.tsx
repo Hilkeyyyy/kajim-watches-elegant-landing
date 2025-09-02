@@ -68,6 +68,8 @@ const Carousel = React.forwardRef<
         slidesToScroll: 1,
         ...(opts || {}),
         axis: orientation === "horizontal" ? "x" : "y",
+        watchDrag: true,
+        watchResize: true,
       },
       plugins
     )
