@@ -14,26 +14,26 @@ export const StockStatus = ({ stockStatus = 'in_stock', quantity, size = "md", c
     if (quantity === 0 || stockStatus === 'out_of_stock') {
       return {
         label: 'Esgotado',
-        variant: 'destructive' as const,
+        variant: 'outline' as const,
         icon: XCircle,
-        className: 'text-red-700 bg-red-50 border-red-200'
+        className: 'text-slate-300 bg-gradient-to-r from-slate-500/20 to-gray-500/20 border-slate-400/30 backdrop-blur-xl'
       };
     }
     
     if ((quantity && quantity < 5) || stockStatus === 'low_stock') {
       return {
         label: 'Estoque Baixo',
-        variant: 'secondary' as const,
+        variant: 'outline' as const,
         icon: AlertTriangle,
-        className: 'text-yellow-700 bg-yellow-50 border-yellow-200'
+        className: 'text-amber-200 bg-gradient-to-r from-amber-500/20 to-orange-500/20 border-amber-400/30 backdrop-blur-xl'
       };
     }
     
     return {
       label: 'Em Estoque',
-      variant: 'default' as const,
+      variant: 'outline' as const,
       icon: CheckCircle,
-      className: 'text-green-700 bg-green-50 border-green-200'
+      className: 'text-emerald-200 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border-emerald-400/30 backdrop-blur-xl'
     };
   };
 

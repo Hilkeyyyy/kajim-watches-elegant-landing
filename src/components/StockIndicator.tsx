@@ -21,8 +21,8 @@ export const StockIndicator: React.FC<StockIndicatorProps> = ({
     if (stockQuantity === 0) {
       return {
         label: 'Esgotado',
-        bgClass: 'bg-gradient-to-r from-red-500/90 to-rose-500/90',
-        borderClass: 'border-red-400/30',
+        bgClass: 'bg-gradient-to-r from-slate-500/30 to-gray-500/30',
+        borderClass: 'border-slate-400/30',
         icon: '✗'
       };
     }
@@ -30,7 +30,7 @@ export const StockIndicator: React.FC<StockIndicatorProps> = ({
     if (stockQuantity <= 5) {
       return {
         label: `Últimas ${stockQuantity}`,
-        bgClass: 'bg-gradient-to-r from-amber-500/90 to-orange-500/90',
+        bgClass: 'bg-gradient-to-r from-amber-500/30 to-orange-500/30',
         borderClass: 'border-amber-400/30',
         icon: '⚡'
       };
@@ -38,8 +38,8 @@ export const StockIndicator: React.FC<StockIndicatorProps> = ({
     
     return {
       label: `Estoque (${stockQuantity})`,
-      bgClass: 'bg-gradient-to-r from-primary/80 to-accent/80 backdrop-blur-lg',
-      borderClass: 'border-primary/20',
+      bgClass: 'bg-gradient-to-r from-emerald-500/30 to-teal-500/30',
+      borderClass: 'border-emerald-400/30',
       icon: '✓'
     };
   };
