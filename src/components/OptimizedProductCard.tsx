@@ -96,7 +96,13 @@ const OptimizedProductCard: React.FC<ProductCardProps> = memo(({
 
 
   return (
-    <Card className="group relative w-full max-w-full mx-auto bg-gradient-to-br from-background to-background/95 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-700 hover:scale-[1.03] hover:-translate-y-2 overflow-hidden border border-border/30 backdrop-blur-sm">
+    <Card className="group relative w-full max-w-full mx-auto bg-gradient-to-br from-background to-background/95 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-700 hover:scale-[1.03] hover:-translate-y-2 overflow-hidden border border-border/30 backdrop-blur-sm touch-pan-y"
+          style={{
+            touchAction: 'pan-y',
+            WebkitTouchCallout: 'none',
+            WebkitUserSelect: 'none',
+            userSelect: 'none'
+          }}>
       {/* Área da Imagem com lazy loading otimizado */}
       <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-muted/20 to-muted/5">
         <div

@@ -425,4 +425,33 @@ Typography: Playfair Display (elegant serif), Inter (modern sans), Crimson Text 
   .animate-shake {
     animation: shake 0.5s ease-in-out;
   }
+
+  /* Configurações de toque para melhor experiência mobile */
+  .touch-pan-y {
+    touch-action: pan-y;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Animações de carrinho */
+  .cart-feedback {
+    transform: scale(1.1);
+    animation: cartPulse 0.7s ease-out;
+  }
+
+  @keyframes cartPulse {
+    0% { 
+      transform: scale(1); 
+      background: hsl(var(--primary));
+    }
+    50% { 
+      transform: scale(1.15); 
+      background: hsl(var(--accent));
+    }
+    100% { 
+      transform: scale(1.1); 
+      background: hsl(var(--primary));
+    }
+  }
 }
