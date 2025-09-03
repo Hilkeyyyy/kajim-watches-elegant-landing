@@ -120,11 +120,17 @@ const Carousel = React.forwardRef<
       }
 
       onSelect(api)
-      api.on("reInit", onSelect)
+      const handleReInit = () => {
+        const index = api.selectedScrollSnap()
+        api.scrollTo(index, true)
+        onSelect(api)
+      }
+      api.on("reInit", handleReInit)
       api.on("select", onSelect)
 
       return () => {
         api?.off("select", onSelect)
+        api?.off("reInit", handleReInit)
       }
     }, [api, onSelect])
 
