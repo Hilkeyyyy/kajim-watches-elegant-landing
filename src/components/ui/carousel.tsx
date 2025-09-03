@@ -59,10 +59,10 @@ const Carousel = React.forwardRef<
     const [carouselRef, api] = useEmblaCarousel(
       {
         align: "start",
-        dragFree: false,
-        containScroll: "trimSnaps",
-        inViewThreshold: 0.5,
-        skipSnaps: false,
+        loop: true,
+        dragFree: true,
+        containScroll: "keepSnaps",
+        skipSnaps: true,
         duration: 25,
         startIndex: 0,
         slidesToScroll: 1,

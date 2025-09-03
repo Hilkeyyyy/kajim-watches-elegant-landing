@@ -40,7 +40,7 @@ const defaultSettings: SiteSettings = {
   hero_image_url: '',
   hero_background_image_url: '',
   hero_watch_image_url: '',
-  enable_hero_background_blur: true,
+  enable_hero_background_blur: false,
   footer_text: 'KAJIM RELÓGIOS - Todos os direitos reservados.',
   about_text: 'KAJIM WATCHES é uma combinação entre precisão, elegância e acessibilidade. Relógios 100% originais com garantia.',
   contact_info: 'Telefone: (86) 9 8838-8124\nE-mail: contato@kajim.com.br',

@@ -218,7 +218,7 @@ const SiteEditor = () => {
                   </div>
                   <Switch
                     id="enable_hero_background_blur"
-                    checked={settings.enable_hero_background_blur ?? true}
+                    checked={settings.enable_hero_background_blur ?? false}
                     onCheckedChange={(checked) => 
                       handleInputChange('enable_hero_background_blur', checked)
                     }

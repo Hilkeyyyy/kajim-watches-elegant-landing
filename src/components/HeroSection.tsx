@@ -27,7 +27,7 @@ const HeroSection = () => {
 
   const heroImageUrl = settings.hero_watch_image_url || settings.hero_image_url || heroWatch;
   const backgroundImageUrl = settings.hero_background_image_url;
-  const enableBlur = settings.enable_hero_background_blur !== false;
+  const enableBlur = settings.enable_hero_background_blur === true;
 
   return (
     <section className="min-h-[70vh] md:min-h-[80vh] bg-background flex flex-col justify-center items-center relative overflow-hidden px-4 py-8 md:py-12">
