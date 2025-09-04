@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Product } from '@/types';
 import { convertSupabaseToProduct, SupabaseProduct } from '@/types/supabase-product';
 import { Card, CardContent } from '@/components/ui/card';
+import { debounce } from '@/utils/debounce';
 
 interface SearchBarProps {
   placeholder?: string;
@@ -25,16 +26,19 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
 
+  const debouncedSearch = React.useMemo(() => debounce((t: string) => searchProducts(t), 250), []);
+
   useEffect(() => {
     if (searchTerm.length > 2) {
-      searchProducts(searchTerm);
+      debouncedSearch(searchTerm);
     } else {
       setResults([]);
       setShowDropdown(false);
     }
-  }, [searchTerm]);
+  }, [searchTerm, debouncedSearch]);
 
   const searchProducts = async (term: string) => {
+    const termSanitized = term.trim();
     setIsLoading(true);
     try {
       const { data, error } = await supabase
@@ -42,8 +46,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         .select('*')
         .eq('is_visible', true)
         .eq('status', 'active')
-        .or(`name.ilike.%${term}%,brand.ilike.%${term}%,description.ilike.%${term}%`)
-        .limit(5);
+        .or(`(name.ilike.%${termSanitized}%,brand.ilike.%${termSanitized}%,description.ilike.%${termSanitized}%)`)
+        .order('created_at', { ascending: false })
+        .limit(8);
 
       if (error) throw error;
 

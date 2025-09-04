@@ -315,14 +315,21 @@ Typography: Playfair Display (elegant serif), Inter (modern sans), Crimson Text 
   .embla__container {
     display: flex;
     touch-action: pan-x pan-y;
-    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: transform;
+    /* Let Embla control transforms and transitions to avoid loop jumps */
   }
 
   .embla__slide {
     flex: 0 0 auto;
     min-width: 0;
     transform: translate3d(0, 0, 0);
-    transition: transform 0.15s ease-out;
+    will-change: transform;
+  }
+
+  /* Prevent global transitions from affecting Embla transforms */
+  .embla__container,
+  .embla__slide {
+    transition: none !important;
   }
 
   /* Ultra-fluid button feedback */

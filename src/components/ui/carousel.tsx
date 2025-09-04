@@ -61,9 +61,10 @@ const Carousel = React.forwardRef<
         align: "start",
         loop: true,
         dragFree: true,
-        containScroll: "keepSnaps",
-        skipSnaps: true,
-        duration: 25,
+        // Do not force contain/skip to avoid jumpy resets when looping
+        // containScroll intentionally omitted
+        // skipSnaps intentionally omitted (defaults to false)
+        duration: 20,
         startIndex: 0,
         slidesToScroll: 1,
         ...(opts || {}),
