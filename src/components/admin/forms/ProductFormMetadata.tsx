@@ -39,10 +39,13 @@ export const ProductFormMetadata: React.FC<ProductFormMetadataProps> = ({ form }
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Status do Produto</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select 
+                    onValueChange={field.onChange} 
+                    value={field.value || 'active'}
+                  >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Status do produto" />
+                        <SelectValue placeholder="Selecione o status" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>

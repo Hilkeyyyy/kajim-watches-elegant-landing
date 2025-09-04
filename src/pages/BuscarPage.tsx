@@ -26,9 +26,6 @@ export const BuscarPage: React.FC = () => {
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState('name');
-  const [brandFilter, setBrandFilter] = useState('all');
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, Infinity]);
-  const [releaseFilter, setReleaseFilter] = useState<'all' | '30' | '90' | '365'>('all');
   const { handleError } = useErrorHandler();
   const navigate = useNavigate();
 
@@ -38,7 +35,7 @@ export const BuscarPage: React.FC = () => {
 
   useEffect(() => {
     filterAndSortProducts();
-  }, [searchTerm, products, sortBy, brandFilter, priceRange, releaseFilter]);
+  }, [searchTerm, products, sortBy]);
 
   const fetchProducts = async () => {
     try {
@@ -75,38 +72,6 @@ export const BuscarPage: React.FC = () => {
       );
     }
 
-    // Filtrar por marca (case-insensitive e normalizado)
-    if (brandFilter !== 'all') {
-      const normalizedBrandFilter = brandFilter.toLowerCase().trim();
-      filtered = filtered.filter(product => 
-        product.brand.toLowerCase().trim() === normalizedBrandFilter
-      );
-    }
-
-    // Filtrar por preço (com validação robusta)
-    filtered = filtered.filter(product => {
-      const price = parseFloat(String(product.price)) || 0;
-      return !isNaN(price) && price >= priceRange[0] && price <= priceRange[1];
-    });
-
-    // Filtrar por data de lançamento (created_at) com validação robusta
-    if (releaseFilter !== 'all') {
-      const days = parseInt(releaseFilter, 10);
-      if (!isNaN(days)) {
-        const threshold = new Date();
-        threshold.setDate(threshold.getDate() - days);
-        filtered = filtered.filter(product => {
-          if (!product.created_at) return true;
-          try {
-            const created = new Date(product.created_at);
-            return !isNaN(created.getTime()) && created >= threshold;
-          } catch {
-            return true; // Manter produto se a data for inválida
-          }
-        });
-      }
-    }
-
     // Ordenar
     filtered.sort((a, b) => {
       switch (sortBy) {
@@ -133,14 +98,6 @@ export const BuscarPage: React.FC = () => {
     setFilteredProducts(filtered);
   };
 
-  // Extrair marcas únicas dos produtos (normalizado e limpo)
-  const availableBrands = Array.from(
-    new Set(
-      products
-        .map(p => p.brand?.trim())
-        .filter(Boolean)
-    )
-  ).sort((a, b) => a.localeCompare(b, 'pt-BR', { sensitivity: 'base' }));
 
   const handleProductClick = (id: string) => {
     navigate(`/produto/${id}`);
@@ -192,20 +149,7 @@ export const BuscarPage: React.FC = () => {
                   />
                 </div>
                 
-                <div className="flex flex-wrap gap-2">
-                  <Select value={brandFilter} onValueChange={setBrandFilter}>
-                    <SelectTrigger className="w-full sm:w-48 h-12 border-0 bg-background/50 backdrop-blur-sm">
-                      <Filter className="w-4 h-4 mr-2" />
-                      <SelectValue placeholder="Filtrar por marca" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Todas as marcas</SelectItem>
-                      {availableBrands.map(brand => (
-                        <SelectItem key={brand} value={brand}><span className="notranslate" translate="no">{brand}</span></SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
+                <div className="flex justify-end">
                   <Select value={sortBy} onValueChange={setSortBy}>
                     <SelectTrigger className="w-full sm:w-48 h-12 border-0 bg-background/50 backdrop-blur-sm">
                       <SlidersHorizontal className="w-4 h-4 mr-2" />
@@ -217,41 +161,6 @@ export const BuscarPage: React.FC = () => {
                       <SelectItem value="price_asc">Preço: Menor → Maior</SelectItem>
                       <SelectItem value="price_desc">Preço: Maior → Menor</SelectItem>
                       <SelectItem value="newest">Mais novos</SelectItem>
-                    </SelectContent>
-                  </Select>
-
-                  <div className="flex gap-2 w-full sm:w-auto">
-                    <Input
-                      type="number"
-                      placeholder="Preço mín."
-                      value={priceRange[0] === 0 ? '' : String(priceRange[0])}
-                      onChange={(e) => {
-                        const val = e.target.value === '' ? 0 : Number(e.target.value);
-                        setPriceRange([val, priceRange[1]]);
-                      }}
-                      className="h-12 w-[120px] border-0 bg-background/50 backdrop-blur-sm"
-                    />
-                    <Input
-                      type="number"
-                      placeholder="Preço máx."
-                      value={priceRange[1] === Infinity ? '' : String(priceRange[1])}
-                      onChange={(e) => {
-                        const val = e.target.value === '' ? Infinity : Number(e.target.value);
-                        setPriceRange([priceRange[0], val]);
-                      }}
-                      className="h-12 w-[120px] border-0 bg-background/50 backdrop-blur-sm"
-                    />
-                  </div>
-
-                  <Select value={releaseFilter} onValueChange={(v) => setReleaseFilter(v as 'all' | '30' | '90' | '365')}>
-                    <SelectTrigger className="w-full sm:w-56 h-12 border-0 bg-background/50 backdrop-blur-sm">
-                      <SelectValue placeholder="Lançamento" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Qualquer data</SelectItem>
-                      <SelectItem value="30">Últimos 30 dias</SelectItem>
-                      <SelectItem value="90">Últimos 90 dias</SelectItem>
-                      <SelectItem value="365">Últimos 365 dias</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -300,15 +209,12 @@ export const BuscarPage: React.FC = () => {
                   <Button 
                     onClick={() => {
                       setSearchTerm('');
-                      setBrandFilter('all');
-                      setPriceRange([0, Infinity]);
-                      setReleaseFilter('all');
                       setSortBy('name');
                     }}
                     variant="outline"
                     className="mt-4"
                   >
-                    Limpar Todos os Filtros
+                    Limpar Busca
                   </Button>
                 </div>
               </CardContent>
