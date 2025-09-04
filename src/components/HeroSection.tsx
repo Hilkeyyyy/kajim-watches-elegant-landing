@@ -66,14 +66,6 @@ const HeroSection = () => {
           {settings.hero_subtitle}
         </p>
         
-        {/* Modern Guarantee Badge with Liquid Glass Effect */}
-        <div className="mb-12 inline-flex items-center gap-3 bg-gradient-to-r from-background/50 to-card/30 backdrop-blur-2xl border border-border/30 rounded-full px-8 py-4 shadow-2xl ring-1 ring-primary/10">
-          <div className="w-3 h-3 bg-gradient-to-r from-primary to-accent rounded-full animate-pulse shadow-lg"></div>
-          <span className="font-semibold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent text-lg tracking-wide">
-            ✓ 100% ORIGINAIS
-          </span>
-          <div className="w-3 h-3 bg-gradient-to-r from-primary to-accent rounded-full animate-pulse shadow-lg"></div>
-        </div>
         
         {/* CTA Button */}
         <Button 
