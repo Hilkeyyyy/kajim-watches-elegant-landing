@@ -133,6 +133,42 @@ export type Database = {
           },
         ]
       }
+      content_blocks: {
+        Row: {
+          body: string | null
+          content_key: string
+          created_at: string
+          extra: Json | null
+          id: string
+          image_url: string | null
+          subtitle: string | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          body?: string | null
+          content_key: string
+          created_at?: string
+          extra?: Json | null
+          id?: string
+          image_url?: string | null
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          body?: string | null
+          content_key?: string
+          created_at?: string
+          extra?: Json | null
+          id?: string
+          image_url?: string | null
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       product_specifications: {
         Row: {
           created_at: string
@@ -645,6 +681,17 @@ export type Database = {
         Args: { cart_data: Json }
         Returns: string
       }
+      get_content_block_public: {
+        Args: { p_content_key: string }
+        Returns: {
+          body: string
+          content_key: string
+          extra: Json
+          image_url: string
+          subtitle: string
+          title: string
+        }[]
+      }
       get_site_settings_public: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -689,6 +736,20 @@ export type Database = {
       update_user_role: {
         Args: { new_role: string; target_user_id: string }
         Returns: boolean
+      }
+      upsert_content_block: {
+        Args: { data: Json; p_content_key: string }
+        Returns: {
+          body: string | null
+          content_key: string
+          created_at: string
+          extra: Json | null
+          id: string
+          image_url: string | null
+          subtitle: string | null
+          title: string | null
+          updated_at: string
+        }
       }
       upsert_site_settings: {
         Args: { new_settings: Json }

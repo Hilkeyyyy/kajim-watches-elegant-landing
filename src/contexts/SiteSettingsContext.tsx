@@ -29,7 +29,7 @@ interface SiteSettings {
 interface SiteSettingsContextType {
   settings: SiteSettings;
   isLoading: boolean;
-  updateSettings: (newSettings: Partial<SiteSettings>) => Promise<void>;
+  updateSettings: (newSettings: Partial<SiteSettings>) => Promise<{ success: boolean; error?: string }>;
   refetch: () => Promise<void>;
 }
 
@@ -162,7 +162,7 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
       if (error) {
         console.error('❌ Erro ao salvar via RPC:', error);
-        throw error;
+        return { success: false, error: error.message };
       }
 
       console.log('✅ Configurações salvas com sucesso via RPC:', data);
@@ -180,14 +180,19 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ 
       };
       setSettings(updatedSettings);
       
+      // Force refetch from database to ensure we have the latest persisted data
+      await fetchSettings();
+      
       // Notifica todos os componentes da mudança
       window.dispatchEvent(new CustomEvent('site-settings-updated', { 
         detail: updatedSettings 
       }));
+
+      return { success: true };
     } catch (error) {
       console.error('❌ Erro ao atualizar configurações:', error);
       handleError(error, 'Erro ao salvar configurações');
-      throw error;
+      return { success: false, error: error.message };
     }
   };
 

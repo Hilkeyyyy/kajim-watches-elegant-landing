@@ -6,11 +6,11 @@ import { OffersCarousel, NewProductsCarousel } from "@/components/carousels/Opti
 import { FeaturedCarousel } from "@/components/carousels/OptimizedFeaturedCarousel";
 import AboutSection from "@/components/AboutSection";
 import Footer from "@/components/Footer";
-import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useSiteSettingsContext } from "@/contexts/SiteSettingsContext";
 import { useProductPrefetch } from "@/hooks/useProductPrefetch";
 
 const Index = () => {
-  const { settings } = useSiteSettings();
+  const { settings } = useSiteSettingsContext();
   
   // Prefetch inteligente de produtos para melhor performance
   useProductPrefetch();

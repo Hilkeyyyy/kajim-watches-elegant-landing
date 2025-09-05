@@ -2,10 +2,54 @@ import { useSiteSettingsContext } from "@/contexts/SiteSettingsContext";
 import { LoadingSpinner } from "./LoadingSpinner";
 import watchDetails from "@/assets/watch-details.jpg";
 import { useSecurity } from "@/hooks/useSecurity";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+
+interface AboutContent {
+  title: string;
+  body: string;
+}
 
 const AboutSection = () => {
   const { settings, isLoading } = useSiteSettingsContext();
   const { sanitizeHtml } = useSecurity();
+  const [aboutContent, setAboutContent] = useState<AboutContent | null>(null);
+
+  useEffect(() => {
+    const fetchAboutContent = async () => {
+      try {
+        const { data, error } = await supabase.rpc('get_content_block_public', {
+          p_content_key: 'about_section'
+        });
+        
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+          setAboutContent({
+            title: data[0].title || 'Sobre KAJIM',
+            body: data[0].body || settings.about_text || 'KAJIM WATCHES é uma combinação entre precisão, elegância e acessibilidade. Relógios 100% originais com garantia.'
+          });
+        } else {
+          // Fallback to settings
+          setAboutContent({
+            title: 'Sobre KAJIM',
+            body: settings.about_text || 'KAJIM WATCHES é uma combinação entre precisão, elegância e acessibilidade. Relógios 100% originais com garantia.'
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching about content:', error);
+        // Fallback to settings
+        setAboutContent({
+          title: 'Sobre KAJIM',
+          body: settings.about_text || 'KAJIM WATCHES é uma combinação entre precisão, elegância e acessibilidade. Relógios 100% originais com garantia.'
+        });
+      }
+    };
+
+    if (!isLoading) {
+      fetchAboutContent();
+    }
+  }, [settings.about_text, isLoading]);
 
   if (isLoading) {
     return (
@@ -25,12 +69,12 @@ const AboutSection = () => {
           {/* Text Content */}
           <div className="text-center lg:text-left order-2 lg:order-1">
             <h2 className="text-4xl sm:text-5xl md:text-6xl font-playfair font-bold mb-8 tracking-wide">
-              {settings.hero_title}
+              {aboutContent?.title || 'Sobre KAJIM'}
             </h2>
             
             <div className="space-y-6 mb-12">
               <p className="text-lg sm:text-xl text-gray-200 leading-relaxed">
-                {settings.about_text}
+                {aboutContent?.body || settings.about_text}
               </p>
               
               <p className="text-lg text-gray-300 leading-relaxed">

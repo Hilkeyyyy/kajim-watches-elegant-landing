@@ -11,6 +11,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ImageUpload } from '@/components/ImageUpload';
 import { Switch } from '@/components/ui/switch';
 import { Save, Settings, Image, Type, Layout, ToggleLeft } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 interface SiteSettings {
   site_title?: string;
@@ -32,6 +34,7 @@ interface SiteSettings {
 const SiteEditor = () => {
   const { settings: currentSettings, isLoading, updateSettings } = useSiteSettingsContext();
   const [settings, setSettings] = useState<SiteSettings>(currentSettings || {});
+  const [aboutContent, setAboutContent] = useState({ title: '', body: '' });
   const [isSaving, setIsSaving] = useState(false);
   const { handleError, handleSuccess } = useErrorHandler();
 
@@ -41,21 +44,69 @@ const SiteEditor = () => {
       console.log('📊 Configurações atualizadas no editor:', currentSettings);
       setSettings(currentSettings);
     }
+    fetchAboutContent();
   }, [currentSettings]);
+
+  const fetchAboutContent = async () => {
+    try {
+      const { data, error } = await supabase.rpc('get_content_block_public', {
+        p_content_key: 'about_section'
+      });
+      
+      if (error) throw error;
+      
+      if (data && data.length > 0) {
+        setAboutContent({
+          title: data[0].title || 'Sobre KAJIM',
+          body: data[0].body || 'KAJIM WATCHES é uma combinação entre precisão, elegância e acessibilidade. Relógios 100% originais com garantia.'
+        });
+      } else {
+        setAboutContent({
+          title: 'Sobre KAJIM',
+          body: 'KAJIM WATCHES é uma combinação entre precisão, elegância e acessibilidade. Relógios 100% originais com garantia.'
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching about content:', error);
+    }
+  };
 
   const handleSaveSettings = async () => {
     try {
       setIsSaving(true);
       console.log('💾 Salvando no SiteEditor:', settings);
       
-      await updateSettings(settings);
+      const result = await updateSettings(settings);
       
-      handleSuccess('✅ Configurações salvas e aplicadas com sucesso!');
+      if (result.success) {
+        toast.success('✅ Configurações salvas e aplicadas com sucesso!');
+      } else {
+        toast.error('Erro ao salvar configurações: ' + result.error);
+      }
     } catch (error) {
       console.error('❌ Erro no SiteEditor:', error);
       handleError(error, 'Erro ao salvar configurações');
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleSaveAboutContent = async () => {
+    try {
+      const { error } = await supabase.rpc('upsert_content_block', {
+        p_content_key: 'about_section',
+        data: {
+          title: aboutContent.title,
+          body: aboutContent.body
+        }
+      });
+
+      if (error) throw error;
+      
+      toast.success("Conteúdo da seção 'Sobre' salvo com sucesso!");
+    } catch (error) {
+      console.error('Error saving about content:', error);
+      toast.error("Erro ao salvar conteúdo da seção 'Sobre'");
     }
   };
 
@@ -103,7 +154,7 @@ const SiteEditor = () => {
       </div>
 
       <Tabs defaultValue="general" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-5 bg-muted/30">
+        <TabsList className="grid w-full grid-cols-6 bg-muted/30">
           <TabsTrigger value="general" className="gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary/10 data-[state=active]:to-accent/10 data-[state=active]:text-primary">
             <Type className="h-4 w-4" />
             <span className="hidden sm:inline">Geral</span>
@@ -115,6 +166,10 @@ const SiteEditor = () => {
           <TabsTrigger value="content" className="gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary/10 data-[state=active]:to-accent/10 data-[state=active]:text-primary">
             <Layout className="h-4 w-4" />
             <span className="hidden sm:inline">Conteúdo</span>
+          </TabsTrigger>
+          <TabsTrigger value="about" className="gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary/10 data-[state=active]:to-accent/10 data-[state=active]:text-primary">
+            <Type className="h-4 w-4" />
+            <span className="hidden sm:inline">Sobre</span>
           </TabsTrigger>
           <TabsTrigger value="layout" className="gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary/10 data-[state=active]:to-accent/10 data-[state=active]:text-primary">
             <ToggleLeft className="h-4 w-4" />
@@ -267,6 +322,40 @@ const SiteEditor = () => {
                   rows={3}
                 />
               </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="about" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Seção "Sobre"</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="about-title">Título da Seção</Label>
+                <Input
+                  id="about-title"
+                  value={aboutContent.title}
+                  onChange={(e) => setAboutContent(prev => ({ ...prev, title: e.target.value }))}
+                  placeholder="Ex: Sobre KAJIM"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="about-body">Conteúdo Principal</Label>
+                <Textarea
+                  id="about-body"
+                  value={aboutContent.body}
+                  onChange={(e) => setAboutContent(prev => ({ ...prev, body: e.target.value }))}
+                  placeholder="Descreva sua empresa e valores aqui..."
+                  rows={4}
+                />
+              </div>
+
+              <Button onClick={handleSaveAboutContent} className="w-full">
+                Salvar Conteúdo da Seção "Sobre"
+              </Button>
             </CardContent>
           </Card>
         </TabsContent>
