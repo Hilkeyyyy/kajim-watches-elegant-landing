@@ -297,7 +297,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return state.favorites.length;
   }, [state.favorites]);
 
-  // WhatsApp com segurança melhorada
+  // WhatsApp com novo template
   const sendCartToWhatsApp = useCallback(async () => {
     if (state.cart.length === 0) {
       notifyError('Carrinho vazio', 'Adicione produtos ao carrinho antes de enviar.');
@@ -305,64 +305,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
 
     try {
-      // Preparar dados do carrinho com totais calculados
-      const cartData = state.cart.map(item => ({
-        name: item.name,
-        quantity: item.quantity,
-        price: item.price,
-        total: getItemTotal(item.price, item.quantity)
-      }));
-
-      // Usar função do banco para gerar link
-      const { data: whatsappLink, error } = await supabase
-        .rpc('generate_whatsapp_link', { cart_data: cartData });
-
-      if (error) {
-        throw error;
-      }
-
-      if (whatsappLink) {
-        window.open(whatsappLink, '_blank');
-        notifySuccess('Pedido enviado', 'Seu pedido foi enviado para o WhatsApp!');
-      } else {
-        throw new Error('Falha ao gerar link do WhatsApp');
-      }
+      // Importar a função utilitária dinamicamente
+      const { generateCartWhatsAppMessage } = await import('@/utils/whatsappUtils');
+      
+      const totalValue = getCartTotal();
+      const totalItems = getTotalItems();
+      
+      const message = await generateCartWhatsAppMessage(state.cart, totalItems, parseFloat(totalValue.toString()));
+      const whatsappUrl = `https://wa.me/559181993435?text=${encodeURIComponent(message)}`;
+      
+      window.open(whatsappUrl, '_blank');
+      notifySuccess('Pedido enviado', 'Seu pedido foi enviado para o WhatsApp!');
     } catch (error) {
       console.error('Erro ao enviar pedido para WhatsApp:', error);
-      
-      // Fallback para método anterior
-      try {
-        const itemsList = state.cart
-          .map((item, index) => 
-            `🟢 Item ${index + 1}
-⌚ ${item.name}
-🔹 Marca: ${item.brand || 'Marca não informada'}
-🔢 Quantidade: ${item.quantity}x
-💰 Valor: ${item.price}
-📸 Imagem: ${item.image || 'Imagem não disponível'}`
-          )
-          .join('\n\n');
-        
-        const message = `🛍️ LISTA DE ITENS SALVOS
-
-${itemsList}
-
-🛒 Desejo prosseguir com a compra dos itens listados!
-
-📞 Preciso de mais informações sobre os produtos.
-💳 Quais as formas de pagamento disponíveis?
-🚚 Como funciona a entrega?
-
-Aguardo retorno!`;
-
-        const whatsappUrl = `https://wa.me/559181993435?text=${encodeURIComponent(message)}`;
-        window.open(whatsappUrl, '_blank');
-        
-        notifySuccess('Pedido enviado', 'Seu pedido foi enviado para o WhatsApp!');
-      } catch (fallbackError) {
-        console.error('Erro no fallback do WhatsApp:', fallbackError);
-        notifyError('Erro ao enviar pedido', 'Tente novamente.');
-      }
+      notifyError('Erro ao enviar pedido', 'Tente novamente.');
     }
   }, [state.cart, notifySuccess, notifyError, getItemTotal, getCartTotal]);
 

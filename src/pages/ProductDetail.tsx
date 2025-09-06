@@ -88,44 +88,26 @@ const ProductDetail = () => {
     );
   }
 
-  const handleWhatsApp = () => {
-    const productUrl = `${window.location.origin}/produto/${product.id}`;
-    const message = `🛒 INTERESSE CONFIRMADO NO PRODUTO!
-
-⌚ ${product.name}
-🔹 Marca: ${product.brand}
-💰 Valor: ${formatPrice(parseFloat(product.price))}
-
-📸 Imagem do produto:
-${product.image}
-
-📞 Gostaria de receber mais informações sobre este produto!
-💳 Quais são as formas de pagamento disponíveis?
-🚚 Como funciona a entrega?
-
-Aguardo retorno para finalizar a compra!`;
-    const whatsappUrl = `https://wa.me/559181993435?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, "_blank");
+  const handleWhatsApp = async () => {
+    try {
+      const { generateProductWhatsAppMessage } = await import('@/utils/whatsappUtils');
+      const message = await generateProductWhatsAppMessage(product);
+      const whatsappUrl = `https://wa.me/559181993435?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, "_blank");
+    } catch (error) {
+      console.error('Erro ao gerar mensagem do WhatsApp:', error);
+    }
   };
 
-  const handleDirectPurchase = () => {
-    const message = `🛒 INTERESSE CONFIRMADO NO PRODUTO!
-
-⌚ ${product.name}
-🔹 Marca: ${product.brand}
-💰 Valor: ${formatPrice(parseFloat(product.price))}
-
-📸 Imagem do produto:
-${product.image}
-
-📞 Gostaria de receber mais informações sobre este produto!
-💳 Quais são as formas de pagamento disponíveis?
-🚚 Como funciona a entrega?
-
-Aguardo retorno para finalizar a compra!`;
-
-    const whatsappUrl = `https://wa.me/559181993435?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
+  const handleDirectPurchase = async () => {
+    try {
+      const { generateProductWhatsAppMessage } = await import('@/utils/whatsappUtils');
+      const message = await generateProductWhatsAppMessage(product);
+      const whatsappUrl = `https://wa.me/559181993435?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, '_blank');
+    } catch (error) {
+      console.error('Erro ao gerar mensagem do WhatsApp:', error);
+    }
   };
 
   // Verificar se produto está em estoque

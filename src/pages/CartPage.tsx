@@ -20,31 +20,18 @@ export const CartPage: React.FC = () => {
     }
   };
 
-  const handleSendToWhatsApp = () => {
-    const itemsList = cart
-      .map((item, index) => 
-        `🟢 Item ${index + 1}
-⌚ ${item.name}
-🔹 Marca: KAJIM
-💰 Valor: ${item.price}
-📸 Imagem: ${item.image || 'Imagem não disponível'}`
-      )
-      .join('\n\n');
-    
-    const message = `🛍️ LISTA DE ITENS SALVOS
-
-${itemsList}
-
-🛒 Desejo prosseguir com a compra dos itens listados!
-
-📞 Preciso de mais informações sobre os produtos.
-💳 Quais as formas de pagamento disponíveis?
-🚚 Como funciona a entrega?
-
-Aguardo retorno!`;
-    
-    const whatsappUrl = `https://wa.me/559181993435?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
+  const handleSendToWhatsApp = async () => {
+    try {
+      const { generateCartWhatsAppMessage } = await import('@/utils/whatsappUtils');
+      const totalValue = cart.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
+      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      
+      const message = await generateCartWhatsAppMessage(cart, totalItems, totalValue);
+      const whatsappUrl = `https://wa.me/559181993435?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, '_blank');
+    } catch (error) {
+      console.error('Erro ao gerar mensagem do WhatsApp:', error);
+    }
   };
 
   if (cart.length === 0) {
