@@ -100,8 +100,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
             <div
               className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide shadow-xl backdrop-blur-xl hover:shadow-2xl transition-all duration-300 border 
                 ${badgeStyle === 'hero'
-                  ? 'bg-gradient-to-r from-primary/90 to-primary text-primary-foreground border-primary/40'
-                  : 'glass-card bg-gradient-to-r from-background/90 to-background text-foreground/90 border-border/50'}
+                  ? 'glass-card bg-gradient-to-r from-background/80 to-background text-primary-foreground border-border/40'
+                  : 'bg-gradient-to-r from-primary/90 to-primary text-primary-foreground border-primary/40'}
               `}
             >
               OFERTA
@@ -124,8 +124,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
           <div
             className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide shadow-xl backdrop-blur-xl hover:shadow-2xl transition-all duration-300 border 
               ${badgeStyle === 'hero'
-                ? 'bg-gradient-to-r from-primary/90 to-primary text-primary-foreground border-primary/40'
-                : 'glass-card bg-gradient-to-r from-background/90 to-background text-foreground/90 border-border/50'}
+                ? 'glass-card bg-gradient-to-r from-background/80 to-background text-primary-foreground border-border/40'
+                : 'bg-gradient-to-r from-primary/90 to-primary text-primary-foreground border-primary/40'}
             `}
           >
             ORIGINAL
@@ -148,15 +148,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
       <CardContent className="p-4 lg:p-5 space-y-3 bg-gradient-to-t from-muted/10 to-transparent">
         {/* Marca - Design luxuoso */}
         <div className="flex items-center justify-between">
-          <p className="text-sm font-bold text-primary uppercase tracking-[0.15em] mb-1 bg-primary/10 px-3 py-1 rounded-full">
+          <p className={`text-sm font-bold uppercase tracking-[0.12em] mb-1 px-3 py-1 rounded-full border 
+            ${badgeStyle === 'hero' 
+              ? 'glass-card bg-background/80 text-foreground/90 border-border/40' 
+              : 'bg-primary text-primary-foreground border-primary/40'}
+          `}>
             <span className="notranslate" translate="no">{product.brand}</span>
           </p>
           {isOfferActive && (
             <div
               className={`text-xs font-bold px-3 py-1 rounded-full backdrop-blur-xl shadow-lg hover:shadow-xl transition-all duration-300 border 
                 ${badgeStyle === 'hero'
-                  ? 'bg-primary text-primary-foreground border-primary/40'
-                  : 'glass-card bg-background/90 text-foreground/90 border-border/50'}
+                  ? 'glass-card bg-background/80 text-primary-foreground border-border/40'
+                  : 'bg-primary text-primary-foreground border-primary/40'}
               `}
             >
               OFERTA EXCLUSIVA
