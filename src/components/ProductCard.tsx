@@ -92,10 +92,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
           </div>
         </div>
 
-        {/* Badge de Oferta - Design sofisticado */}
+        {/* Badge de Oferta - Design sofisticado com liquid glass */}
         {isOfferActive && (
           <div className="absolute top-4 left-4 z-10">
-            <div className="bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide shadow-xl backdrop-blur-sm border border-red-400/30">
+            <div className="glass-card bg-gradient-to-r from-primary/90 to-primary text-primary-foreground px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide shadow-xl backdrop-blur-xl border border-primary/30 hover:shadow-2xl transition-all duration-300">
               OFERTA
             </div>
           </div>
@@ -111,9 +111,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
           />
         </div>
 
-        {/* Badge ORIGINAL - Design sofisticado */}
+        {/* Badge ORIGINAL - Design sofisticado com liquid glass */}
         <div className="absolute bottom-4 right-4 z-10">
-          <div className="bg-gradient-to-r from-foreground to-foreground/90 text-background px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide shadow-xl backdrop-blur-sm border border-foreground/20">
+          <div className="glass-card bg-gradient-to-r from-foreground/90 to-foreground text-background px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide shadow-xl backdrop-blur-xl border border-foreground/30 hover:shadow-2xl transition-all duration-300">
             ORIGINAL
           </div>
         </div>
@@ -138,7 +138,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
             <span className="notranslate" translate="no">{product.brand}</span>
           </p>
           {isOfferActive && (
-            <div className="text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded-full border border-red-200">
+            <div className="glass-card text-xs font-bold text-primary bg-primary/10 px-3 py-1 rounded-full border border-primary/30 backdrop-blur-xl shadow-lg hover:shadow-xl transition-all duration-300">
               OFERTA EXCLUSIVA
             </div>
           )}
