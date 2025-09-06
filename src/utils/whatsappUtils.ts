@@ -12,7 +12,7 @@ const getUserName = async (): Promise<string> => {
     const { data: profile } = await supabase
       .from('profiles')
       .select('name')
-      .eq('user_id', user.id)
+      .eq('id', user.id)
       .single();
 
     return profile?.name || user.email?.split('@')[0] || '[Nome do Usuário]';
@@ -38,7 +38,10 @@ export const generateProductWhatsAppMessage = async (product: any): Promise<stri
     second: '2-digit',
   });
 
-  const imageUrl = product.image ? `${window.location.origin}${product.image}` : 'Imagem não disponível';
+  // Verificar se a imagem já é uma URL completa ou um caminho relativo
+  const imageUrl = product.image 
+    ? (product.image.startsWith('http') ? product.image : `${window.location.origin}${product.image}`)
+    : 'Imagem não disponível';
 
   return `🏪 KAJIM RELÓGIOS – Confirmação de Interesse
 
@@ -47,17 +50,13 @@ Prezados,
 Tenho interesse no seguinte produto:
 
 ⌚ Produto: ${product.name}
-
 🏷️ Marca: ${product.brand}
-
 💰 Preço: ${formatPrice(parseFloat(product.price))}
-
 📦 Categoria: ${product.category || 'Classic'}
+🎯 Modelo: ${product.name}
 
-📱 Modelo: ${product.name}
-
-🔗 Link da Imagem: ${imageUrl}
-
+📸 Imagem do produto:
+${imageUrl}
 
 📅 Data da consulta: ${currentDate} às ${currentTime}
 
@@ -87,22 +86,22 @@ export const generateCartWhatsAppMessage = async (cartItems: any[], totalItems: 
     .map((item, index) => {
       const unitPrice = parseFloat(item.price);
       const subtotal = unitPrice * item.quantity;
-      const imageUrl = item.image ? `${window.location.origin}${item.image}` : 'Imagem não disponível';
+      // Verificar se a imagem já é uma URL completa ou um caminho relativo
+      const imageUrl = item.image 
+        ? (item.image.startsWith('http') ? item.image : `${window.location.origin}${item.image}`)
+        : 'Imagem não disponível';
       const itemNumber = index + 1;
       
       return `${itemNumber}️⃣ ⌚ Produto: ${item.name}
-
 🏷️ Marca: ${item.brand || 'N/A'}
-
 💰 Preço Unitário: ${formatPrice(unitPrice)}
-
 📊 Quantidade: ${item.quantity}
-
 💵 Subtotal: ${formatPrice(subtotal)}
 
-🔗 Link da Imagem: ${imageUrl}
+📸 Imagem do produto:
+${imageUrl}
 
-
+───────────────────────────────────
 `;
     })
     .join('\n');
