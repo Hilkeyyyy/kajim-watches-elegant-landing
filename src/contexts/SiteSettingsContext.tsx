@@ -92,9 +92,9 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ 
       setIsLoading(true);
       console.log('🔄 Buscando configurações via RPC público...');
       
-      // Primeiro tenta via função pública (sem autenticação)
+      // Primeiro tenta via função pública segura (sem dados sensíveis)
       const { data: publicData, error: publicError } = await supabase
-        .rpc('get_site_settings_public');
+        .rpc('get_site_settings_public_secure');
 
       if (!publicError && publicData && publicData.length > 0) {
         console.log('✅ Configurações carregadas via RPC público:', publicData[0]);

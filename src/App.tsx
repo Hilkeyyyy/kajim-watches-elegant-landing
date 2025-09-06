@@ -31,6 +31,7 @@ const ProductEdit = lazy(() => import('@/pages/admin/ProductEdit'));
 const Categories = lazy(() => import('@/pages/admin/Categories'));
 const SiteEditor = lazy(() => import('@/pages/admin/SiteEditor'));
 const Reports = lazy(() => import('@/pages/admin/Reports'));
+const Security = lazy(() => import('@/pages/admin/Security'));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -101,6 +102,7 @@ function App() {
                         <Route path="categorias" element={<Categories />} />
                         <Route path="editor" element={<SiteEditor />} />
                         <Route path="relatorios" element={<Reports />} />
+                        <Route path="seguranca" element={<Security />} />
                       </Route>
 
                       {/* 404 */}

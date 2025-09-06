@@ -12,7 +12,8 @@ import {
   Edit3,
   Home,
   LogOut,
-  User
+  User,
+  Shield
 } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/Button';
@@ -61,6 +62,11 @@ const AdminLayout = () => {
       title: 'Relatórios',
       href: '/admin/relatorios',
       icon: FileText
+    },
+    {
+      title: 'Segurança',
+      href: '/admin/seguranca',
+      icon: Shield
     }
   ];
 

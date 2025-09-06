@@ -597,6 +597,39 @@ export type Database = {
         }
         Relationships: []
       }
+      security_audit_logs: {
+        Row: {
+          created_at: string
+          details: Json | null
+          event_type: string
+          id: string
+          ip_address: unknown | null
+          severity: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          details?: Json | null
+          event_type: string
+          id?: string
+          ip_address?: unknown | null
+          severity?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          details?: Json | null
+          event_type?: string
+          id?: string
+          ip_address?: unknown | null
+          severity?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       site_settings: {
         Row: {
           about_text: string | null
@@ -716,6 +749,28 @@ export type Database = {
           site_title: string
         }[]
       }
+      get_site_settings_public_secure: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          about_text: string
+          editable_sections: Json
+          enable_hero_background_blur: boolean
+          footer_links: Json
+          footer_text: string
+          hero_background_image_url: string
+          hero_gallery: Json
+          hero_image_url: string
+          hero_subtitle: string
+          hero_title: string
+          hero_watch_image_url: string
+          homepage_blocks: Json
+          layout_options: Json
+          mid_banners: Json
+          show_category_carousel: boolean
+          show_mid_banners: boolean
+          site_title: string
+        }[]
+      }
       is_admin: {
         Args: { user_id: string }
         Returns: boolean
@@ -733,7 +788,28 @@ export type Database = {
         }
         Returns: undefined
       }
+      log_security_event: {
+        Args: { p_details?: Json; p_event_type: string; p_severity?: string }
+        Returns: undefined
+      }
+      search_products_secure: {
+        Args: { result_limit?: number; search_term: string }
+        Returns: {
+          brand: string
+          created_at: string
+          description: string
+          id: string
+          image_url: string
+          images: string[]
+          name: string
+          price: number
+        }[]
+      }
       update_user_role: {
+        Args: { new_role: string; target_user_id: string }
+        Returns: boolean
+      }
+      update_user_role_secure: {
         Args: { new_role: string; target_user_id: string }
         Returns: boolean
       }

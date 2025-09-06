@@ -31,7 +31,7 @@ export const BuscarPage: React.FC = () => {
 
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [searchTerm]); // Re-fetch when search term changes
 
   useEffect(() => {
     filterAndSortProducts();
@@ -39,18 +39,46 @@ export const BuscarPage: React.FC = () => {
 
   const fetchProducts = async () => {
     try {
-      const { data: productsData, error } = await supabase
-        .from('products')
-        .select('*')
-        .eq('is_visible', true)
-        .eq('status', 'active')
-        .order('created_at', { ascending: false });
+      if (searchTerm.trim()) {
+        // Use secure search function for search queries
+        const { data: searchData, error } = await supabase.rpc('search_products_secure', {
+          search_term: searchTerm,
+          result_limit: 50 // Higher limit for search page
+        });
 
-      if (error) throw error;
+        if (error) throw error;
 
-      const products = (productsData as SupabaseProduct[] || []).map(convertSupabaseToProduct);
+        // Convert the RPC result to Product format
+        const products: Product[] = (searchData || []).map(item => ({
+          id: item.id,
+          name: item.name,
+          brand: item.brand,
+          description: item.description || '',
+          price: item.price.toString(),
+          image: item.image_url,
+          images: item.images || [],
+          features: [],
+          created_at: item.created_at,
+          updated_at: item.created_at
+        }));
+        
+        setProducts(products);
+      } else {
+        // Load all products when no search term
+        const { data: productsData, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('is_visible', true)
+          .eq('status', 'active')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        const products = (productsData as SupabaseProduct[] || []).map(convertSupabaseToProduct);
+        setProducts(products);
+      }
+      
       console.log(`Produtos carregados: ${products.length}`); // Debug log
-      setProducts(products);
     } catch (error) {
       console.error('Erro ao buscar produtos:', error);
       handleError(error, 'Erro ao carregar produtos');

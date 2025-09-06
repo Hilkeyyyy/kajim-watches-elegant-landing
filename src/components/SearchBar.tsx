@@ -38,21 +38,30 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   }, [searchTerm, debouncedSearch]);
 
   const searchProducts = async (term: string) => {
-    const termSanitized = term.trim();
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .eq('is_visible', true)
-        .eq('status', 'active')
-        .or(`(name.ilike.%${termSanitized}%,brand.ilike.%${termSanitized}%,description.ilike.%${termSanitized}%)`)
-        .order('created_at', { ascending: false })
-        .limit(8);
+      // Use secure search function to prevent SQL injection
+      const { data, error } = await supabase.rpc('search_products_secure', {
+        search_term: term,
+        result_limit: 8
+      });
 
       if (error) throw error;
 
-      const products = (data as SupabaseProduct[] || []).map(convertSupabaseToProduct);
+      // Convert the RPC result to Product format
+      const products: Product[] = (data || []).map(item => ({
+        id: item.id,
+        name: item.name,
+        brand: item.brand,
+        description: item.description || '',
+        price: item.price.toString(), // Convert numeric price to string
+        image: item.image_url,
+        images: item.images || [],
+        features: [], // Features not needed for search results
+        created_at: item.created_at,
+        updated_at: item.created_at // Use created_at as fallback for search results
+      }));
+      
       setResults(products);
       setShowDropdown(products.length > 0 && showResults);
     } catch (error) {
