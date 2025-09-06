@@ -38,31 +38,33 @@ export const generateProductWhatsAppMessage = async (product: any): Promise<stri
     second: '2-digit',
   });
 
-  return `KAJIM RELÓGIOS – Confirmação de Interesse
+  const imageUrl = product.image ? `${window.location.origin}${product.image}` : 'Imagem não disponível';
+
+  return `🏪 KAJIM RELÓGIOS – Confirmação de Interesse
 
 Prezados,
 
 Tenho interesse no seguinte produto:
 
-Produto: ${product.name}
+⌚ Produto: ${product.name}
 
-Marca: ${product.brand}
+🏷️ Marca: ${product.brand}
 
-Preço: ${formatPrice(parseFloat(product.price))}
+💰 Preço: ${formatPrice(parseFloat(product.price))}
 
-Categoria: ${product.category || 'Classic'}
+📦 Categoria: ${product.category || 'Classic'}
 
-Modelo: ${product.name}
+📱 Modelo: ${product.name}
 
-Link da Imagem: Visualizar produto
+🔗 Link da Imagem: ${imageUrl}
 
 
-Data da consulta: ${currentDate} às ${currentTime}
+📅 Data da consulta: ${currentDate} às ${currentTime}
 
 Gostaria de receber mais informações sobre este relógio, bem como detalhes sobre as condições de compra.
 
 Atenciosamente,
-${userName}`;
+${userName} ✨`;
 };
 
 /**
@@ -85,25 +87,27 @@ export const generateCartWhatsAppMessage = async (cartItems: any[], totalItems: 
     .map((item, index) => {
       const unitPrice = parseFloat(item.price);
       const subtotal = unitPrice * item.quantity;
+      const imageUrl = item.image ? `${window.location.origin}${item.image}` : 'Imagem não disponível';
+      const itemNumber = index + 1;
       
-      return `${index + 1}. Produto: ${item.name}
+      return `${itemNumber}️⃣ ⌚ Produto: ${item.name}
 
-Marca: ${item.brand || 'N/A'}
+🏷️ Marca: ${item.brand || 'N/A'}
 
-Preço Unitário: ${formatPrice(unitPrice)}
+💰 Preço Unitário: ${formatPrice(unitPrice)}
 
-Quantidade: ${item.quantity}
+📊 Quantidade: ${item.quantity}
 
-Subtotal: ${formatPrice(subtotal)}
+💵 Subtotal: ${formatPrice(subtotal)}
 
-Link da Imagem: Visualizar produto
+🔗 Link da Imagem: ${imageUrl}
 
 
 `;
     })
     .join('\n');
 
-  return `KAJIM RELÓGIOS – Confirmação de Interesse
+  return `🏪 KAJIM RELÓGIOS – Confirmação de Interesse
 
 Prezados,
 
@@ -111,13 +115,13 @@ Tenho interesse nos seguintes produtos:
 
 ${itemsList}
 
-Quantidade total de itens: ${totalItems}
-Valor total estimado: ${formatPrice(totalValue)}
+📊 Quantidade total de itens: ${totalItems}
+💰 Valor total estimado: ${formatPrice(totalValue)}
 
-Data da consulta: ${currentDate} às ${currentTime}
+📅 Data da consulta: ${currentDate} às ${currentTime}
 
 Gostaria de receber mais informações sobre os produtos listados, bem como detalhes sobre as condições de compra.
 
 Atenciosamente,
-${userName}`;
+${userName} ✨`;
 };
