@@ -10,13 +10,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/Input";
 import { Switch } from "@/components/ui/switch";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+// Removed Radix Select to avoid portal/removeChild issues in admin form
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface ProductFormMetadataProps {
@@ -39,21 +34,17 @@ export const ProductFormMetadata: React.FC<ProductFormMetadataProps> = ({ form }
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Status do Produto</FormLabel>
-                  <Select 
-                    onValueChange={field.onChange} 
-                    value={field.value || 'active'}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione o status" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="active">Ativo</SelectItem>
-                      <SelectItem value="inactive">Inativo</SelectItem>
-                      <SelectItem value="out_of_stock">Sem estoque</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <select
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      value={field.value || 'active'}
+                      onChange={(e) => field.onChange(e.target.value)}
+                    >
+                      <option value="active">Ativo</option>
+                      <option value="inactive">Inativo</option>
+                      <option value="out_of_stock">Sem estoque</option>
+                    </select>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
