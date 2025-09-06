@@ -15,6 +15,7 @@ interface ProductCardProps {
   onProductClick?: (id: string) => void;
   onClick?: () => void;
   showBadgesAtBase?: boolean;
+  badgeStyle?: 'default' | 'hero';
 }
 
 /**
@@ -24,7 +25,8 @@ const OptimizedProductCard: React.FC<ProductCardProps> = memo(({
   product, 
   onProductClick, 
   onClick, 
-  showBadgesAtBase = false 
+  showBadgesAtBase = false,
+  badgeStyle = 'default',
 }) => {
   const { addToCart } = useApp();
   const { notifyCartAction } = useNotifications();
@@ -142,7 +144,13 @@ const OptimizedProductCard: React.FC<ProductCardProps> = memo(({
         {/* Badge de Oferta - Design sofisticado */}
         {isOfferActive && (
           <div className="absolute top-4 left-4 z-10">
-            <div className="px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wide shadow-xl glass-elegant border border-border/40 text-foreground/90">
+            <div
+              className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide shadow-xl backdrop-blur-xl hover:shadow-2xl transition-all duration-300 border 
+                ${badgeStyle === 'hero'
+                  ? 'glass-card bg-gradient-to-r from-foreground/70 to-foreground text-background border-foreground/30'
+                  : 'bg-gradient-to-r from-primary/90 to-primary text-primary-foreground border-primary/40'}
+              `}
+            >
               OFERTA
             </div>
           </div>
@@ -165,7 +173,13 @@ const OptimizedProductCard: React.FC<ProductCardProps> = memo(({
               ESGOTADO
             </div>
           ) : (
-            <div className="bg-gradient-to-r from-foreground to-foreground/90 text-background px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide shadow-xl backdrop-blur-sm border border-foreground/20">
+            <div
+              className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide shadow-xl backdrop-blur-xl hover:shadow-2xl transition-all duration-300 border 
+                ${badgeStyle === 'hero'
+                  ? 'glass-card bg-gradient-to-r from-foreground/70 to-foreground text-background border-foreground/30'
+                  : 'bg-gradient-to-r from-primary/90 to-primary text-primary-foreground border-primary/40'}
+              `}
+            >
               ORIGINAL
             </div>
           )}
@@ -190,11 +204,21 @@ const OptimizedProductCard: React.FC<ProductCardProps> = memo(({
       <CardContent className="p-4 lg:p-5 space-y-3 bg-gradient-to-t from-muted/10 to-transparent">
         {/* Marca - Design luxuoso */}
         <div className="flex items-center justify-between">
-          <p className="text-sm font-bold text-primary uppercase tracking-[0.15em] mb-1 bg-primary/10 px-3 py-1 rounded-full">
+          <p className={`text-sm font-bold uppercase tracking-[0.15em] mb-1 px-3 py-1 rounded-full border 
+            ${badgeStyle === 'hero' 
+              ? 'glass-card bg-background/80 text-foreground/90 border-border/40' 
+              : 'bg-primary text-primary-foreground border-primary/40'}
+          `}>
             <span className="notranslate" translate="no">{product.brand}</span>
           </p>
           {isOfferActive && (
-            <div className="text-xs font-semibold text-foreground/80 glass-elegant px-2 py-1 rounded-full border border-border/40">
+            <div
+              className={`text-xs font-bold px-3 py-1 rounded-full backdrop-blur-xl shadow-lg hover:shadow-xl transition-all duration-300 border 
+                ${badgeStyle === 'hero'
+                  ? 'glass-card bg-gradient-to-r from-foreground/60 to-foreground/80 text-background border-foreground/30'
+                  : 'bg-primary text-primary-foreground border-primary/40'}
+              `}
+            >
               OFERTA EXCLUSIVA
             </div>
           )}

@@ -74,6 +74,7 @@ const OptimizedFeaturedCarousel = memo(() => {
                 <ProductCard
                   product={product}
                   onProductClick={handleProductClick}
+                  badgeStyle="hero"
                 />
               </CarouselItem>
             ))}
