@@ -100,7 +100,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
             <div
               className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide shadow-xl backdrop-blur-xl hover:shadow-2xl transition-all duration-300 border 
                 ${badgeStyle === 'hero'
-                  ? 'glass-card bg-gradient-to-r from-background/80 to-background text-primary-foreground border-border/40'
+                  ? 'glass-card bg-gradient-to-r from-foreground/70 to-foreground text-background border-foreground/30'
                   : 'bg-gradient-to-r from-primary/90 to-primary text-primary-foreground border-primary/40'}
               `}
             >
@@ -124,7 +124,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
           <div
             className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide shadow-xl backdrop-blur-xl hover:shadow-2xl transition-all duration-300 border 
               ${badgeStyle === 'hero'
-                ? 'glass-card bg-gradient-to-r from-background/80 to-background text-primary-foreground border-border/40'
+                ? 'glass-card bg-gradient-to-r from-foreground/70 to-foreground text-background border-foreground/30'
                 : 'bg-gradient-to-r from-primary/90 to-primary text-primary-foreground border-primary/40'}
             `}
           >
@@ -159,7 +159,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
             <div
               className={`text-xs font-bold px-3 py-1 rounded-full backdrop-blur-xl shadow-lg hover:shadow-xl transition-all duration-300 border 
                 ${badgeStyle === 'hero'
-                  ? 'glass-card bg-background/80 text-primary-foreground border-border/40'
+                  ? 'glass-card bg-gradient-to-r from-foreground/60 to-foreground/80 text-background border-foreground/30'
                   : 'bg-primary text-primary-foreground border-primary/40'}
               `}
             >
