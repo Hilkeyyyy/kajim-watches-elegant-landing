@@ -78,7 +78,7 @@ const HeroSection = () => {
       </div>
       
       {/* Hero Image */}
-      <div className="relative z-10 mt-8 md:mt-16 w-full max-w-sm md:max-w-md mx-auto">
+      <div className="relative z-10 mt-8 md:mt-12 lg:mt-16 xl:mt-20 w-full max-w-sm md:max-w-lg lg:max-w-2xl xl:max-w-4xl 2xl:max-w-5xl mx-auto">
         <div className="relative">
           <img 
             src={heroImageUrl} 
