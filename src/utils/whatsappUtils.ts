@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import { formatPrice } from './priceUtils';
+import { formatPrice, parsePrice } from './priceUtils';
 
 /**
  * Busca o nome do usuário logado
@@ -43,7 +43,7 @@ export const generateProductWhatsAppMessage = async (product: any): Promise<stri
     ? (product.image.startsWith('http') ? product.image : `${window.location.origin}${product.image}`)
     : 'Imagem não disponível';
 
-  return `🏪 KAJIM RELÓGIOS – Confirmação de Interesse
+  return `KAJIM RELÓGIOS – Confirmação de Interesse
 
 Prezados,
 
@@ -51,7 +51,7 @@ Tenho interesse no seguinte produto:
 
 ⌚ Produto: ${product.name}
 🏷️ Marca: ${product.brand}
-💰 Preço: ${formatPrice(parseFloat(product.price))}
+💰 Preço: ${formatPrice(typeof product.price === 'number' ? product.price : parsePrice(product.price))}
 📦 Categoria: ${product.category || 'Classic'}
 🎯 Modelo: ${product.name}
 
@@ -63,7 +63,7 @@ ${imageUrl}
 Gostaria de receber mais informações sobre este relógio, bem como detalhes sobre as condições de compra.
 
 Atenciosamente,
-${userName} ✨`;
+${userName}`;
 };
 
 /**
@@ -82,31 +82,59 @@ export const generateCartWhatsAppMessage = async (cartItems: any[], totalItems: 
     second: '2-digit',
   });
 
-  const itemsList = cartItems
-    .map((item, index) => {
-      const unitPrice = parseFloat(item.price);
-      const subtotal = unitPrice * item.quantity;
-      // Verificar se a imagem já é uma URL completa ou um caminho relativo
-      const imageUrl = item.image 
-        ? (item.image.startsWith('http') ? item.image : `${window.location.origin}${item.image}`)
+  const enrichedItems = await Promise.all(
+    cartItems.map(async (item, index) => {
+      const unitPrice = typeof item.price === 'number' ? item.price : parsePrice(item.price);
+      const quantity = Number(item.quantity) || 1;
+      const subtotal = unitPrice * quantity;
+      const imageSrc = (item as any).image || (item as any).image_url;
+      const imageUrl = imageSrc
+        ? (imageSrc.startsWith('http') ? imageSrc : `${window.location.origin}${imageSrc}`)
         : 'Imagem não disponível';
-      const itemNumber = index + 1;
-      
-      return `${itemNumber}️⃣ ⌚ Produto: ${item.name}
-🏷️ Marca: ${item.brand || 'N/A'}
-💰 Preço Unitário: ${formatPrice(unitPrice)}
-📊 Quantidade: ${item.quantity}
-💵 Subtotal: ${formatPrice(subtotal)}
+      const brand =
+        (item as any).brand ||
+        ((item as any).product && (item as any).product.brand) ||
+        (item as any).brand_name ||
+        (() => {
+          const n = ((item as any).name as string) || '';
+          const candidates = [
+            'Rolex','TAG Heuer','Omega','Seiko','Casio','Citizen','Tissot','Audemars Piguet',
+            'Patek Philippe','Cartier','Hublot','Breitling','IWC','Longines','Orient','Breguet','Panerai'
+          ];
+          const match = candidates.find(b => n.toLowerCase().startsWith(b.toLowerCase()));
+          if (match) return match;
+          return n.split(' ').slice(0, 2).join(' ').trim() || 'Marca indisponível';
+        })();
+
+      return {
+        index: index + 1,
+        name: (item as any).name,
+        brand,
+        unitPrice,
+        quantity,
+        subtotal,
+        imageUrl,
+      };
+    })
+  );
+
+  const itemsList = enrichedItems
+    .map((it) => `${it.index}️⃣ ⌚ Produto: ${it.name}
+🏷️ Marca: ${it.brand}
+💰 Preço Unitário: ${formatPrice(it.unitPrice)}
+📊 Quantidade: ${it.quantity}
+💵 Subtotal: ${formatPrice(it.subtotal)}
 
 📸 Imagem do produto:
-${imageUrl}
+${it.imageUrl}
 
 ───────────────────────────────────
-`;
-    })
+`)
     .join('\n');
 
-  return `🏪 KAJIM RELÓGIOS – Confirmação de Interesse
+  const computedTotalValue = enrichedItems.reduce((sum, it) => sum + it.subtotal, 0);
+
+  return `KAJIM RELÓGIOS – Confirmação de Interesse
 
 Prezados,
 
@@ -115,12 +143,12 @@ Tenho interesse nos seguintes produtos:
 ${itemsList}
 
 📊 Quantidade total de itens: ${totalItems}
-💰 Valor total estimado: ${formatPrice(totalValue)}
+💰 Valor total estimado: ${formatPrice(computedTotalValue)}
 
 📅 Data da consulta: ${currentDate} às ${currentTime}
 
 Gostaria de receber mais informações sobre os produtos listados, bem como detalhes sobre as condições de compra.
 
 Atenciosamente,
-${userName} ✨`;
+${userName}`;
 };
