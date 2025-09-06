@@ -86,6 +86,7 @@ export const FeaturedCarousel = () => {
                 <ProductCard
                   product={product}
                   onProductClick={handleProductClick}
+                  badgeStyle="hero"
                 />
               </CarouselItem>
             ))}

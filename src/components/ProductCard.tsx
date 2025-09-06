@@ -16,9 +16,10 @@ interface ProductCardProps {
   onProductClick?: (id: string) => void;
   onClick?: () => void;
   showBadgesAtBase?: boolean;
+  badgeStyle?: 'default' | 'hero';
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onClick, showBadgesAtBase = false }) => {
+export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onClick, showBadgesAtBase = false, badgeStyle = 'default' }) => {
   const { addToCart } = useApp();
   const { notifyCartAction } = useNotifications();
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -76,6 +77,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
             alt={`${product.brand} ${product.name}`}
             className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-110"
             loading="lazy"
+            decoding="async"
           />
           
           {/* Overlay elegante multicamadas */}
@@ -92,10 +94,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
           </div>
         </div>
 
-        {/* Badge de Oferta - Design sutil com fundo escuro */}
+        {/* Badge de Oferta - estilização condicional */}
         {isOfferActive && (
           <div className="absolute top-4 left-4 z-10">
-            <div className="glass-card bg-gradient-to-r from-gray-800/95 to-gray-900/95 text-gray-100 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide shadow-xl backdrop-blur-xl border border-gray-700/50 hover:shadow-2xl transition-all duration-300">
+            <div
+              className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide shadow-xl backdrop-blur-xl hover:shadow-2xl transition-all duration-300 border 
+                ${badgeStyle === 'hero'
+                  ? 'bg-gradient-to-r from-primary/90 to-primary text-primary-foreground border-primary/40'
+                  : 'glass-card bg-gradient-to-r from-background/90 to-background text-foreground/90 border-border/50'}
+              `}
+            >
               OFERTA
             </div>
           </div>
@@ -111,9 +119,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
           />
         </div>
 
-        {/* Badge ORIGINAL - Design sutil com fundo escuro */}
+        {/* Badge ORIGINAL - estilização condicional */}
         <div className="absolute bottom-4 right-4 z-10">
-          <div className="glass-card bg-gradient-to-r from-gray-800/95 to-gray-900/95 text-gray-100 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide shadow-xl backdrop-blur-xl border border-gray-700/50 hover:shadow-2xl transition-all duration-300">
+          <div
+            className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide shadow-xl backdrop-blur-xl hover:shadow-2xl transition-all duration-300 border 
+              ${badgeStyle === 'hero'
+                ? 'bg-gradient-to-r from-primary/90 to-primary text-primary-foreground border-primary/40'
+                : 'glass-card bg-gradient-to-r from-background/90 to-background text-foreground/90 border-border/50'}
+            `}
+          >
             ORIGINAL
           </div>
         </div>
@@ -138,7 +152,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
             <span className="notranslate" translate="no">{product.brand}</span>
           </p>
           {isOfferActive && (
-            <div className="glass-card text-xs font-bold text-gray-100 bg-gray-800/90 px-3 py-1 rounded-full border border-gray-700/50 backdrop-blur-xl shadow-lg hover:shadow-xl transition-all duration-300">
+            <div
+              className={`text-xs font-bold px-3 py-1 rounded-full backdrop-blur-xl shadow-lg hover:shadow-xl transition-all duration-300 border 
+                ${badgeStyle === 'hero'
+                  ? 'bg-primary text-primary-foreground border-primary/40'
+                  : 'glass-card bg-background/90 text-foreground/90 border-border/50'}
+              `}
+            >
               OFERTA EXCLUSIVA
             </div>
           )}
