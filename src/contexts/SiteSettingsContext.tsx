@@ -118,10 +118,10 @@ const defaultSettings: SiteSettings = {
     address: 'Landing pages personalizadas para cada cliente'
   },
   footer_custom_links: [
-    { title: 'Política de Privacidade', url: '#' },
-    { title: 'Termos de Uso', url: '#' },
-    { title: 'Sobre Nós', url: '#' },
-    { title: 'Garantia', url: '#' }
+    { title: 'Política de Privacidade', url: '/politica-privacidade' },
+    { title: 'Termos de Uso', url: '/termos-de-uso' },
+    { title: 'Sobre Nós', url: '/sobre' },
+    { title: 'Garantia', url: '/garantia' }
   ]
 };
 

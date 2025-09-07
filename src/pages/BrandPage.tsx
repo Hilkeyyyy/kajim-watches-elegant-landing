@@ -25,7 +25,7 @@ export const BrandPage = () => {
       const { data, error } = await supabase
         .from('products')
         .select('*')
-        .eq('brand', brandName)
+        .ilike('brand', brandName)
         .eq('is_visible', true)
         .eq('status', 'active')
         .order('created_at', { ascending: false });

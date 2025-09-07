@@ -38,6 +38,8 @@ const Security = lazy(() => import('@/pages/admin/Security'));
 // Public content pages
 const TermsOfService = lazy(() => import('@/pages/TermsOfService'));
 const PrivacyPolicy = lazy(() => import('@/pages/PrivacyPolicy'));
+const About = lazy(() => import('@/pages/About'));
+const Warranty = lazy(() => import('@/pages/Warranty'));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -96,16 +98,26 @@ function App() {
                            <BrandPage />
                          </ErrorBoundaryOptimized>
                        } />
-                       <Route path="/termos-de-uso" element={
-                         <ErrorBoundaryOptimized>
-                           <TermsOfService />
-                         </ErrorBoundaryOptimized>
-                       } />
-                       <Route path="/politica-privacidade" element={
-                         <ErrorBoundaryOptimized>
-                           <PrivacyPolicy />
-                         </ErrorBoundaryOptimized>
-                       } />
+              <Route path="/termos-de-uso" element={
+                <ErrorBoundaryOptimized>
+                  <TermsOfService />
+                </ErrorBoundaryOptimized>
+              } />
+              <Route path="/politica-privacidade" element={
+                <ErrorBoundaryOptimized>
+                  <PrivacyPolicy />
+                </ErrorBoundaryOptimized>
+              } />
+              <Route path="/sobre" element={
+                <ErrorBoundaryOptimized>
+                  <About />
+                </ErrorBoundaryOptimized>
+              } />
+              <Route path="/garantia" element={
+                <ErrorBoundaryOptimized>
+                  <Warranty />
+                </ErrorBoundaryOptimized>
+              } />
                        <Route path="/auth" element={<Auth />} />
 
                       {/* Admin routes */}
