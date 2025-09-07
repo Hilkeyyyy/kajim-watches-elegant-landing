@@ -26,32 +26,33 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
 
-  const debouncedSearch = React.useMemo(() => debounce((t: string) => searchProducts(t), 300), []);
-
-  useEffect(() => {
-    if (searchTerm.length >= 2) {
-      debouncedSearch(searchTerm);
-    } else {
+  const searchProducts = React.useCallback(async (term: string) => {
+    console.log('Buscando por:', term, '| Length:', term.length);
+    
+    if (!term.trim() || term.length < 2) {
+      console.log('Termo muito curto, limpando resultados');
       setResults([]);
       setShowDropdown(false);
+      return;
     }
-  }, [searchTerm, debouncedSearch]);
 
-  const searchProducts = async (term: string) => {
     setIsLoading(true);
+    console.log('Iniciando busca para:', term.trim());
+    
     try {
-      // Tentar usar função de busca segura primeiro
+      // Busca principal usando função segura
       const { data, error } = await supabase.rpc('search_products_secure', {
-        search_term: term,
+        search_term: term.trim(),
         result_limit: 8
       });
 
       if (error) {
-        console.warn('Erro na busca segura, tentando busca direta:', error);
+        console.error('Erro na função de busca:', error);
         throw error;
       }
 
-      // Converter para formato Product
+      console.log('Dados retornados da busca:', data?.length || 0, 'produtos');
+
       const products: Product[] = (data || []).map(item => ({
         id: item.id,
         name: item.name,
@@ -67,48 +68,35 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       
       setResults(products);
       setShowDropdown(products.length > 0 && showResults);
+      console.log('Resultados definidos:', products.length, '| Dropdown:', products.length > 0 && showResults);
     } catch (error) {
-      console.error('Erro na busca:', error);
-      
-      // Fallback: busca direta na tabela de produtos
-      try {
-        const sanitizedTerm = term.trim().toLowerCase();
-        const { data: fallbackData, error: fallbackError } = await supabase
-          .from('products')
-          .select('id, name, brand, description, price, image_url, images, created_at')
-          .eq('is_visible', true)
-          .eq('status', 'active')
-          .or(`name.ilike.%${sanitizedTerm}%,brand.ilike.%${sanitizedTerm}%,description.ilike.%${sanitizedTerm}%`)
-          .order('is_featured', { ascending: false })
-          .order('created_at', { ascending: false })
-          .limit(8);
-
-        if (fallbackError) throw fallbackError;
-
-        const fallbackProducts: Product[] = (fallbackData || []).map(item => ({
-          id: item.id,
-          name: item.name,
-          brand: item.brand,
-          description: item.description || '',
-          price: item.price.toString(),
-          image: item.image_url,
-          images: item.images || [],
-          features: [],
-          created_at: item.created_at,
-          updated_at: item.created_at
-        }));
-        
-        setResults(fallbackProducts);
-        setShowDropdown(fallbackProducts.length > 0 && showResults);
-      } catch (fallbackError) {
-        console.error('Erro no fallback de busca:', fallbackError);
-        setResults([]);
-        setShowDropdown(false);
-      }
+      console.error('Erro completo na busca:', error);
+      setResults([]);
+      setShowDropdown(false);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [showResults]);
+
+  const debouncedSearch = React.useMemo(
+    () => debounce((t: string) => {
+      console.log('Debounce executado para:', t);
+      if (t.trim() && t.length >= 2) {
+        searchProducts(t);
+      } else {
+        console.log('Limpando por debounce');
+        setResults([]);
+        setShowDropdown(false);
+        setIsLoading(false);
+      }
+    }, 300),
+    [searchProducts]
+  );
+
+  useEffect(() => {
+    console.log('SearchTerm mudou para:', searchTerm);
+    debouncedSearch(searchTerm);
+  }, [searchTerm, debouncedSearch]);
 
   const handleSearch = () => {
     if (searchTerm.trim()) {
@@ -130,9 +118,11 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   const clearSearch = () => {
+    console.log('Limpando busca...');
     setSearchTerm('');
     setResults([]);
     setShowDropdown(false);
+    setIsLoading(false);
   };
 
   return (

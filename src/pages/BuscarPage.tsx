@@ -30,28 +30,21 @@ export const BuscarPage: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    setLoading(true);
     fetchProducts();
-  }, [searchTerm]); // Re-fetch when search term changes
-
-  useEffect(() => {
-    filterAndSortProducts();
-  }, [searchTerm, products, sortBy]);
+  }, [searchTerm]);
 
   const fetchProducts = async () => {
     try {
       if (searchTerm.trim()) {
-        // Usar função de busca segura
+        // Busca usando função segura
         const { data: searchData, error } = await supabase.rpc('search_products_secure', {
-          search_term: searchTerm,
-          result_limit: 100 // Limite maior para página de busca
+          search_term: searchTerm.trim(),
+          result_limit: 100
         });
 
-        if (error) {
-          console.warn('Erro na busca segura, tentando busca direta:', error);
-          throw error;
-        }
+        if (error) throw error;
 
-        // Converter resultado para formato Product
         const products: Product[] = (searchData || []).map(item => ({
           id: item.id,
           name: item.name,
@@ -66,8 +59,9 @@ export const BuscarPage: React.FC = () => {
         }));
         
         setProducts(products);
+        setFilteredProducts(sortProducts(products, sortBy));
       } else {
-        // Carregar todos os produtos quando não há termo de busca
+        // Carregar todos os produtos quando não há busca
         const { data: productsData, error } = await supabase
           .from('products')
           .select('*')
@@ -81,66 +75,26 @@ export const BuscarPage: React.FC = () => {
 
         const products = (productsData as SupabaseProduct[] || []).map(convertSupabaseToProduct);
         setProducts(products);
+        setFilteredProducts(sortProducts(products, sortBy));
       }
-      
     } catch (error) {
       console.error('Erro ao buscar produtos:', error);
-      
-      // Fallback: busca direta quando função RPC falha
-      try {
-        if (searchTerm.trim()) {
-          const sanitizedTerm = searchTerm.trim().toLowerCase();
-          const { data: fallbackData, error: fallbackError } = await supabase
-            .from('products')
-            .select('*')
-            .eq('is_visible', true)
-            .eq('status', 'active')
-            .or(`name.ilike.%${sanitizedTerm}%,brand.ilike.%${sanitizedTerm}%,description.ilike.%${sanitizedTerm}%`)
-            .order('is_featured', { ascending: false })
-            .order('created_at', { ascending: false })
-            .limit(100);
-
-          if (fallbackError) throw fallbackError;
-
-          const fallbackProducts = (fallbackData as SupabaseProduct[] || []).map(convertSupabaseToProduct);
-          setProducts(fallbackProducts);
-        } else {
-          setProducts([]);
-        }
-      } catch (fallbackError) {
-        console.error('Erro no fallback de busca:', fallbackError);
-        handleError(fallbackError, 'Erro ao carregar produtos');
-        setProducts([]);
-      }
+      handleError(error, 'Erro ao carregar produtos');
+      setProducts([]);
+      setFilteredProducts([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const filterAndSortProducts = () => {
-    let filtered = products;
-
-    // Filtrar por termo de busca
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      filtered = filtered.filter(product =>
-        product.name.toLowerCase().includes(term) ||
-        product.brand.toLowerCase().includes(term) ||
-        (product.description && product.description.toLowerCase().includes(term))
-      );
-    }
-
-    // Ordenar
-    filtered.sort((a, b) => {
+  const sortProducts = (products: Product[], sortBy: string): Product[] => {
+    const sorted = [...products];
+    sorted.sort((a, b) => {
       switch (sortBy) {
         case 'price_asc':
-          const priceA = parseFloat(String(a.price)) || 0;
-          const priceB = parseFloat(String(b.price)) || 0;
-          return priceA - priceB;
+          return parseFloat(String(a.price) || '0') - parseFloat(String(b.price) || '0');
         case 'price_desc':
-          const priceA2 = parseFloat(String(a.price)) || 0;
-          const priceB2 = parseFloat(String(b.price)) || 0;
-          return priceB2 - priceA2;
+          return parseFloat(String(b.price) || '0') - parseFloat(String(a.price) || '0');
         case 'brand':
           return a.brand.localeCompare(b.brand, 'pt-BR', { sensitivity: 'base' });
         case 'newest':
@@ -152,9 +106,13 @@ export const BuscarPage: React.FC = () => {
           return a.name.localeCompare(b.name, 'pt-BR', { sensitivity: 'base' });
       }
     });
-
-    setFilteredProducts(filtered);
+    return sorted;
   };
+
+  // Atualizar filteredProducts quando sortBy mudar
+  useEffect(() => {
+    setFilteredProducts(sortProducts(products, sortBy));
+  }, [products, sortBy]);
 
 
   const handleProductClick = (id: string) => {
