@@ -1,9 +1,23 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Shield, CheckCircle, Clock, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { supabase } from '@/integrations/supabase/client';
 
 export const Warranty = () => {
+  const [content, setContent] = useState<{ title: string; body: string }>({ title: 'Garantia', body: '' });
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      const { data, error } = await supabase.rpc('get_content_block_public', { p_content_key: 'warranty' });
+      if (!error && data && data.length > 0) {
+        setContent({ title: data[0].title || 'Garantia', body: data[0].body || '' });
+      }
+    };
+    fetchContent();
+    document.title = `${content.title} | KAJIM`;
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/5 to-background">
       <div className="container mx-auto px-4 py-8">
@@ -16,7 +30,7 @@ export const Warranty = () => {
           </Button>
           <div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent font-serif">
-              Garantia
+              {content.title}
             </h1>
             <p className="text-muted-foreground font-light">
               Proteção completa para seu investimento
@@ -37,9 +51,9 @@ export const Warranty = () => {
               Suporte Completo e Confiável
             </h2>
             
-            <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-              Todos os nossos relógios vêm com garantia internacional completa, assegurando proteção total para seu investimento.
-            </p>
+            <div className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto whitespace-pre-wrap">
+              {content.body || 'Todos os nossos relógios vêm com garantia internacional completa, assegurando proteção total para seu investimento.'}
+            </div>
           </div>
 
           {/* Warranty Coverage */}

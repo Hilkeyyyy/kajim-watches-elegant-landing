@@ -1,9 +1,23 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Shield, Award, Clock, Star } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { supabase } from '@/integrations/supabase/client';
 
 export const About = () => {
+  const [content, setContent] = useState<{ title: string; body: string }>({ title: 'Sobre Nós', body: '' });
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      const { data, error } = await supabase.rpc('get_content_block_public', { p_content_key: 'about_us' });
+      if (!error && data && data.length > 0) {
+        setContent({ title: data[0].title || 'Sobre Nós', body: data[0].body || '' });
+      }
+    };
+    fetchContent();
+    document.title = `${content.title} | KAJIM`;
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/5 to-background">
       <div className="container mx-auto px-4 py-8">
@@ -16,7 +30,7 @@ export const About = () => {
           </Button>
           <div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent font-serif">
-              Sobre Nós
+              {content.title}
             </h1>
             <p className="text-muted-foreground font-light">
               Conheça nossa história e compromisso
@@ -37,9 +51,9 @@ export const About = () => {
               KAJIM RELÓGIOS
             </h2>
             
-            <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-              Uma combinação entre precisão, elegância e acessibilidade. Especializados em relógios 100% originais com garantia internacional.
-            </p>
+            <div className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto whitespace-pre-wrap">
+              {content.body || 'KAJIM WATCHES é uma combinação entre precisão, elegância e acessibilidade. Relógios 100% originais com garantia.'}
+            </div>
           </div>
 
           {/* Features Grid */}
