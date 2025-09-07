@@ -1,22 +1,39 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Shield, Award, Clock, Star } from 'lucide-react';
+import { ArrowLeft, Star } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { supabase } from '@/integrations/supabase/client';
 
 export const About = () => {
-  const [content, setContent] = useState<{ title: string; body: string }>({ title: 'Sobre Nós', body: '' });
+  const [content, setContent] = useState<{ title: string; body: string; extra?: any }>({ title: 'Sobre Nós', body: '', extra: undefined });
 
   useEffect(() => {
     const fetchContent = async () => {
       const { data, error } = await supabase.rpc('get_content_block_public', { p_content_key: 'about_us' });
       if (!error && data && data.length > 0) {
-        setContent({ title: data[0].title || 'Sobre Nós', body: data[0].body || '' });
+        const row = data[0];
+        setContent({ title: row.title || 'Sobre Nós', body: row.body || '', extra: row.extra || {} });
+        document.title = `${row.title || 'Sobre Nós'} | KAJIM`;
+      } else {
+        document.title = 'Sobre Nós | KAJIM';
       }
     };
     fetchContent();
-    document.title = `${content.title} | KAJIM`;
   }, []);
+
+  const defaultBrands = [
+    { name: 'HAMILTON', flag: '🇺🇸', description: 'Tradição americana desde 1892, famosa pelos relógios militares e de aviação com precisão incomparável.' },
+    { name: 'SEIKO', flag: '🇯🇵', description: 'Pioneira japonesa em inovação relojoeira, criadora do movimento quartzo e dos icônicos mergulhadores.' },
+    { name: 'BALTIC', flag: '🇫🇷', description: 'Marca francesa contemporânea que une design vintage com tecnologia moderna em peças exclusivas.' },
+    { name: 'CITIZEN', flag: '🇯🇵', description: 'Líder mundial em tecnologia Eco-Drive, relógios movidos à luz com autonomia excepcional.' },
+    { name: 'TAG HEUER', flag: '🇨🇭', description: 'Suíça pura, especialista em cronógrafos esportivos e relógios de alta performance desde 1860.' },
+    { name: 'BULOVA', flag: '🇺🇸', description: 'Americana histórica, pioneira em precisão e design inovador há mais de 145 anos.' },
+    { name: 'VENEZIANICO', flag: '🇮🇹', description: 'Italiana artesanal que celebra a tradição veneziana com relógios únicos e elegantes.' },
+  ];
+
+  const brands = Array.isArray(content?.extra?.brands) && content.extra.brands.length > 0
+    ? content.extra.brands
+    : defaultBrands;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/5 to-background">
@@ -56,37 +73,17 @@ export const About = () => {
             </div>
           </div>
 
-          {/* Features Grid */}
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center space-y-4 p-6 rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm">
-              <div className="w-16 h-16 mx-auto bg-gradient-to-r from-primary/20 to-accent/20 rounded-full flex items-center justify-center">
-                <Shield className="h-8 w-8 text-primary" />
+          {/* Brands Grid */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {brands.map((brand: any, idx: number) => (
+              <div key={idx} className="p-6 rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm hover:shadow-lg transition-shadow">
+                <div className="w-16 h-16 mx-auto bg-gradient-to-r from-primary/20 to-accent/20 rounded-full flex items-center justify-center text-2xl">
+                  <span aria-hidden="true">{brand.flag || '⌚'}</span>
+                </div>
+                <h3 className="mt-4 text-center text-xl font-semibold">{brand.flag ? `${brand.flag} ${brand.name}` : brand.name}</h3>
+                <p className="mt-2 text-center text-muted-foreground">{brand.description}</p>
               </div>
-              <h3 className="text-xl font-semibold">100% Originais</h3>
-              <p className="text-muted-foreground">
-                Todos os nossos relógios são autênticos com certificado de originalidade e garantia internacional.
-              </p>
-            </div>
-
-            <div className="text-center space-y-4 p-6 rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm">
-              <div className="w-16 h-16 mx-auto bg-gradient-to-r from-primary/20 to-accent/20 rounded-full flex items-center justify-center">
-                <Award className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold">Qualidade Premium</h3>
-              <p className="text-muted-foreground">
-                Cada peça é cuidadosamente selecionada para oferecer a você a experiência de luxo que merece.
-              </p>
-            </div>
-
-            <div className="text-center space-y-4 p-6 rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm">
-              <div className="w-16 h-16 mx-auto bg-gradient-to-r from-primary/20 to-accent/20 rounded-full flex items-center justify-center">
-                <Clock className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold">Atendimento Personalizado</h3>
-              <p className="text-muted-foreground">
-                Criamos landing pages personalizadas para cada cliente, garantindo uma experiência única.
-              </p>
-            </div>
+            ))}
           </div>
 
           {/* Mission Statement */}
