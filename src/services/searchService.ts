@@ -71,34 +71,77 @@ class SearchService {
   }
 
   private async performSearch(searchTerm: string, limit: number): Promise<Product[]> {
-    const { data, error } = await supabase.rpc('search_products_json', {
-      search_term: searchTerm,
-      result_limit: limit
-    });
+    try {
+      const { data, error } = await supabase.rpc('search_products_json', {
+        search_term: searchTerm,
+        result_limit: limit
+      });
 
-    if (error) {
-      console.error('Erro na função de busca:', error);
-      throw new Error('Erro ao buscar produtos');
+      if (error) throw error;
+
+      if (!data || !Array.isArray(data)) {
+        return [];
+      }
+
+      return data.map((item: any): Product => ({
+        id: item.id,
+        name: item.name || '',
+        brand: item.brand || '',
+        description: item.description || '',
+        price: item.price || '0',
+        original_price: item.original_price ?? item.price ?? '0',
+        image: item.image,
+        images: item.images || [],
+        features: item.features || [],
+        status: item.status || 'active',
+        created_at: item.created_at,
+        updated_at: item.updated_at
+      }));
+    } catch (rpcError) {
+      console.warn('RPC search failed, using fallback query:', rpcError);
+
+      const { data: rows, error: qError } = await supabase
+        .from('products')
+        .select('id,name,brand,description,price,original_price,image_url,images,features,status,created_at,updated_at,is_visible')
+        .eq('is_visible', true)
+        .eq('status', 'active')
+        .or(`name.ilike.%${searchTerm}%,brand.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`)
+        .limit(limit);
+
+      if (qError) {
+        console.error('Fallback search failed:', qError);
+        throw new Error('Erro ao buscar produtos');
+      }
+
+      if (!rows || !Array.isArray(rows)) return [];
+
+      const termLower = searchTerm.toLowerCase();
+      const sorted = [...rows].sort((a: any, b: any) => {
+        const an = (a.name || '').toLowerCase();
+        const bn = (b.name || '').toLowerCase();
+        const ab = (a.brand || '').toLowerCase();
+        const bb = (b.brand || '').toLowerCase();
+        const aStarts = an.startsWith(termLower) ? 0 : ab.startsWith(termLower) ? 1 : 2;
+        const bStarts = bn.startsWith(termLower) ? 0 : bb.startsWith(termLower) ? 1 : 2;
+        if (aStarts !== bStarts) return aStarts - bStarts;
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      });
+
+      return sorted.map((item: any): Product => ({
+        id: item.id,
+        name: item.name || '',
+        brand: item.brand || '',
+        description: item.description || '',
+        price: item.price != null ? String(item.price) : '0',
+        original_price: item.original_price != null ? String(item.original_price) : (item.price != null ? String(item.price) : '0'),
+        image: item.image_url,
+        images: item.images || [],
+        features: item.features || [],
+        status: item.status || 'active',
+        created_at: item.created_at,
+        updated_at: item.updated_at
+      }));
     }
-
-    if (!data || !Array.isArray(data)) {
-      return [];
-    }
-
-    return data.map((item: any): Product => ({
-      id: item.id,
-      name: item.name || '',
-      brand: item.brand || '',
-      description: item.description || '',
-      price: item.price || '0',
-      original_price: item.original_price,
-      image: item.image,
-      images: item.images || [],
-      features: item.features || [],
-      status: item.status || 'active',
-      created_at: item.created_at,
-      updated_at: item.updated_at
-    }));
   }
 
   // Debounced search para uso em tempo real
