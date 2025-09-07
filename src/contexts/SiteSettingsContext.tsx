@@ -139,7 +139,7 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ 
       
       // Primeiro tenta via função pública segura (sem dados sensíveis)
       const { data: publicData, error: publicError } = await supabase
-        .rpc('get_site_settings_public_secure');
+        .rpc('get_site_settings_public');
 
       if (!publicError && publicData && publicData.length > 0) {
         console.log('✅ Configurações carregadas via RPC público:', publicData[0]);
@@ -241,7 +241,8 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ 
         (payload) => {
           console.log('🔄 Configurações atualizadas em tempo real:', payload);
           if (payload.new) {
-            setSettings(prev => ({ ...prev, ...payload.new }));
+            const converted = convertSupabaseData(payload.new);
+            setSettings(prev => ({ ...prev, ...converted }));
           }
         }
       )
