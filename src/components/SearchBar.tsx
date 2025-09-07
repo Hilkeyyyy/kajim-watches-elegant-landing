@@ -40,32 +40,71 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const searchProducts = async (term: string) => {
     setIsLoading(true);
     try {
-      // Use secure search function to prevent SQL injection
+      // Tentar usar função de busca segura primeiro
       const { data, error } = await supabase.rpc('search_products_secure', {
         search_term: term,
         result_limit: 8
       });
 
-      if (error) throw error;
+      if (error) {
+        console.warn('Erro na busca segura, tentando busca direta:', error);
+        throw error;
+      }
 
-      // Convert the RPC result to Product format
+      // Converter para formato Product
       const products: Product[] = (data || []).map(item => ({
         id: item.id,
         name: item.name,
         brand: item.brand,
         description: item.description || '',
-        price: item.price.toString(), // Convert numeric price to string
+        price: item.price.toString(),
         image: item.image_url,
         images: item.images || [],
-        features: [], // Features not needed for search results
+        features: [],
         created_at: item.created_at,
-        updated_at: item.created_at // Use created_at as fallback for search results
+        updated_at: item.created_at
       }));
       
       setResults(products);
       setShowDropdown(products.length > 0 && showResults);
     } catch (error) {
       console.error('Erro na busca:', error);
+      
+      // Fallback: busca direta na tabela de produtos
+      try {
+        const sanitizedTerm = term.trim().toLowerCase();
+        const { data: fallbackData, error: fallbackError } = await supabase
+          .from('products')
+          .select('id, name, brand, description, price, image_url, images, created_at')
+          .eq('is_visible', true)
+          .eq('status', 'active')
+          .or(`name.ilike.%${sanitizedTerm}%,brand.ilike.%${sanitizedTerm}%,description.ilike.%${sanitizedTerm}%`)
+          .order('is_featured', { ascending: false })
+          .order('created_at', { ascending: false })
+          .limit(8);
+
+        if (fallbackError) throw fallbackError;
+
+        const fallbackProducts: Product[] = (fallbackData || []).map(item => ({
+          id: item.id,
+          name: item.name,
+          brand: item.brand,
+          description: item.description || '',
+          price: item.price.toString(),
+          image: item.image_url,
+          images: item.images || [],
+          features: [],
+          created_at: item.created_at,
+          updated_at: item.created_at
+        }));
+        
+        setResults(fallbackProducts);
+        setShowDropdown(fallbackProducts.length > 0 && showResults);
+      } catch (fallbackError) {
+        console.error('Erro no fallback de busca:', fallbackError);
+        setResults([]);
+        setShowDropdown(false);
+      }
     } finally {
       setIsLoading(false);
     }

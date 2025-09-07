@@ -40,15 +40,18 @@ export const BuscarPage: React.FC = () => {
   const fetchProducts = async () => {
     try {
       if (searchTerm.trim()) {
-        // Use secure search function for search queries
+        // Usar função de busca segura
         const { data: searchData, error } = await supabase.rpc('search_products_secure', {
           search_term: searchTerm,
-          result_limit: 50 // Higher limit for search page
+          result_limit: 100 // Limite maior para página de busca
         });
 
-        if (error) throw error;
+        if (error) {
+          console.warn('Erro na busca segura, tentando busca direta:', error);
+          throw error;
+        }
 
-        // Convert the RPC result to Product format
+        // Converter resultado para formato Product
         const products: Product[] = (searchData || []).map(item => ({
           id: item.id,
           name: item.name,
@@ -64,13 +67,15 @@ export const BuscarPage: React.FC = () => {
         
         setProducts(products);
       } else {
-        // Load all products when no search term
+        // Carregar todos os produtos quando não há termo de busca
         const { data: productsData, error } = await supabase
           .from('products')
           .select('*')
           .eq('is_visible', true)
           .eq('status', 'active')
-          .order('created_at', { ascending: false });
+          .order('is_featured', { ascending: false })
+          .order('created_at', { ascending: false })
+          .limit(100);
 
         if (error) throw error;
 
@@ -78,10 +83,35 @@ export const BuscarPage: React.FC = () => {
         setProducts(products);
       }
       
-      console.log(`Produtos carregados: ${products.length}`); // Debug log
     } catch (error) {
       console.error('Erro ao buscar produtos:', error);
-      handleError(error, 'Erro ao carregar produtos');
+      
+      // Fallback: busca direta quando função RPC falha
+      try {
+        if (searchTerm.trim()) {
+          const sanitizedTerm = searchTerm.trim().toLowerCase();
+          const { data: fallbackData, error: fallbackError } = await supabase
+            .from('products')
+            .select('*')
+            .eq('is_visible', true)
+            .eq('status', 'active')
+            .or(`name.ilike.%${sanitizedTerm}%,brand.ilike.%${sanitizedTerm}%,description.ilike.%${sanitizedTerm}%`)
+            .order('is_featured', { ascending: false })
+            .order('created_at', { ascending: false })
+            .limit(100);
+
+          if (fallbackError) throw fallbackError;
+
+          const fallbackProducts = (fallbackData as SupabaseProduct[] || []).map(convertSupabaseToProduct);
+          setProducts(fallbackProducts);
+        } else {
+          setProducts([]);
+        }
+      } catch (fallbackError) {
+        console.error('Erro no fallback de busca:', fallbackError);
+        handleError(fallbackError, 'Erro ao carregar produtos');
+        setProducts([]);
+      }
     } finally {
       setLoading(false);
     }
