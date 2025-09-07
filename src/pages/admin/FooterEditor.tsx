@@ -73,6 +73,8 @@ const FooterEditor = () => {
     try {
       setIsSaving(true);
       
+      console.log('🔄 Salvando configurações do footer:', { contactInfo, socialLinks, customLinks });
+      
       const updatedSettings = {
         footer_contact_info: contactInfo,
         social_links: socialLinks,
@@ -82,12 +84,19 @@ const FooterEditor = () => {
       const result = await updateSettings(updatedSettings);
       
       if (result.success) {
+        console.log('✅ Footer salvo com sucesso!');
         toast.success('✅ Configurações do footer salvas com sucesso!');
+        
+        // Force re-fetch to ensure UI reflects saved data
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       } else {
+        console.error('❌ Erro ao salvar footer:', result.error);
         toast.error('Erro ao salvar configurações: ' + result.error);
       }
     } catch (error) {
-      console.error('Erro ao salvar footer:', error);
+      console.error('❌ Erro inesperado ao salvar footer:', error);
       toast.error('Erro inesperado ao salvar configurações');
     } finally {
       setIsSaving(false);
@@ -290,9 +299,12 @@ const FooterEditor = () => {
               
               {customLinks.length === 0 && (
                 <div className="text-center py-8 text-muted-foreground">
-                  Nenhum link personalizado adicionado.
-                  <br />
-                  Clique em "Adicionar Link" para começar.
+                  <p className="mb-2">Nenhum link personalizado adicionado.</p>
+                  <p className="text-sm">Clique em "Adicionar Link" para começar.</p>
+                  <p className="text-xs mt-2 text-gray-500">
+                    Links padrão (Política de Privacidade, Termos de Uso, Sobre Nós, Garantia) 
+                    serão exibidos automaticamente até você adicionar links personalizados.
+                  </p>
                 </div>
               )}
             </CardContent>

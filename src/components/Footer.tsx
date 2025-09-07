@@ -1,6 +1,6 @@
 import { useSiteSettingsContext } from '@/contexts/SiteSettingsContext';
 import { LoadingSpinner } from './LoadingSpinner';
-import { Shield, Award, Clock, Phone, Mail, MapPin, Instagram, Facebook, Twitter, MessageCircle } from "lucide-react";
+import { Shield, Award, Clock, Phone, Mail, MapPin, Instagram, Facebook, Twitter, MessageCircle, FileText, Info } from "lucide-react";
 import { Link } from 'react-router-dom';
 
 const Footer = () => {
@@ -169,15 +169,77 @@ const Footer = () => {
             </h3>
             
             <div className="space-y-3">
-              {customLinks.map((link, index) => (
-                <Link
-                  key={index}
-                  to={link.url}
-                  className="block text-slate-300 hover:text-primary text-sm transition-colors duration-200 hover:translate-x-1 transform"
-                >
-                  {link.title}
-                </Link>
-              ))}
+              {customLinks.length > 0 ? (
+                customLinks.map((link, index) => (
+                  <div key={index} className="flex items-center gap-3 group">
+                    <div className="w-8 h-8 bg-gradient-to-r from-primary/30 to-accent/30 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:from-primary/40 group-hover:to-accent/40 transition-all duration-200 shadow-md">
+                      {link.title.toLowerCase().includes('privacidade') && <Shield className="h-4 w-4 text-white drop-shadow-sm" />}
+                      {link.title.toLowerCase().includes('termos') && <FileText className="h-4 w-4 text-white drop-shadow-sm" />}
+                      {link.title.toLowerCase().includes('sobre') && <Info className="h-4 w-4 text-white drop-shadow-sm" />}
+                      {link.title.toLowerCase().includes('garantia') && <Shield className="h-4 w-4 text-white drop-shadow-sm" />}
+                      {!link.title.toLowerCase().includes('privacidade') && 
+                       !link.title.toLowerCase().includes('termos') && 
+                       !link.title.toLowerCase().includes('sobre') && 
+                       !link.title.toLowerCase().includes('garantia') && 
+                       <FileText className="h-4 w-4 text-white drop-shadow-sm" />}
+                    </div>
+                    <Link
+                      to={link.url}
+                      className="block text-slate-300 hover:text-primary text-sm transition-colors duration-200 hover:translate-x-1 transform"
+                    >
+                      {link.title}
+                    </Link>
+                  </div>
+                ))
+              ) : (
+                // Links padrão se nenhum customizado foi configurado
+                <>
+                  <div className="flex items-center gap-3 group">
+                    <div className="w-8 h-8 bg-gradient-to-r from-primary/30 to-accent/30 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:from-primary/40 group-hover:to-accent/40 transition-all duration-200 shadow-md">
+                      <Shield className="h-4 w-4 text-white drop-shadow-sm" />
+                    </div>
+                    <Link
+                      to="/politica-privacidade"
+                      className="block text-slate-300 hover:text-primary text-sm transition-colors duration-200 hover:translate-x-1 transform"
+                    >
+                      Política de Privacidade
+                    </Link>
+                  </div>
+                  <div className="flex items-center gap-3 group">
+                    <div className="w-8 h-8 bg-gradient-to-r from-primary/30 to-accent/30 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:from-primary/40 group-hover:to-accent/40 transition-all duration-200 shadow-md">
+                      <FileText className="h-4 w-4 text-white drop-shadow-sm" />
+                    </div>
+                    <Link
+                      to="/termos-de-uso"
+                      className="block text-slate-300 hover:text-primary text-sm transition-colors duration-200 hover:translate-x-1 transform"
+                    >
+                      Termos de Uso
+                    </Link>
+                  </div>
+                  <div className="flex items-center gap-3 group">
+                    <div className="w-8 h-8 bg-gradient-to-r from-primary/30 to-accent/30 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:from-primary/40 group-hover:to-accent/40 transition-all duration-200 shadow-md">
+                      <Info className="h-4 w-4 text-white drop-shadow-sm" />
+                    </div>
+                    <Link
+                      to="/sobre"
+                      className="block text-slate-300 hover:text-primary text-sm transition-colors duration-200 hover:translate-x-1 transform"
+                    >
+                      Sobre Nós
+                    </Link>
+                  </div>
+                  <div className="flex items-center gap-3 group">
+                    <div className="w-8 h-8 bg-gradient-to-r from-primary/30 to-accent/30 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:from-primary/40 group-hover:to-accent/40 transition-all duration-200 shadow-md">
+                      <Shield className="h-4 w-4 text-white drop-shadow-sm" />
+                    </div>
+                    <Link
+                      to="/garantia"
+                      className="block text-slate-300 hover:text-primary text-sm transition-colors duration-200 hover:translate-x-1 transform"
+                    >
+                      Garantia
+                    </Link>
+                  </div>
+                </>
+              )}
             </div>
             
             {settings.additional_info && (
