@@ -45,6 +45,22 @@ interface SiteSettingsContextType {
   refetch: () => Promise<void>;
 }
 
+// Helper function to convert Supabase data to expected types
+const convertSupabaseData = (data: any): SiteSettings => {
+  return {
+    ...data,
+    hero_gallery: Array.isArray(data.hero_gallery) ? data.hero_gallery : [],
+    mid_banners: Array.isArray(data.mid_banners) ? data.mid_banners : [],
+    homepage_blocks: Array.isArray(data.homepage_blocks) ? data.homepage_blocks : [],
+    footer_links: Array.isArray(data.footer_links) ? data.footer_links : [],
+    layout_options: typeof data.layout_options === 'object' && data.layout_options ? data.layout_options : {},
+    editable_sections: typeof data.editable_sections === 'object' && data.editable_sections ? data.editable_sections : {},
+    social_links: typeof data.social_links === 'object' && data.social_links && !Array.isArray(data.social_links) ? data.social_links : {},
+    footer_contact_info: typeof data.footer_contact_info === 'object' && data.footer_contact_info && !Array.isArray(data.footer_contact_info) ? data.footer_contact_info : {},
+    footer_custom_links: Array.isArray(data.footer_custom_links) ? data.footer_custom_links : [],
+  };
+};
+
 const defaultSettings: SiteSettings = {
   site_title: 'KAJIM RELÓGIOS',
   hero_title: 'KAJIM RELÓGIOS',
@@ -127,19 +143,11 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
       if (!publicError && publicData && publicData.length > 0) {
         console.log('✅ Configurações carregadas via RPC público:', publicData[0]);
-      const mergedSettings = {
-        ...defaultSettings,
-        ...publicData[0],
-        hero_gallery: Array.isArray(publicData[0].hero_gallery) ? publicData[0].hero_gallery : defaultSettings.hero_gallery,
-        mid_banners: Array.isArray(publicData[0].mid_banners) ? publicData[0].mid_banners : defaultSettings.mid_banners,
-        homepage_blocks: Array.isArray(publicData[0].homepage_blocks) ? publicData[0].homepage_blocks : defaultSettings.homepage_blocks,
-        footer_links: Array.isArray(publicData[0].footer_links) ? publicData[0].footer_links : defaultSettings.footer_links,
-        layout_options: typeof publicData[0].layout_options === 'object' && publicData[0].layout_options ? publicData[0].layout_options : defaultSettings.layout_options,
-        editable_sections: typeof publicData[0].editable_sections === 'object' && publicData[0].editable_sections ? publicData[0].editable_sections : defaultSettings.editable_sections,
-        social_links: typeof publicData[0].social_links === 'object' && publicData[0].social_links ? publicData[0].social_links : defaultSettings.social_links,
-        footer_contact_info: typeof publicData[0].footer_contact_info === 'object' && publicData[0].footer_contact_info ? publicData[0].footer_contact_info : defaultSettings.footer_contact_info,
-        footer_custom_links: Array.isArray(publicData[0].footer_custom_links) ? publicData[0].footer_custom_links : defaultSettings.footer_custom_links,
-      };
+        const convertedSettings = convertSupabaseData(publicData[0]);
+        const mergedSettings = {
+          ...defaultSettings,
+          ...convertedSettings,
+        };
         setSettings(mergedSettings);
         return;
       }
@@ -161,18 +169,10 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
       if (data) {
         console.log('✅ Configurações carregadas via acesso direto:', data);
+        const convertedSettings = convertSupabaseData(data);
         const mergedSettings = {
           ...defaultSettings,
-          ...data,
-          hero_gallery: Array.isArray(data.hero_gallery) ? data.hero_gallery : defaultSettings.hero_gallery,
-          mid_banners: Array.isArray(data.mid_banners) ? data.mid_banners : defaultSettings.mid_banners,
-          homepage_blocks: Array.isArray(data.homepage_blocks) ? data.homepage_blocks : defaultSettings.homepage_blocks,
-          footer_links: Array.isArray(data.footer_links) ? data.footer_links : defaultSettings.footer_links,
-          layout_options: typeof data.layout_options === 'object' && data.layout_options ? data.layout_options : defaultSettings.layout_options,
-          editable_sections: typeof data.editable_sections === 'object' && data.editable_sections ? data.editable_sections : defaultSettings.editable_sections,
-          social_links: typeof data.social_links === 'object' && data.social_links ? data.social_links : defaultSettings.social_links,
-          footer_contact_info: typeof data.footer_contact_info === 'object' && data.footer_contact_info ? data.footer_contact_info : defaultSettings.footer_contact_info,
-          footer_custom_links: Array.isArray(data.footer_custom_links) ? data.footer_custom_links : defaultSettings.footer_custom_links,
+          ...convertedSettings,
         };
         setSettings(mergedSettings);
       } else {
@@ -203,15 +203,10 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ 
       console.log('✅ Configurações salvas com sucesso via RPC:', data);
       
       // Atualiza o estado local com os dados retornados
+      const convertedData = convertSupabaseData(data);
       const updatedSettings = {
         ...defaultSettings,
-        ...data,
-        hero_gallery: Array.isArray(data.hero_gallery) ? data.hero_gallery : defaultSettings.hero_gallery,
-        mid_banners: Array.isArray(data.mid_banners) ? data.mid_banners : defaultSettings.mid_banners,
-        homepage_blocks: Array.isArray(data.homepage_blocks) ? data.homepage_blocks : defaultSettings.homepage_blocks,
-        footer_links: Array.isArray(data.footer_links) ? data.footer_links : defaultSettings.footer_links,
-        layout_options: typeof data.layout_options === 'object' && data.layout_options ? data.layout_options : defaultSettings.layout_options,
-        editable_sections: typeof data.editable_sections === 'object' && data.editable_sections ? data.editable_sections : defaultSettings.editable_sections,
+        ...convertedData,
       };
       setSettings(updatedSettings);
       

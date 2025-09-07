@@ -30,8 +30,14 @@ const ProductCreate = lazy(() => import('@/pages/admin/ProductCreate'));
 const ProductEdit = lazy(() => import('@/pages/admin/ProductEdit'));
 const Categories = lazy(() => import('@/pages/admin/Categories'));
 const SiteEditor = lazy(() => import('@/pages/admin/SiteEditor'));
+const FooterEditor = lazy(() => import('@/pages/admin/FooterEditor'));
+const ContentEditor = lazy(() => import('@/pages/admin/ContentEditor'));
 const Reports = lazy(() => import('@/pages/admin/Reports'));
 const Security = lazy(() => import('@/pages/admin/Security'));
+
+// Public content pages
+const TermsOfService = lazy(() => import('@/pages/TermsOfService'));
+const PrivacyPolicy = lazy(() => import('@/pages/PrivacyPolicy'));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -84,13 +90,23 @@ function App() {
                         <ErrorBoundaryOptimized>
                           <CategoryPage />
                         </ErrorBoundaryOptimized>
-                      } />
-                      <Route path="/marca/:brand" element={
-                        <ErrorBoundaryOptimized>
-                          <BrandPage />
-                        </ErrorBoundaryOptimized>
-                      } />
-                      <Route path="/auth" element={<Auth />} />
+                       } />
+                       <Route path="/marca/:brand" element={
+                         <ErrorBoundaryOptimized>
+                           <BrandPage />
+                         </ErrorBoundaryOptimized>
+                       } />
+                       <Route path="/termos-de-uso" element={
+                         <ErrorBoundaryOptimized>
+                           <TermsOfService />
+                         </ErrorBoundaryOptimized>
+                       } />
+                       <Route path="/politica-privacidade" element={
+                         <ErrorBoundaryOptimized>
+                           <PrivacyPolicy />
+                         </ErrorBoundaryOptimized>
+                       } />
+                       <Route path="/auth" element={<Auth />} />
 
                       {/* Admin routes */}
                       <Route path="/admin" element={<AdminLayout />}>
@@ -98,11 +114,13 @@ function App() {
                         <Route path="dashboard" element={<Dashboard />} />
                         <Route path="produtos" element={<Products />} />
                         <Route path="produtos/novo" element={<ProductCreate />} />
-                        <Route path="produtos/editar/:id" element={<ProductEdit />} />
-                        <Route path="categorias" element={<Categories />} />
-                        <Route path="editor" element={<SiteEditor />} />
-                        <Route path="relatorios" element={<Reports />} />
-                        <Route path="seguranca" element={<Security />} />
+                         <Route path="produtos/editar/:id" element={<ProductEdit />} />
+                         <Route path="categorias" element={<Categories />} />
+                         <Route path="editor" element={<SiteEditor />} />
+                         <Route path="editor-rodape" element={<FooterEditor />} />
+                         <Route path="editor-conteudo" element={<ContentEditor />} />
+                         <Route path="relatorios" element={<Reports />} />
+                         <Route path="seguranca" element={<Security />} />
                       </Route>
 
                       {/* 404 */}

@@ -107,8 +107,8 @@ const Footer = () => {
             <div className="space-y-4">
               {contactInfo.phone && (
                 <div className="flex items-start gap-3 group">
-                  <div className="w-8 h-8 bg-gradient-to-r from-primary/20 to-accent/20 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:from-primary/30 group-hover:to-accent/30 transition-all duration-200">
-                    <Phone className="h-4 w-4 text-primary" />
+                  <div className="w-8 h-8 bg-gradient-to-r from-primary/30 to-accent/30 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:from-primary/40 group-hover:to-accent/40 transition-all duration-200 shadow-md">
+                    <Phone className="h-4 w-4 text-white drop-shadow-sm" />
                   </div>
                   <div>
                     <p className="text-white/90 text-sm font-medium mb-1">Telefone</p>
@@ -119,8 +119,8 @@ const Footer = () => {
               
               {contactInfo.email && (
                 <div className="flex items-start gap-3 group">
-                  <div className="w-8 h-8 bg-gradient-to-r from-primary/20 to-accent/20 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:from-primary/30 group-hover:to-accent/30 transition-all duration-200">
-                    <Mail className="h-4 w-4 text-primary" />
+                  <div className="w-8 h-8 bg-gradient-to-r from-primary/30 to-accent/30 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:from-primary/40 group-hover:to-accent/40 transition-all duration-200 shadow-md">
+                    <Mail className="h-4 w-4 text-white drop-shadow-sm" />
                   </div>
                   <div>
                     <p className="text-white/90 text-sm font-medium mb-1">E-mail</p>
@@ -131,8 +131,8 @@ const Footer = () => {
               
               {contactInfo.address && (
                 <div className="flex items-start gap-3 group">
-                  <div className="w-8 h-8 bg-gradient-to-r from-primary/20 to-accent/20 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:from-primary/30 group-hover:to-accent/30 transition-all duration-200">
-                    <MapPin className="h-4 w-4 text-primary" />
+                  <div className="w-8 h-8 bg-gradient-to-r from-primary/30 to-accent/30 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:from-primary/40 group-hover:to-accent/40 transition-all duration-200 shadow-md">
+                    <MapPin className="h-4 w-4 text-white drop-shadow-sm" />
                   </div>
                   <div>
                     <p className="text-white/90 text-sm font-medium mb-1">Atendimento</p>
@@ -170,13 +170,13 @@ const Footer = () => {
             
             <div className="space-y-3">
               {customLinks.map((link, index) => (
-                <a
+                <Link
                   key={index}
-                  href={link.url}
+                  to={link.url}
                   className="block text-slate-300 hover:text-primary text-sm transition-colors duration-200 hover:translate-x-1 transform"
                 >
                   {link.title}
-                </a>
+                </Link>
               ))}
             </div>
             
@@ -198,19 +198,19 @@ const Footer = () => {
               
               <div className="relative z-10 space-y-4">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 bg-gradient-to-r from-primary/20 to-accent/20 rounded-full">
-                    <Shield className="h-5 w-5 text-primary" />
+                  <div className="p-2 bg-gradient-to-r from-primary/30 to-accent/30 rounded-full shadow-md">
+                    <Shield className="h-5 w-5 text-white drop-shadow-sm" />
                   </div>
                   <span className="text-white font-bold text-sm">100% ORIGINAL</span>
                 </div>
                 
-                <div className="flex items-center gap-3 text-white/80 text-sm">
-                  <Award className="h-4 w-4 text-accent flex-shrink-0" />
+                <div className="flex items-center gap-3 text-white/90 text-sm">
+                  <Award className="h-4 w-4 text-white drop-shadow-sm flex-shrink-0" />
                   <span>Certificado de autenticidade</span>
                 </div>
                 
-                <div className="flex items-center gap-3 text-white/80 text-sm">
-                  <Clock className="h-4 w-4 text-accent flex-shrink-0" />
+                <div className="flex items-center gap-3 text-white/90 text-sm">
+                  <Clock className="h-4 w-4 text-white drop-shadow-sm flex-shrink-0" />
                   <span>Garantia internacional</span>
                 </div>
                 

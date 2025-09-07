@@ -59,9 +59,19 @@ const AdminLayout = () => {
       icon: Edit3
     },
     {
+      title: 'Editor do Rodapé',
+      href: '/admin/editor-rodape',
+      icon: Edit3
+    },
+    {
+      title: 'Editor de Conteúdo',
+      href: '/admin/editor-conteudo',
+      icon: FileText
+    },
+    {
       title: 'Relatórios',
       href: '/admin/relatorios',
-      icon: FileText
+      icon: BarChart3
     },
     {
       title: 'Segurança',
