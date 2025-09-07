@@ -22,10 +22,8 @@ const Footer = () => {
   const customLinks = settings.footer_custom_links || [];
 
   const handleWhatsAppClick = () => {
-    if (socialLinks.whatsapp) {
-      const message = encodeURIComponent('Olá! Gostaria de saber mais sobre os relógios disponíveis.');
-      window.open(`https://wa.me/${socialLinks.whatsapp}?text=${message}`, '_blank');
-    }
+    const message = encodeURIComponent('Olá! Gostaria de saber mais sobre os relógios disponíveis.');
+    window.open(`https://wa.me/559181993435?text=${message}`, '_blank');
   };
 
   return (
@@ -38,30 +36,34 @@ const Footer = () => {
             {settings.site_title}
           </h2>
           
-          {/* Social Icons */}
-          <div className="flex justify-center gap-4">
-            {socialLinks.whatsapp && (
-              <button
-                onClick={handleWhatsAppClick}
-                className="group relative w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center hover:from-green-600 hover:to-green-700 transition-all duration-300 transform hover:scale-110 shadow-lg hover:shadow-green-500/25"
-              >
-                <MessageCircle className="h-6 w-6 text-white" />
-                <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
-                  Entre em contato
-                </div>
-              </button>
-            )}
+          {/* Social Icons - Estilo KAJIM Premium */}
+          <div className="flex justify-center gap-6">
+            {/* WhatsApp - Sempre visível com link direto KAJIM */}
+            <button
+              onClick={handleWhatsAppClick}
+              className="group relative w-16 h-16 bg-gradient-to-r from-green-500 via-green-600 to-emerald-600 rounded-2xl flex items-center justify-center hover:from-green-600 hover:via-green-700 hover:to-emerald-700 transition-all duration-500 transform hover:scale-110 hover:rotate-3 shadow-2xl hover:shadow-green-500/40 border border-green-400/20"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-emerald-400/20 rounded-2xl blur-sm group-hover:blur-md transition-all duration-500" />
+              <MessageCircle className="h-8 w-8 text-white relative z-10 drop-shadow-lg" />
+              <div className="absolute -top-14 left-1/2 transform -translate-x-1/2 bg-black/90 text-white text-sm py-2 px-4 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap shadow-xl border border-green-500/20">
+                <span className="font-semibold">WhatsApp KAJIM</span>
+                <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-black/90"></div>
+              </div>
+            </button>
             
+            {/* Instagram - Com estilo KAJIM quando configurado */}
             {socialLinks.instagram && (
               <a
                 href={socialLinks.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group relative w-12 h-12 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center hover:from-pink-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-110 shadow-lg hover:shadow-pink-500/25"
+                className="group relative w-16 h-16 bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 rounded-2xl flex items-center justify-center hover:from-purple-600 hover:via-pink-600 hover:to-rose-600 transition-all duration-500 transform hover:scale-110 hover:-rotate-3 shadow-2xl hover:shadow-pink-500/40 border border-purple-400/20"
               >
-                <Instagram className="h-6 w-6 text-white" />
-                <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                  Instagram
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-400/20 to-rose-400/20 rounded-2xl blur-sm group-hover:blur-md transition-all duration-500" />
+                <Instagram className="h-8 w-8 text-white relative z-10 drop-shadow-lg" />
+                <div className="absolute -top-14 left-1/2 transform -translate-x-1/2 bg-black/90 text-white text-sm py-2 px-4 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap shadow-xl border border-purple-500/20">
+                  <span className="font-semibold">Instagram KAJIM</span>
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-black/90"></div>
                 </div>
               </a>
             )}
