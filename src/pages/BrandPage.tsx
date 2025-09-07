@@ -66,9 +66,9 @@ export const BrandPage = () => {
             </Link>
           </Button>
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent font-serif">
-              {brandName}
-            </h1>
+             <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent font-serif uppercase">
+               {brandName}
+             </h1>
             <p className="text-muted-foreground font-light">
               {products.length} {products.length === 1 ? 'produto encontrado' : 'produtos encontrados'}
             </p>
