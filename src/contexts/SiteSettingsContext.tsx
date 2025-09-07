@@ -23,17 +23,8 @@ interface SiteSettings {
   show_category_carousel?: boolean;
   layout_options?: any;
   editable_sections?: any;
-  social_links?: {
-    whatsapp?: string;
-    instagram?: string;
-    facebook?: string;
-    twitter?: string;
-  };
-  footer_contact_info?: {
-    phone?: string;
-    email?: string;
-    address?: string;
-  };
+  social_links?: any;
+  footer_contact_info?: any;
   footer_custom_links?: any[];
   [key: string]: any;
 }
@@ -123,23 +114,11 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ 
       
       // Primeiro tenta via função pública segura (sem dados sensíveis)
       const { data: publicData, error: publicError } = await supabase
-        .rpc('get_site_settings_public_secure');
+        .rpc('get_site_settings_public');
 
       if (!publicError && publicData && publicData.length > 0) {
         console.log('✅ Configurações carregadas via RPC público:', publicData[0]);
-      const mergedSettings = {
-        ...defaultSettings,
-        ...publicData[0],
-        hero_gallery: Array.isArray(publicData[0].hero_gallery) ? publicData[0].hero_gallery : defaultSettings.hero_gallery,
-        mid_banners: Array.isArray(publicData[0].mid_banners) ? publicData[0].mid_banners : defaultSettings.mid_banners,
-        homepage_blocks: Array.isArray(publicData[0].homepage_blocks) ? publicData[0].homepage_blocks : defaultSettings.homepage_blocks,
-        footer_links: Array.isArray(publicData[0].footer_links) ? publicData[0].footer_links : defaultSettings.footer_links,
-        layout_options: typeof publicData[0].layout_options === 'object' && publicData[0].layout_options ? publicData[0].layout_options : defaultSettings.layout_options,
-        editable_sections: typeof publicData[0].editable_sections === 'object' && publicData[0].editable_sections ? publicData[0].editable_sections : defaultSettings.editable_sections,
-        social_links: typeof publicData[0].social_links === 'object' && publicData[0].social_links ? publicData[0].social_links : defaultSettings.social_links,
-        footer_contact_info: typeof publicData[0].footer_contact_info === 'object' && publicData[0].footer_contact_info ? publicData[0].footer_contact_info : defaultSettings.footer_contact_info,
-        footer_custom_links: Array.isArray(publicData[0].footer_custom_links) ? publicData[0].footer_custom_links : defaultSettings.footer_custom_links,
-      };
+        const mergedSettings = { ...defaultSettings, ...publicData[0] };
         setSettings(mergedSettings);
         return;
       }
@@ -161,19 +140,7 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
       if (data) {
         console.log('✅ Configurações carregadas via acesso direto:', data);
-        const mergedSettings = {
-          ...defaultSettings,
-          ...data,
-          hero_gallery: Array.isArray(data.hero_gallery) ? data.hero_gallery : defaultSettings.hero_gallery,
-          mid_banners: Array.isArray(data.mid_banners) ? data.mid_banners : defaultSettings.mid_banners,
-          homepage_blocks: Array.isArray(data.homepage_blocks) ? data.homepage_blocks : defaultSettings.homepage_blocks,
-          footer_links: Array.isArray(data.footer_links) ? data.footer_links : defaultSettings.footer_links,
-          layout_options: typeof data.layout_options === 'object' && data.layout_options ? data.layout_options : defaultSettings.layout_options,
-          editable_sections: typeof data.editable_sections === 'object' && data.editable_sections ? data.editable_sections : defaultSettings.editable_sections,
-          social_links: typeof data.social_links === 'object' && data.social_links ? data.social_links : defaultSettings.social_links,
-          footer_contact_info: typeof data.footer_contact_info === 'object' && data.footer_contact_info ? data.footer_contact_info : defaultSettings.footer_contact_info,
-          footer_custom_links: Array.isArray(data.footer_custom_links) ? data.footer_custom_links : defaultSettings.footer_custom_links,
-        };
+        const mergedSettings = { ...defaultSettings, ...data };
         setSettings(mergedSettings);
       } else {
         console.log('⚠️ Nenhuma configuração encontrada, usando padrões');
@@ -203,16 +170,7 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ 
       console.log('✅ Configurações salvas com sucesso via RPC:', data);
       
       // Atualiza o estado local com os dados retornados
-      const updatedSettings = {
-        ...defaultSettings,
-        ...data,
-        hero_gallery: Array.isArray(data.hero_gallery) ? data.hero_gallery : defaultSettings.hero_gallery,
-        mid_banners: Array.isArray(data.mid_banners) ? data.mid_banners : defaultSettings.mid_banners,
-        homepage_blocks: Array.isArray(data.homepage_blocks) ? data.homepage_blocks : defaultSettings.homepage_blocks,
-        footer_links: Array.isArray(data.footer_links) ? data.footer_links : defaultSettings.footer_links,
-        layout_options: typeof data.layout_options === 'object' && data.layout_options ? data.layout_options : defaultSettings.layout_options,
-        editable_sections: typeof data.editable_sections === 'object' && data.editable_sections ? data.editable_sections : defaultSettings.editable_sections,
-      };
+      const updatedSettings = { ...defaultSettings, ...data };
       setSettings(updatedSettings);
       
       // Force refetch from database to ensure we have the latest persisted data

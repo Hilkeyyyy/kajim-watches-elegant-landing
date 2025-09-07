@@ -742,6 +742,8 @@ export type Database = {
           contact_info: string
           editable_sections: Json
           enable_hero_background_blur: boolean
+          footer_contact_info: Json
+          footer_custom_links: Json
           footer_links: Json
           footer_text: string
           hero_background_image_url: string
@@ -756,6 +758,7 @@ export type Database = {
           show_category_carousel: boolean
           show_mid_banners: boolean
           site_title: string
+          social_links: Json
         }[]
       }
       get_site_settings_public_secure: {
