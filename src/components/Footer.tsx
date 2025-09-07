@@ -16,7 +16,7 @@ const Footer = () => {
     );
   }
 
-  const brands = ['ROLEX', 'TAG Heuer', 'HAMILTON', 'VENEZIANICO'];
+  const brands = ['HAMILTON', 'SEIKO', 'BALTIC', 'CITIZEN', 'TAG HEUER', 'BULOVA', 'VENEZIANICO'];
   const socialLinks = settings.social_links || {};
   const contactInfo = settings.footer_contact_info || {};
   const customLinks = settings.footer_custom_links || [];
