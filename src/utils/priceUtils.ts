@@ -36,8 +36,14 @@ export const parsePrice = (priceString: string): number => {
   return Math.round(result * 100) / 100;
 };
 
-export const formatPrice = (price: number): string => {
-  return price.toLocaleString('pt-BR', {
+export const formatPrice = (price: string | number | null | undefined): string => {
+  if (!price || price === '') return 'R$ 0,00';
+  
+  const numericPrice = typeof price === 'string' ? parseFloat(price) : price;
+  
+  if (isNaN(numericPrice)) return 'R$ 0,00';
+  
+  return numericPrice.toLocaleString('pt-BR', {
     style: 'currency',
     currency: 'BRL',
   });

@@ -804,6 +804,10 @@ export type Database = {
         Args: { p_details?: Json; p_event_type: string; p_severity?: string }
         Returns: undefined
       }
+      search_products_json: {
+        Args: { result_limit?: number; search_term: string }
+        Returns: Json
+      }
       search_products_secure: {
         Args: { result_limit?: number; search_term: string }
         Returns: {

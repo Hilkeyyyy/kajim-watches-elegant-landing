@@ -7,10 +7,10 @@ import { Input } from '@/components/ui/Input';
 import { Card, CardContent } from '@/components/ui/card';
 import { ProductCard } from '@/components/ProductCard';
 import { MobileNavigation } from '@/components/MobileNavigation';
-import { supabase } from '@/integrations/supabase/client';
 import { Product } from '@/types/product';
-import { SupabaseProduct, convertSupabaseToProduct } from '@/types/supabase-product';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
+import { searchService } from '@/services/searchService';
+import { formatPrice } from '@/utils/priceUtils';
 import { 
   Select,
   SelectContent,
@@ -36,47 +36,19 @@ export const BuscarPage: React.FC = () => {
 
   const fetchProducts = async () => {
     try {
+      let products: Product[] = [];
+      
       if (searchTerm.trim()) {
-        // Busca usando função segura
-        const { data: searchData, error } = await supabase.rpc('search_products_secure', {
-          search_term: searchTerm.trim(),
-          result_limit: 100
-        });
-
-        if (error) throw error;
-
-        const products: Product[] = (searchData || []).map(item => ({
-          id: item.id,
-          name: item.name,
-          brand: item.brand,
-          description: item.description || '',
-          price: item.price.toString(),
-          image: item.image_url,
-          images: item.images || [],
-          features: [],
-          created_at: item.created_at,
-          updated_at: item.created_at
-        }));
-        
-        setProducts(products);
-        setFilteredProducts(sortProducts(products, sortBy));
+        // Usar o serviço de busca otimizado
+        products = await searchService.searchProducts(searchTerm.trim(), 100);
       } else {
-        // Carregar todos os produtos quando não há busca
-        const { data: productsData, error } = await supabase
-          .from('products')
-          .select('*')
-          .eq('is_visible', true)
-          .eq('status', 'active')
-          .order('is_featured', { ascending: false })
-          .order('created_at', { ascending: false })
-          .limit(100);
-
-        if (error) throw error;
-
-        const products = (productsData as SupabaseProduct[] || []).map(convertSupabaseToProduct);
-        setProducts(products);
-        setFilteredProducts(sortProducts(products, sortBy));
+        // Usar o serviço de produtos para todos os produtos
+        const { productService } = await import('@/services/productService');
+        products = await productService.getAllProducts();
       }
+      
+      setProducts(products);
+      setFilteredProducts(sortProducts(products, sortBy));
     } catch (error) {
       console.error('Erro ao buscar produtos:', error);
       handleError(error, 'Erro ao carregar produtos');
@@ -92,9 +64,13 @@ export const BuscarPage: React.FC = () => {
     sorted.sort((a, b) => {
       switch (sortBy) {
         case 'price_asc':
-          return parseFloat(String(a.price) || '0') - parseFloat(String(b.price) || '0');
+          const priceA = parseFloat(String(a.price) || '0');
+          const priceB = parseFloat(String(b.price) || '0');
+          return priceA - priceB;
         case 'price_desc':
-          return parseFloat(String(b.price) || '0') - parseFloat(String(a.price) || '0');
+          const priceA2 = parseFloat(String(a.price) || '0');
+          const priceB2 = parseFloat(String(b.price) || '0');
+          return priceB2 - priceA2;
         case 'brand':
           return a.brand.localeCompare(b.brand, 'pt-BR', { sensitivity: 'base' });
         case 'newest':

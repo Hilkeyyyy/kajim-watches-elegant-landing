@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, X } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
-import { supabase } from '@/integrations/supabase/client';
 import { Product } from '@/types';
-import { convertSupabaseToProduct, SupabaseProduct } from '@/types/supabase-product';
 import { Card, CardContent } from '@/components/ui/card';
-import { debounce } from '@/utils/debounce';
+import { searchService } from '@/services/searchService';
+import { formatPrice } from '@/utils/priceUtils';
 
 interface SearchBarProps {
   placeholder?: string;
@@ -26,51 +25,21 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
 
-  const searchProducts = React.useCallback(async (term: string) => {
-    console.log('Buscando por:', term, '| Length:', term.length);
-    
+  const searchProducts = useCallback(async (term: string) => {
     if (!term.trim() || term.length < 2) {
-      console.log('Termo muito curto, limpando resultados');
       setResults([]);
       setShowDropdown(false);
       return;
     }
 
     setIsLoading(true);
-    console.log('Iniciando busca para:', term.trim());
     
     try {
-      // Busca principal usando função segura
-      const { data, error } = await supabase.rpc('search_products_secure', {
-        search_term: term.trim(),
-        result_limit: 8
-      });
-
-      if (error) {
-        console.error('Erro na função de busca:', error);
-        throw error;
-      }
-
-      console.log('Dados retornados da busca:', data?.length || 0, 'produtos');
-
-      const products: Product[] = (data || []).map(item => ({
-        id: item.id,
-        name: item.name,
-        brand: item.brand,
-        description: item.description || '',
-        price: item.price.toString(),
-        image: item.image_url,
-        images: item.images || [],
-        features: [],
-        created_at: item.created_at,
-        updated_at: item.created_at
-      }));
-      
+      const products = await searchService.searchProducts(term.trim(), 8);
       setResults(products);
       setShowDropdown(products.length > 0 && showResults);
-      console.log('Resultados definidos:', products.length, '| Dropdown:', products.length > 0 && showResults);
     } catch (error) {
-      console.error('Erro completo na busca:', error);
+      console.error('Erro na busca:', error);
       setResults([]);
       setShowDropdown(false);
     } finally {
@@ -78,25 +47,26 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     }
   }, [showResults]);
 
-  const debouncedSearch = React.useMemo(
-    () => debounce((t: string) => {
-      console.log('Debounce executado para:', t);
-      if (t.trim() && t.length >= 2) {
-        searchProducts(t);
-      } else {
-        console.log('Limpando por debounce');
-        setResults([]);
-        setShowDropdown(false);
-        setIsLoading(false);
-      }
-    }, 300),
-    [searchProducts]
-  );
+  // Usar debounced search do serviço
+  const handleSearchInput = useCallback((term: string) => {
+    if (!term.trim() || term.length < 2) {
+      setResults([]);
+      setShowDropdown(false);
+      setIsLoading(false);
+      return;
+    }
+    
+    setIsLoading(true);
+    searchService.debouncedSearch(term, (products) => {
+      setResults(products);
+      setShowDropdown(products.length > 0 && showResults);
+      setIsLoading(false);
+    }, 8);
+  }, [showResults]);
 
   useEffect(() => {
-    console.log('SearchTerm mudou para:', searchTerm);
-    debouncedSearch(searchTerm);
-  }, [searchTerm, debouncedSearch]);
+    handleSearchInput(searchTerm);
+  }, [searchTerm, handleSearchInput]);
 
   const handleSearch = () => {
     if (searchTerm.trim()) {
@@ -118,7 +88,6 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   const clearSearch = () => {
-    console.log('Limpando busca...');
     setSearchTerm('');
     setResults([]);
     setShowDropdown(false);
@@ -175,10 +144,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                         <span className="notranslate" translate="no">{product.brand}</span> <span className="notranslate" translate="no">{product.name}</span>
                       </p>
                       <p className="text-sm font-bold text-primary">
-                        {typeof product.price === 'string' 
-                          ? `R$ ${parseFloat(product.price).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
-                          : `R$ ${Number(product.price).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
-                        }
+                        {formatPrice(product.price)}
                       </p>
                     </div>
                   </div>
