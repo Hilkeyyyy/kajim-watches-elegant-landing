@@ -23,6 +23,18 @@ interface SiteSettings {
   show_category_carousel?: boolean;
   layout_options?: any;
   editable_sections?: any;
+  social_links?: {
+    whatsapp?: string;
+    instagram?: string;
+    facebook?: string;
+    twitter?: string;
+  };
+  footer_contact_info?: {
+    phone?: string;
+    email?: string;
+    address?: string;
+  };
+  footer_custom_links?: any[];
   [key: string]: any;
 }
 
@@ -77,7 +89,24 @@ const defaultSettings: SiteSettings = {
       }
     ],
     custom_blocks: []
-  }
+  },
+  social_links: {
+    whatsapp: '5586988388124',
+    instagram: '',
+    facebook: '',
+    twitter: ''
+  },
+  footer_contact_info: {
+    phone: '(86) 9 8838-8124',
+    email: 'contato@kajim.com.br',
+    address: 'Landing pages personalizadas para cada cliente'
+  },
+  footer_custom_links: [
+    { title: 'Política de Privacidade', url: '#' },
+    { title: 'Termos de Uso', url: '#' },
+    { title: 'Sobre Nós', url: '#' },
+    { title: 'Garantia', url: '#' }
+  ]
 };
 
 const SiteSettingsContext = createContext<SiteSettingsContextType | undefined>(undefined);
@@ -98,16 +127,19 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
       if (!publicError && publicData && publicData.length > 0) {
         console.log('✅ Configurações carregadas via RPC público:', publicData[0]);
-        const mergedSettings = {
-          ...defaultSettings,
-          ...publicData[0],
-          hero_gallery: Array.isArray(publicData[0].hero_gallery) ? publicData[0].hero_gallery : defaultSettings.hero_gallery,
-          mid_banners: Array.isArray(publicData[0].mid_banners) ? publicData[0].mid_banners : defaultSettings.mid_banners,
-          homepage_blocks: Array.isArray(publicData[0].homepage_blocks) ? publicData[0].homepage_blocks : defaultSettings.homepage_blocks,
-          footer_links: Array.isArray(publicData[0].footer_links) ? publicData[0].footer_links : defaultSettings.footer_links,
-          layout_options: typeof publicData[0].layout_options === 'object' && publicData[0].layout_options ? publicData[0].layout_options : defaultSettings.layout_options,
-          editable_sections: typeof publicData[0].editable_sections === 'object' && publicData[0].editable_sections ? publicData[0].editable_sections : defaultSettings.editable_sections,
-        };
+      const mergedSettings = {
+        ...defaultSettings,
+        ...publicData[0],
+        hero_gallery: Array.isArray(publicData[0].hero_gallery) ? publicData[0].hero_gallery : defaultSettings.hero_gallery,
+        mid_banners: Array.isArray(publicData[0].mid_banners) ? publicData[0].mid_banners : defaultSettings.mid_banners,
+        homepage_blocks: Array.isArray(publicData[0].homepage_blocks) ? publicData[0].homepage_blocks : defaultSettings.homepage_blocks,
+        footer_links: Array.isArray(publicData[0].footer_links) ? publicData[0].footer_links : defaultSettings.footer_links,
+        layout_options: typeof publicData[0].layout_options === 'object' && publicData[0].layout_options ? publicData[0].layout_options : defaultSettings.layout_options,
+        editable_sections: typeof publicData[0].editable_sections === 'object' && publicData[0].editable_sections ? publicData[0].editable_sections : defaultSettings.editable_sections,
+        social_links: typeof publicData[0].social_links === 'object' && publicData[0].social_links ? publicData[0].social_links : defaultSettings.social_links,
+        footer_contact_info: typeof publicData[0].footer_contact_info === 'object' && publicData[0].footer_contact_info ? publicData[0].footer_contact_info : defaultSettings.footer_contact_info,
+        footer_custom_links: Array.isArray(publicData[0].footer_custom_links) ? publicData[0].footer_custom_links : defaultSettings.footer_custom_links,
+      };
         setSettings(mergedSettings);
         return;
       }
@@ -138,6 +170,9 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ 
           footer_links: Array.isArray(data.footer_links) ? data.footer_links : defaultSettings.footer_links,
           layout_options: typeof data.layout_options === 'object' && data.layout_options ? data.layout_options : defaultSettings.layout_options,
           editable_sections: typeof data.editable_sections === 'object' && data.editable_sections ? data.editable_sections : defaultSettings.editable_sections,
+          social_links: typeof data.social_links === 'object' && data.social_links ? data.social_links : defaultSettings.social_links,
+          footer_contact_info: typeof data.footer_contact_info === 'object' && data.footer_contact_info ? data.footer_contact_info : defaultSettings.footer_contact_info,
+          footer_custom_links: Array.isArray(data.footer_custom_links) ? data.footer_custom_links : defaultSettings.footer_custom_links,
         };
         setSettings(mergedSettings);
       } else {

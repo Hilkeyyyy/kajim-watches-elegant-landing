@@ -638,6 +638,8 @@ export type Database = {
           created_at: string
           editable_sections: Json | null
           enable_hero_background_blur: boolean | null
+          footer_contact_info: Json | null
+          footer_custom_links: Json | null
           footer_links: Json
           footer_text: string | null
           hero_background_image_url: string | null
@@ -653,6 +655,7 @@ export type Database = {
           show_category_carousel: boolean
           show_mid_banners: boolean
           site_title: string | null
+          social_links: Json | null
           updated_at: string
         }
         Insert: {
@@ -662,6 +665,8 @@ export type Database = {
           created_at?: string
           editable_sections?: Json | null
           enable_hero_background_blur?: boolean | null
+          footer_contact_info?: Json | null
+          footer_custom_links?: Json | null
           footer_links?: Json
           footer_text?: string | null
           hero_background_image_url?: string | null
@@ -677,6 +682,7 @@ export type Database = {
           show_category_carousel?: boolean
           show_mid_banners?: boolean
           site_title?: string | null
+          social_links?: Json | null
           updated_at?: string
         }
         Update: {
@@ -686,6 +692,8 @@ export type Database = {
           created_at?: string
           editable_sections?: Json | null
           enable_hero_background_blur?: boolean | null
+          footer_contact_info?: Json | null
+          footer_custom_links?: Json | null
           footer_links?: Json
           footer_text?: string | null
           hero_background_image_url?: string | null
@@ -701,6 +709,7 @@ export type Database = {
           show_category_carousel?: boolean
           show_mid_banners?: boolean
           site_title?: string | null
+          social_links?: Json | null
           updated_at?: string
         }
         Relationships: []
@@ -836,6 +845,8 @@ export type Database = {
           created_at: string
           editable_sections: Json | null
           enable_hero_background_blur: boolean | null
+          footer_contact_info: Json | null
+          footer_custom_links: Json | null
           footer_links: Json
           footer_text: string | null
           hero_background_image_url: string | null
@@ -851,6 +862,7 @@ export type Database = {
           show_category_carousel: boolean
           show_mid_banners: boolean
           site_title: string | null
+          social_links: Json | null
           updated_at: string
         }
       }
