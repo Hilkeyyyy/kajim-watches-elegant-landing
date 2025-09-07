@@ -26,10 +26,10 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
 
-  const debouncedSearch = React.useMemo(() => debounce((t: string) => searchProducts(t), 250), []);
+  const debouncedSearch = React.useMemo(() => debounce((t: string) => searchProducts(t), 300), []);
 
   useEffect(() => {
-    if (searchTerm.length > 2) {
+    if (searchTerm.length >= 2) {
       debouncedSearch(searchTerm);
     } else {
       setResults([]);
@@ -163,25 +163,28 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         <Card className="absolute top-full left-0 right-0 mt-2 z-50 shadow-xl border bg-card/95 backdrop-blur-xl">
           <CardContent className="p-2">
             {isLoading ? (
-              <div className="flex items-center justify-center py-4">
-                <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+              <div className="flex items-center justify-center py-6">
+                <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                <span className="ml-3 text-sm text-muted-foreground">Buscando...</span>
               </div>
-            ) : (
+            ) : results.length > 0 ? (
               <div className="space-y-1">
                 {results.map((product) => (
                   <div
                     key={product.id}
                     onClick={() => handleProductClick(product.id)}
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
+                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors group"
                   >
                     <img
                       src={product.image || product.images?.[0] || '/placeholder.svg'}
                       alt={product.name}
-                      className="w-10 h-10 object-cover rounded-md"
+                      className="w-12 h-12 object-cover rounded-lg bg-muted/20"
                     />
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm truncate"><span className="notranslate" translate="no">{product.brand}</span> <span className="notranslate" translate="no">{product.name}</span></p>
-                      <p className="text-xs text-muted-foreground truncate">
+                      <p className="font-medium text-sm truncate group-hover:text-primary transition-colors">
+                        <span className="notranslate" translate="no">{product.brand}</span> <span className="notranslate" translate="no">{product.name}</span>
+                      </p>
+                      <p className="text-sm font-bold text-primary">
                         {typeof product.price === 'string' 
                           ? `R$ ${parseFloat(product.price).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
                           : `R$ ${Number(product.price).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
@@ -195,10 +198,19 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                     variant="ghost"
                     size="sm"
                     onClick={handleSearch}
-                    className="w-full justify-center text-primary hover:bg-primary/10"
+                    className="w-full justify-center text-primary hover:bg-primary/10 font-medium"
                   >
+                    <Search className="w-4 h-4 mr-2" />
                     Ver todos os resultados para "{searchTerm}"
                   </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center py-6">
+                <div className="text-center space-y-2">
+                  <Search className="w-8 h-8 text-muted-foreground/40 mx-auto" />
+                  <p className="text-sm text-muted-foreground">Nenhum produto encontrado</p>
+                  <p className="text-xs text-muted-foreground/60">Tente buscar com termos diferentes</p>
                 </div>
               </div>
             )}
