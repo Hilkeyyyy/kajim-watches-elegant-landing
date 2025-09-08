@@ -5,7 +5,7 @@ import { Header } from '@/components/Header';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card, CardContent } from '@/components/ui/card';
-import { ProductCard } from '@/components/ProductCard';
+import { ProductCard as OptimizedProductCard } from '@/components/OptimizedProductCard';
 import { MobileNavigation } from '@/components/MobileNavigation';
 import { Product } from '@/types/product';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
@@ -198,7 +198,7 @@ export const BuscarPage: React.FC = () => {
                   className="animate-fade-in w-full max-w-sm transform transition-all duration-300 hover:scale-105"
                   style={{ animationDelay: `${index * 30}ms` }}
                 >
-                  <ProductCard
+                  <OptimizedProductCard
                     product={product}
                     onProductClick={handleProductClick}
                   />

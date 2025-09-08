@@ -135,27 +135,34 @@ export const SearchBar: React.FC<SearchBarProps> = ({
               </div>
             ) : results.length > 0 ? (
               <div className="space-y-1">
-                {results.filter((product) => product && product.id).map((product) => (
-                  <div
-                    key={product.id}
-                    onClick={() => handleProductClick(product.id)}
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors group"
-                  >
-                    <img
-                      src={product.image || product.images?.[0] || '/placeholder.svg'}
-                      alt={product?.name || 'Produto'}
-                      className="w-12 h-12 object-cover rounded-lg bg-muted/20"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm truncate group-hover:text-primary transition-colors">
-                        <span className="notranslate" translate="no">{product?.brand ?? ''}</span> <span className="notranslate" translate="no">{product?.name ?? ''}</span>
-                      </p>
-                      <p className="text-sm font-bold text-primary">
-                        {formatPrice(product?.price ?? '0')}
-                      </p>
+                {results.filter((product) => product && product.id).map((product) => {
+                  const productImage = product.image || product.images?.[0] || '/placeholder.svg';
+                  const productBrand = product?.brand ?? '';
+                  const productName = product?.name ?? '';
+                  const productPrice = product?.price ?? '0';
+                  
+                  return (
+                    <div
+                      key={product.id}
+                      onClick={() => handleProductClick(product.id)}
+                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors group"
+                    >
+                      <img
+                        src={productImage}
+                        alt={productName || 'Produto'}
+                        className="w-12 h-12 object-cover rounded-lg bg-muted/20"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm truncate group-hover:text-primary transition-colors">
+                          <span className="notranslate" translate="no">{productBrand}</span> <span className="notranslate" translate="no">{productName}</span>
+                        </p>
+                        <p className="text-sm font-bold text-primary">
+                          {formatPrice(productPrice)}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
                 <div className="border-t pt-2">
                   <Button
                     variant="ghost"
