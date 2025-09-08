@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, X } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
@@ -24,6 +24,11 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
+
+  const isMounted = useRef(true);
+  useEffect(() => {
+    return () => { isMounted.current = false; };
+  }, []);
 
   const searchProducts = useCallback(async (term: string) => {
     if (!term.trim() || term.length < 2) {
@@ -58,8 +63,10 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     
     setIsLoading(true);
     searchService.debouncedSearch(term, (products) => {
-      setResults(products);
-      setShowDropdown(products.length > 0 && showResults);
+      if (!isMounted.current) return;
+      const safeProducts = Array.isArray(products) ? products : [];
+      setResults(safeProducts);
+      setShowDropdown(safeProducts.length > 0 && showResults);
       setIsLoading(false);
     }, 8);
   }, [showResults]);
@@ -128,7 +135,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
               </div>
             ) : results.length > 0 ? (
               <div className="space-y-1">
-                {results.map((product) => (
+                {results.filter((product) => product && product.id).map((product) => (
                   <div
                     key={product.id}
                     onClick={() => handleProductClick(product.id)}
@@ -136,15 +143,15 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                   >
                     <img
                       src={product.image || product.images?.[0] || '/placeholder.svg'}
-                      alt={product.name}
+                      alt={product?.name || 'Produto'}
                       className="w-12 h-12 object-cover rounded-lg bg-muted/20"
                     />
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-sm truncate group-hover:text-primary transition-colors">
-                        <span className="notranslate" translate="no">{product.brand}</span> <span className="notranslate" translate="no">{product.name}</span>
+                        <span className="notranslate" translate="no">{product?.brand ?? ''}</span> <span className="notranslate" translate="no">{product?.name ?? ''}</span>
                       </p>
                       <p className="text-sm font-bold text-primary">
-                        {formatPrice(product.price)}
+                        {formatPrice(product?.price ?? '0')}
                       </p>
                     </div>
                   </div>
