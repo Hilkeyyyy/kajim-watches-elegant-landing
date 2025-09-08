@@ -22,6 +22,12 @@ import {
 export const BuscarPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
+  // Sincroniza o estado com a URL (?q=...) quando o usuário faz uma nova busca
+  useEffect(() => {
+    const q = searchParams.get('q') || '';
+    setSearchTerm(q);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -60,29 +66,41 @@ export const BuscarPage: React.FC = () => {
   };
 
   const sortProducts = (products: Product[], sortBy: string): Product[] => {
-    const sorted = [...products];
-    sorted.sort((a, b) => {
-      switch (sortBy) {
-        case 'price_asc':
-          const priceA = parseFloat(String(a.price) || '0');
-          const priceB = parseFloat(String(b.price) || '0');
-          return priceA - priceB;
-        case 'price_desc':
-          const priceA2 = parseFloat(String(a.price) || '0');
-          const priceB2 = parseFloat(String(b.price) || '0');
-          return priceB2 - priceA2;
-        case 'brand':
-          return a.brand.localeCompare(b.brand, 'pt-BR', { sensitivity: 'base' });
-        case 'newest':
-          const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
-          const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
-          return dateB - dateA;
-        case 'name':
-        default:
-          return a.name.localeCompare(b.name, 'pt-BR', { sensitivity: 'base' });
-      }
-    });
-    return sorted;
+    try {
+      const sorted = [...products];
+      sorted.sort((a, b) => {
+        const aName = (a?.name || '').toString();
+        const bName = (b?.name || '').toString();
+        const aBrand = (a?.brand || '').toString();
+        const bBrand = (b?.brand || '').toString();
+        switch (sortBy) {
+          case 'price_asc': {
+            const priceA = parseFloat(String(a?.price ?? '0')) || 0;
+            const priceB = parseFloat(String(b?.price ?? '0')) || 0;
+            return priceA - priceB;
+          }
+          case 'price_desc': {
+            const priceA2 = parseFloat(String(a?.price ?? '0')) || 0;
+            const priceB2 = parseFloat(String(b?.price ?? '0')) || 0;
+            return priceB2 - priceA2;
+          }
+          case 'brand':
+            return aBrand.localeCompare(bBrand, 'pt-BR', { sensitivity: 'base' });
+          case 'newest': {
+            const dateA = a?.created_at ? new Date(a.created_at).getTime() : 0;
+            const dateB = b?.created_at ? new Date(b.created_at).getTime() : 0;
+            return dateB - dateA;
+          }
+          case 'name':
+          default:
+            return aName.localeCompare(bName, 'pt-BR', { sensitivity: 'base' });
+        }
+      });
+      return sorted;
+    } catch (e) {
+      console.warn('Safe sort fallback due to data issue:', e);
+      return [...products];
+    }
   };
 
   // Atualizar filteredProducts quando sortBy mudar

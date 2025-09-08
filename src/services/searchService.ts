@@ -100,12 +100,14 @@ class SearchService {
     } catch (rpcError) {
       console.warn('RPC search failed, using fallback query:', rpcError);
 
+      const safeTerm = searchTerm.replace(/[,%_]/g, ' ').trim();
+
       const { data: rows, error: qError } = await supabase
         .from('products')
         .select('id,name,brand,description,price,original_price,image_url,images,features,status,created_at,updated_at,is_visible')
         .eq('is_visible', true)
         .eq('status', 'active')
-        .or(`name.ilike.%${searchTerm}%,brand.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`)
+        .or(`name.ilike.%${safeTerm}%,brand.ilike.%${safeTerm}%,description.ilike.%${safeTerm}%`)
         .limit(limit);
 
       if (qError) {
