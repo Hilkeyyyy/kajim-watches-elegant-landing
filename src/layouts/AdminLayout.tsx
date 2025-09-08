@@ -1,7 +1,8 @@
 
-import React from 'react';
-import { Outlet, Navigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Outlet, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { AdminErrorBoundary } from '@/components/admin/AdminErrorBoundary';
 import { 
@@ -15,7 +16,7 @@ import {
   User,
   Shield
 } from 'lucide-react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { Button } from '@/components/ui/Button';
 import { 
   DropdownMenu,
@@ -28,6 +29,31 @@ import {
 const AdminLayout = () => {
   const { user, loading, isAdmin, signOut } = useAuth();
   const location = useLocation();
+
+  useEffect(() => {
+    // Log de tentativas de acesso não autorizado
+    if (!loading && (!user || !isAdmin)) {
+      const logUnauthorizedAccess = async () => {
+        try {
+          await supabase.rpc('log_security_event', {
+            p_event_type: 'unauthorized_admin_access_attempt',
+            p_details: {
+              attempted_path: location.pathname,
+              user_id: user?.id || null,
+              timestamp: new Date().toISOString(),
+              user_agent: navigator.userAgent,
+              referrer: document.referrer || null
+            },
+            p_severity: 'high'
+          });
+        } catch (error) {
+          console.error('Failed to log unauthorized access:', error);
+        }
+      };
+      
+      logUnauthorizedAccess();
+    }
+  }, [user, isAdmin, loading, location.pathname]);
 
   if (loading) {
     return <LoadingSpinner />;

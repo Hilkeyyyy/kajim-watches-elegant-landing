@@ -1,5 +1,6 @@
 import React from 'react';
 import { SecurityMonitor } from '@/components/admin/SecurityMonitor';
+import { SecurityValidator } from '@/components/admin/SecurityValidator';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Shield, AlertTriangle, CheckCircle, Info } from 'lucide-react';
@@ -158,7 +159,9 @@ const Security: React.FC = () => {
       </div>
 
       {/* Security Logs Monitor */}
-      <SecurityMonitor />
+          <SecurityMonitor />
+          
+          <SecurityValidator />
     </div>
   );
 };
