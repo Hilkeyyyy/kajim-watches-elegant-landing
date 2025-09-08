@@ -6,12 +6,12 @@ export function debounce<T extends (...args: any[]) => any>(
   func: T,
   delay: number
 ): T {
-  let timeoutId: NodeJS.Timeout;
+  let timeoutId: ReturnType<typeof setTimeout>;
   
-  return ((...args: Parameters<T>) => {
+  return (function (this: any, ...args: Parameters<T>) {
     clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => func.apply(null, args), delay);
-  }) as T;
+    timeoutId = setTimeout(() => func.apply(this, args), delay);
+  } as unknown) as T;
 }
 
 export function throttle<T extends (...args: any[]) => any>(
@@ -33,7 +33,7 @@ export function throttle<T extends (...args: any[]) => any>(
  * Debounce especializado para storage com cache em memória
  */
 export class StorageDebouncer {
-  private timeouts = new Map<string, NodeJS.Timeout>();
+  private timeouts = new Map<string, ReturnType<typeof setTimeout>>();
   private cache = new Map<string, any>();
   
   debounce<T>(key: string, value: T, saveFunc: (value: T) => void, delay = 300) {
