@@ -64,7 +64,7 @@ class SearchService {
       return results;
     } catch (error) {
       console.error('Erro na busca de produtos:', error);
-      throw error;
+      return [];
     } finally {
       this.pendingSearches.delete(cacheKey);
     }
@@ -112,7 +112,7 @@ class SearchService {
 
       if (qError) {
         console.error('Fallback search failed:', qError);
-        throw new Error('Erro ao buscar produtos');
+        return [];
       }
 
       if (!rows || !Array.isArray(rows)) return [];

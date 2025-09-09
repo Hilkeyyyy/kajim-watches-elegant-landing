@@ -144,6 +144,18 @@ export class ErrorBoundaryOptimized extends Component<Props, State> {
       return;
     }
 
+    try {
+      const isMobile = window.innerWidth < 768;
+      if (isMobile) {
+        console.error('[MOBILE_SEARCH_ERROR]', {
+          route: window.location.pathname,
+          userAgent: navigator.userAgent,
+          message: rawMsg || String(error),
+          stack: (error as any)?.stack,
+        });
+      }
+    } catch {}
+
     this.setState({ error, errorInfo });
 
     // Log error for debugging

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Search, Filter, SlidersHorizontal } from 'lucide-react';
 import { Header } from '@/components/Header';
@@ -35,12 +35,19 @@ export const BuscarPage: React.FC = () => {
   const { handleError } = useErrorHandler();
   const navigate = useNavigate();
 
+  const isMounted = useRef(true);
+  const requestIdRef = useRef(0);
+  useEffect(() => {
+    return () => { isMounted.current = false; };
+  }, []);
+
   useEffect(() => {
     setLoading(true);
     fetchProducts();
   }, [searchTerm]);
 
   const fetchProducts = async () => {
+    const currentId = ++requestIdRef.current;
     try {
       let products: Product[] = [];
       
@@ -53,14 +60,17 @@ export const BuscarPage: React.FC = () => {
         products = await productService.getAllProducts();
       }
       
+      if (!isMounted.current || currentId !== requestIdRef.current) return;
       setProducts(products);
       setFilteredProducts(sortProducts(products, sortBy));
     } catch (error) {
+      if (!isMounted.current || currentId !== requestIdRef.current) return;
       console.error('Erro ao buscar produtos:', error);
       handleError(error, 'Erro ao carregar produtos');
       setProducts([]);
       setFilteredProducts([]);
     } finally {
+      if (!isMounted.current || currentId !== requestIdRef.current) return;
       setLoading(false);
     }
   };

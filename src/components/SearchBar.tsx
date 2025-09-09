@@ -54,13 +54,17 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
   // Usar debounced search do serviço
   const handleSearchInput = useCallback((term: string) => {
+    if (!showResults) {
+      // No live search (ex: mobile). Only navigate on Enter/botão.
+      setIsLoading(false);
+      return;
+    }
     if (!term.trim() || term.length < 2) {
       setResults([]);
       setShowDropdown(false);
       setIsLoading(false);
       return;
     }
-    
     setIsLoading(true);
     searchService.debouncedSearch(term, (products) => {
       if (!isMounted.current) return;
@@ -72,8 +76,10 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   }, [showResults]);
 
   useEffect(() => {
-    handleSearchInput(searchTerm);
-  }, [searchTerm, handleSearchInput]);
+    if (showResults) {
+      handleSearchInput(searchTerm);
+    }
+  }, [searchTerm, handleSearchInput, showResults]);
 
   const handleSearch = () => {
     if (searchTerm.trim()) {
@@ -151,13 +157,14 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                         src={productImage}
                         alt={productName || 'Produto'}
                         className="w-12 h-12 object-cover rounded-lg bg-muted/20"
+                        onError={(e) => { e.currentTarget.src = '/placeholder.svg'; }}
                       />
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-sm truncate group-hover:text-primary transition-colors">
                           <span className="notranslate" translate="no">{productBrand}</span> <span className="notranslate" translate="no">{productName}</span>
                         </p>
                         <p className="text-sm font-bold text-primary">
-                          {formatPrice(productPrice)}
+                          {(function(){ try { return formatPrice(productPrice); } catch { return 'R$ 0,00'; } })()}
                         </p>
                       </div>
                     </div>
