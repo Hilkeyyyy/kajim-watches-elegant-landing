@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/contexts/AuthContext';
@@ -46,19 +46,7 @@ export const SecurityDashboard: React.FC = () => {
   const fetchSecurityMetrics = async () => {
     setLoading(true);
     try {
-      // Buscar métricas de segurança
-      const { data: metricsData, error: metricsError } = await supabase
-        .rpc('get_security_metrics');
-
-      if (metricsError) throw metricsError;
-
-      // Buscar tendências dos últimos 7 dias
-      const { data: trendsData, error: trendsError } = await supabase
-        .rpc('get_security_trends', { days: 7 });
-
-      if (trendsError) throw trendsError;
-
-      // Buscar eventos recentes
+      // Buscar eventos recentes diretamente
       const { data: eventsData, error: eventsError } = await supabase
         .from('security_audit_logs')
         .select('*')
@@ -67,16 +55,48 @@ export const SecurityDashboard: React.FC = () => {
 
       if (eventsError) throw eventsError;
 
-      setMetrics(metricsData[0] || {
-        total_events: 0,
-        critical_events: 0,
-        high_events: 0,
-        recent_events: 0,
-        unique_users: 0,
-        avg_events_per_day: 0
+      // Calcular métricas básicas dos eventos
+      const events = eventsData || [];
+      const now = new Date();
+      const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+      
+      const recentEvents = events.filter(e => new Date(e.created_at) > oneDayAgo);
+      const criticalEvents = events.filter(e => e.severity === 'critical');
+      const highEvents = events.filter(e => e.severity === 'high');
+      const uniqueUsers = new Set(events.map(e => e.user_id).filter(Boolean)).size;
+
+      setMetrics({
+        total_events: events.length,
+        critical_events: criticalEvents.length,
+        high_events: highEvents.length,
+        recent_events: recentEvents.length,
+        unique_users: uniqueUsers,
+        avg_events_per_day: Math.round(events.length / 7)
       });
-      setTrends(trendsData || []);
-      setRecentEvents(eventsData || []);
+      
+      // Gerar tendências dos últimos 7 dias
+      const trendData: SecurityTrend[] = [];
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+        const dayEvents = events.filter(e => {
+          const eventDate = new Date(e.created_at);
+          return eventDate.toDateString() === date.toDateString();
+        });
+        
+        trendData.push({
+          date: date.toISOString().split('T')[0],
+          event_count: dayEvents.length,
+          severity_breakdown: {
+            critical: dayEvents.filter(e => e.severity === 'critical').length,
+            high: dayEvents.filter(e => e.severity === 'high').length,
+            medium: dayEvents.filter(e => e.severity === 'medium').length,
+            low: dayEvents.filter(e => e.severity === 'low').length,
+          }
+        });
+      }
+      
+      setTrends(trendData);
+      setRecentEvents(events);
 
     } catch (error) {
       console.error('Erro ao buscar métricas de segurança:', error);
