@@ -18,7 +18,7 @@ const CartPage = lazy(() => import('@/pages/CartPage'));
 const FavoritesPage = lazy(() => import('@/pages/FavoritesPage'));
 const CategoryPage = lazy(() => import('@/pages/CategoryPage'));
 const BrandPage = lazy(() => import('@/pages/BrandPage'));
-const BuscarPage = lazy(() => import('@/pages/BuscarPage'));
+
 const Auth = lazy(() => import('@/pages/Auth'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
@@ -81,11 +81,6 @@ function App() {
                       <Route path="/favoritos" element={
                         <ErrorBoundaryOptimized>
                           <FavoritesPage />
-                        </ErrorBoundaryOptimized>
-                      } />
-                      <Route path="/buscar" element={
-                        <ErrorBoundaryOptimized>
-                          <BuscarPage />
                         </ErrorBoundaryOptimized>
                       } />
                       <Route path="/categoria/:id" element={

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Search, Heart, ShoppingCart, User } from 'lucide-react';
+import { Home, Heart, ShoppingCart, User } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { Badge } from '@/components/ui/badge';
 
@@ -13,12 +13,6 @@ export const MobileNavigation = () => {
       href: '/',
       icon: Home,
       label: 'Início',
-      count: 0
-    },
-    {
-      href: '/buscar',
-      icon: Search,
-      label: 'Buscar',
       count: 0
     },
     {
