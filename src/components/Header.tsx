@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, ShoppingCart, User, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-
+import { AdvancedSearchBar } from '@/components/search/AdvancedSearchBar';
 import { useAuth } from '@/contexts/AuthContext';
 import { useApp } from '@/contexts/AppContext';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -32,6 +32,12 @@ export const Header: React.FC = () => {
           {/* Desktop Navigation */}
           {!isMobile && (
             <>
+              {/* Search Bar - Desktop */}
+              <div className="flex-1 max-w-md mx-8">
+                <AdvancedSearchBar 
+                  placeholder="Buscar relógios premium..."
+                />
+              </div>
 
               {/* Desktop Actions */}
               <div className="flex items-center space-x-2">
@@ -130,6 +136,13 @@ export const Header: React.FC = () => {
         {isMobile && mobileMenuOpen && (
           <div className="border-t border-border/50 bg-background/98 backdrop-blur-md">
             <div className="py-4 space-y-3">
+              {/* Mobile Search */}
+              <div className="px-4">
+                <AdvancedSearchBar 
+                  placeholder="Buscar relógios..."
+                  onResultClick={() => setMobileMenuOpen(false)}
+                />
+              </div>
 
               {/* Mobile User Menu */}
               <div className="flex flex-col space-y-2">
