@@ -7,6 +7,7 @@ import { Product } from '@/types';
 import { useApp } from '@/contexts/AppContext';
 import { parsePrice, formatPrice } from '@/utils/priceUtils';
 import { FavoriteButton } from '@/components/FavoriteButton';
+import { getDisplayBadges } from '@/utils/badgeUtils';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ShoppingCart } from 'lucide-react';
 import { useNotifications } from '@/hooks/useNotifications';
@@ -146,17 +147,31 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
 
       {/* Área de Informações - Layout sofisticado premium */}
       <CardContent className="p-4 lg:p-5 space-y-3 bg-gradient-to-t from-muted/10 to-transparent">
-        {/* Marca - Design luxuoso responsivo */}
+        {/* Marca e Badges - Design luxuoso responsivo */}
         <div className="flex items-center justify-between gap-2">
           <p className="text-xs sm:text-sm font-bold uppercase tracking-[0.12em] mb-1 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full border border-foreground/30 bg-transparent text-foreground backdrop-blur-sm whitespace-nowrap">
             <span className="notranslate" translate="no">{product.brand}</span>
           </p>
-          {isOfferActive && (
-            <div className="text-[10px] sm:text-xs font-bold px-2 py-0.5 sm:px-3 sm:py-1 rounded-full backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-foreground/30 bg-transparent text-foreground whitespace-nowrap">
-              <span className="hidden sm:inline">OFERTA EXCLUSIVA</span>
-              <span className="sm:hidden">OFERTA</span>
-            </div>
-          )}
+          
+          {/* Badges dinâmicos - máximo 2 */}
+          {(() => {
+            const displayBadges = getDisplayBadges(product, 2);
+            return displayBadges.length > 0 && (
+              <div className="flex gap-1">
+                {displayBadges.map((badge, index) => (
+                  <div 
+                    key={index}
+                    className="text-[10px] sm:text-xs font-bold px-2 py-0.5 sm:px-3 sm:py-1 rounded-full backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-foreground/30 bg-transparent text-foreground whitespace-nowrap"
+                  >
+                    <span className={badge.length > 8 ? "hidden sm:inline" : ""}>{badge}</span>
+                    {badge.length > 8 && (
+                      <span className="sm:hidden">{badge.length > 12 ? badge.substring(0, 6) + "..." : badge}</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            );
+          })()}
         </div>
 
         {/* Nome do Produto - Tipografia premium */}
