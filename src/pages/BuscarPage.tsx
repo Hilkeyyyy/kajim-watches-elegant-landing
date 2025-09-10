@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export const BuscarPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -34,6 +35,12 @@ export const BuscarPage: React.FC = () => {
   const [sortBy, setSortBy] = useState('name');
   const { handleError } = useErrorHandler();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
+  const [debouncedTerm, setDebouncedTerm] = useState(searchTerm);
+  useEffect(() => {
+    const h = setTimeout(() => setDebouncedTerm(searchTerm), isMobile ? 400 : 250);
+    return () => clearTimeout(h);
+  }, [searchTerm, isMobile]);
 
   const isMounted = useRef(true);
   const requestIdRef = useRef(0);
@@ -43,17 +50,18 @@ export const BuscarPage: React.FC = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetchProducts();
-  }, [searchTerm]);
+    fetchProducts(debouncedTerm);
+  }, [debouncedTerm]);
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (term?: string) => {
     const currentId = ++requestIdRef.current;
     try {
       let products: Product[] = [];
       
-      if (searchTerm.trim()) {
+      const usedTerm = (term ?? searchTerm) || '';
+      if (usedTerm.trim()) {
         // Usar o serviço de busca otimizado
-        products = await searchService.searchProducts(searchTerm.trim(), 100);
+        products = await searchService.searchProducts(usedTerm.trim(), 100);
       } else {
         // Usar o serviço de produtos para todos os produtos
         const { productService } = await import('@/services/productService');
@@ -165,6 +173,14 @@ export const BuscarPage: React.FC = () => {
                     placeholder="Buscar por nome, marca ou descrição..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        setDebouncedTerm(searchTerm);
+                        setLoading(true);
+                        fetchProducts(searchTerm);
+                      }
+                    }}
                     className="pl-10 h-12 text-base border-0 bg-background/50 backdrop-blur-sm focus:bg-background transition-all duration-300"
                   />
                 </div>
