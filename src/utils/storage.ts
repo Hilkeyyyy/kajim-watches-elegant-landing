@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { logStorageAction, logSecurityEvent } from './auditLogger';
+import { safeLocalStorage } from '@/utils/safeStorage';
 
 // Schemas de validação
 const CartItemSchema = z.object({
@@ -53,7 +54,7 @@ class OptimizedStorage {
 
   private async safeGet<T>(key: string, schema: z.ZodSchema<T>): Promise<T | null> {
     try {
-      const stored = localStorage.getItem(key);
+      const stored = safeLocalStorage.getItem(key);
       if (!stored) {
         logStorageAction('get_empty', key, true);
         return null;
@@ -63,7 +64,7 @@ class OptimizedStorage {
       
       // Validar versão e dados
       if (parsed.version !== this.STORAGE_VERSION) {
-        localStorage.removeItem(key);
+        safeLocalStorage.removeItem(key);
         logSecurityEvent('version_mismatch', { key, version: parsed.version });
         return null;
       }
@@ -72,8 +73,8 @@ class OptimizedStorage {
       logStorageAction('get', key, result !== null);
       return result;
     } catch (error) {
-      console.warn(`Erro ao recuperar ${key} do localStorage:`, error);
-      localStorage.removeItem(key);
+      console.warn(`Erro ao recuperar ${key} do storage:`, error);
+      safeLocalStorage.removeItem(key);
       logSecurityEvent('storage_corruption', { key, error: error?.toString() });
       return null;
     }
@@ -87,11 +88,17 @@ class OptimizedStorage {
         version: this.STORAGE_VERSION,
       };
       
-      localStorage.setItem(key, JSON.stringify(storageItem));
+      safeLocalStorage.setItem(key, JSON.stringify(storageItem));
       logStorageAction('set', key, true);
       
-      // Notificar outras abas
-      window.dispatchEvent(new CustomEvent(`storage-${key}`, { detail: data }));
+      // Notificar outras abas (best-effort)
+      try {
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent(`storage-${key}`, { detail: data }));
+        }
+      } catch (_) {
+        // ignore dispatch errors
+      }
     } catch (error) {
       console.error(`Erro ao salvar ${key} no localStorage:`, error);
       logStorageAction('set', key, false);
@@ -168,11 +175,11 @@ class OptimizedStorage {
 
   // Limpeza
   clearAll(): void {
-    localStorage.removeItem(this.getKey('cart'));
-    localStorage.removeItem(this.getKey('favorites'));
+    safeLocalStorage.removeItem(this.getKey('cart'));
+    safeLocalStorage.removeItem(this.getKey('favorites'));
     // Remover chaves legadas
-    localStorage.removeItem('kajim-cart');
-    localStorage.removeItem('kajim-favorites');
+    safeLocalStorage.removeItem('kajim-cart');
+    safeLocalStorage.removeItem('kajim-favorites');
   }
 
   // Listener para sincronização entre abas

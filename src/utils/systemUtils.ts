@@ -1,5 +1,6 @@
 import { storage } from '@/utils/storage';
 import { auditLogger } from '@/utils/auditLogger';
+import { safeLocalStorage } from '@/utils/safeStorage';
 
 interface HealthCheck {
   storage: boolean;
@@ -36,9 +37,9 @@ export const performHealthCheck = async (): Promise<HealthCheck> => {
   try {
     // Teste de localStorage
     const testKey = 'health_check_test';
-    localStorage.setItem(testKey, 'test');
-    const retrieved = localStorage.getItem(testKey);
-    localStorage.removeItem(testKey);
+    safeLocalStorage.setItem(testKey, 'test');
+    const retrieved = safeLocalStorage.getItem(testKey);
+    safeLocalStorage.removeItem(testKey);
     results.localStorage = retrieved === 'test';
   } catch {
     results.localStorage = false;

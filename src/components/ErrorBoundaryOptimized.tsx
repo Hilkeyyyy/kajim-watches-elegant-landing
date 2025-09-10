@@ -74,7 +74,16 @@ export class ErrorBoundaryOptimized extends Component<Props, State> {
         (rawMsg && rawMsg.trim() === '') ||
         stack.includes('resizeobserver') ||
         stack.includes('supabase') ||
-        stack.includes('auth');
+        stack.includes('auth') ||
+        name === 'SecurityError' ||
+        name === 'QuotaExceededError' ||
+        name === 'DOMException' ||
+        msg.includes('securityerror') ||
+        msg.includes('quotaexceedederror') ||
+        msg.includes('the operation is insecure') ||
+        msg.includes("failed to read the 'localstorage' property") ||
+        msg.includes('storage is disabled') ||
+        msg.includes('cookies are disabled');
 
       if (isIgnored) {
         console.warn('ErrorBoundaryOptimized ignored error in render:', rawMsg || error);
@@ -137,7 +146,16 @@ export class ErrorBoundaryOptimized extends Component<Props, State> {
       (rawMsg && rawMsg.trim() === '') ||
       stack.includes('resizeobserver') ||
       stack.includes('supabase') ||
-      stack.includes('auth');
+      stack.includes('auth') ||
+      name === 'SecurityError' ||
+      name === 'QuotaExceededError' ||
+      name === 'DOMException' ||
+      msg.includes('securityerror') ||
+      msg.includes('quotaexceedederror') ||
+      msg.includes('the operation is insecure') ||
+      msg.includes("failed to read the 'localstorage' property") ||
+      msg.includes('storage is disabled') ||
+      msg.includes('cookies are disabled');
 
     if (isIgnored) {
       console.warn('ErrorBoundaryOptimized ignored error in componentDidCatch:', rawMsg || error);
