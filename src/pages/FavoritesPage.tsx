@@ -142,11 +142,11 @@ export const FavoritesPage: React.FC = () => {
         {/* Products Grid */}
         <div className="mt-8 sm:mt-12">
           {favoriteProducts.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 max-w-screen-2xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 max-w-screen-2xl mx-auto">
               {favoriteProducts.map((product, index) => (
                 <div
                   key={product.id}
-                  className="animate-fade-in w-full max-w-[300px] mx-auto"
+                  className="animate-fade-in w-full"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
                   <ProductCard

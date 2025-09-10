@@ -146,14 +146,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
 
       {/* Área de Informações - Layout sofisticado premium */}
       <CardContent className="p-4 lg:p-5 space-y-3 bg-gradient-to-t from-muted/10 to-transparent">
-        {/* Marca - Design luxuoso */}
-        <div className="flex items-center justify-between">
-          <p className="text-sm font-bold uppercase tracking-[0.12em] mb-1 px-3 py-1 rounded-full border border-foreground/30 bg-transparent text-foreground backdrop-blur-sm">
+        {/* Marca - Design luxuoso responsivo */}
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-xs sm:text-sm font-bold uppercase tracking-[0.12em] mb-1 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full border border-foreground/30 bg-transparent text-foreground backdrop-blur-sm whitespace-nowrap">
             <span className="notranslate" translate="no">{product.brand}</span>
           </p>
           {isOfferActive && (
-            <div className="text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-foreground/30 bg-transparent text-foreground">
-              OFERTA EXCLUSIVA
+            <div className="text-[10px] sm:text-xs font-bold px-2 py-0.5 sm:px-3 sm:py-1 rounded-full backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-foreground/30 bg-transparent text-foreground whitespace-nowrap">
+              <span className="hidden sm:inline">OFERTA EXCLUSIVA</span>
+              <span className="sm:hidden">OFERTA</span>
             </div>
           )}
         </div>
