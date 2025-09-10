@@ -94,11 +94,11 @@ const Favorites = () => {
             </div>
           </div>
 
-          {/* Favorites Grid - Layout compacto e responsivo */}
+          {/* Favorites Grid - Cards grandes e quadrados como Chronos Elite */}
           {favoriteProducts.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4 max-w-screen-2xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-screen-2xl mx-auto">
               {favoriteProducts.map((product) => (
-                <div key={product.id} className="w-full max-w-xs mx-auto">
+                <div key={product.id} className="w-full">
                   <ProductCard 
                     product={product}
                     onProductClick={(id) => navigate(`/produto/${id}`)}

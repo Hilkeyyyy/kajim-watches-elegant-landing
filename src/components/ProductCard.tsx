@@ -94,10 +94,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
           </div>
         </div>
 
-        {/* Badge de Oferta - Design padronizado */}
+        {/* Badge de Oferta - estilização condicional */}
         {isOfferActive && (
-          <div className="absolute top-2 left-2 z-10">
-            <div className="px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-red-600/90 to-red-500/90 text-white border-red-300/40 shadow-lg backdrop-blur-sm">
+          <div className="absolute top-4 left-4 z-10">
+            <div
+              className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide shadow-xl backdrop-blur-xl hover:shadow-2xl transition-all duration-300 border 
+                ${badgeStyle === 'hero'
+                  ? 'glass-card bg-gradient-to-r from-foreground/70 to-foreground text-background border-foreground/30'
+                  : 'bg-gradient-to-r from-primary/90 to-primary text-primary-foreground border-primary/40'}
+              `}
+            >
               OFERTA
             </div>
           </div>
@@ -113,9 +119,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
           />
         </div>
 
-        {/* Badge ORIGINAL - Design compacto */}
-        <div className="absolute bottom-2 right-2 z-10">
-          <div className="px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-emerald-600/90 to-emerald-500/90 text-white border-emerald-300/40 shadow-lg backdrop-blur-sm">
+        {/* Badge ORIGINAL - estilização condicional */}
+        <div className="absolute bottom-4 right-4 z-10">
+          <div
+            className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide shadow-xl backdrop-blur-xl hover:shadow-2xl transition-all duration-300 border 
+              ${badgeStyle === 'hero'
+                ? 'glass-card bg-gradient-to-r from-foreground/70 to-foreground text-background border-foreground/30'
+                : 'bg-gradient-to-r from-primary/90 to-primary text-primary-foreground border-primary/40'}
+            `}
+          >
             ORIGINAL
           </div>
         </div>
@@ -134,13 +146,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClic
 
       {/* Área de Informações - Layout sofisticado premium */}
       <CardContent className="p-4 lg:p-5 space-y-3 bg-gradient-to-t from-muted/10 to-transparent">
-        {/* Marca e Oferta Exclusiva */}
-        <div className="flex items-center justify-between gap-2">
-          <div className="text-xs font-medium uppercase tracking-wide px-2 py-1 rounded-md bg-foreground/5 text-foreground/80 truncate">
+        {/* Marca - Design luxuoso */}
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-bold uppercase tracking-[0.12em] mb-1 px-3 py-1 rounded-full border border-foreground/30 bg-transparent text-foreground backdrop-blur-sm">
             <span className="notranslate" translate="no">{product.brand}</span>
-          </div>
+          </p>
           {isOfferActive && (
-            <div className="text-xs font-medium px-2 py-1 rounded-md bg-gradient-to-r from-rose-600/90 to-rose-500/90 text-white border-rose-300/40 shadow-lg backdrop-blur-sm whitespace-nowrap">
+            <div className="text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-foreground/30 bg-transparent text-foreground">
               OFERTA EXCLUSIVA
             </div>
           )}
