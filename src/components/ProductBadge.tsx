@@ -14,7 +14,7 @@ export const ProductBadge = ({ badge, size = "md", className }: ProductBadgeProp
     switch (normalizedBadge) {
       case 'OFERTA':
       case 'PROMOCAO':
-        return 'bg-gradient-to-r from-red-600/90 to-red-500/90 text-white border-red-300/40 shadow-lg backdrop-blur-sm';
+        return 'bg-gradient-to-r from-blue-600/90 to-blue-500/90 text-white border-blue-300/40 shadow-lg backdrop-blur-sm';
       case 'ESGOTADO':
         return 'bg-gradient-to-r from-stone-600/90 to-stone-500/90 text-white border-stone-300/40 shadow-lg backdrop-blur-sm';
       case 'LIMITADO':
@@ -26,7 +26,7 @@ export const ProductBadge = ({ badge, size = "md", className }: ProductBadgeProp
       case 'LUXO':
         return 'bg-gradient-to-r from-blue-600/90 to-blue-500/90 text-white border-blue-300/40 shadow-lg backdrop-blur-sm';
       case 'OFERTA EXCLUSIVA':
-        return 'bg-gradient-to-r from-rose-600/90 to-rose-500/90 text-white border-rose-300/40 shadow-lg backdrop-blur-sm';
+        return 'bg-gradient-to-r from-blue-600/90 to-blue-500/90 text-white border-blue-300/40 shadow-lg backdrop-blur-sm';
       // Badges de marca padronizados
       case 'ROLEX':
         return 'bg-gradient-to-r from-emerald-700/90 to-emerald-600/90 text-white border-emerald-300/40 shadow-lg backdrop-blur-sm';

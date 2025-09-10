@@ -105,8 +105,8 @@ const OptimizedProductCard: React.FC<ProductCardProps> = memo(({
             WebkitUserSelect: 'none',
             userSelect: 'none'
           }}>
-      {/* Área da Imagem com lazy loading otimizado - proporção 3:2 mais flat */}
-      <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-muted/20 to-muted/5">
+      {/* Área da Imagem com lazy loading otimizado - proporção quadrada */}
+      <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-muted/20 to-muted/5">
         <div
           className="w-full h-full cursor-pointer group/image"
           onClick={handleImageClick}
@@ -144,7 +144,7 @@ const OptimizedProductCard: React.FC<ProductCardProps> = memo(({
         {/* Badge de Oferta - Design padronizado */}
         {isOfferActive && (
           <div className="absolute top-2 left-2 z-10">
-            <div className="px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-red-600/90 to-red-500/90 text-white border-red-300/40 shadow-lg backdrop-blur-sm">
+            <div className="px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-blue-600/90 to-blue-500/90 text-white border-blue-300/40 shadow-lg backdrop-blur-sm">
               OFERTA
             </div>
           </div>
@@ -196,9 +196,9 @@ const OptimizedProductCard: React.FC<ProductCardProps> = memo(({
             <span className="notranslate" translate="no">{product.brand}</span>
           </div>
           {isOfferActive && (
-            <div className="text-xs font-medium px-2 py-1 rounded-md bg-gradient-to-r from-rose-600/90 to-rose-500/90 text-white border-rose-300/40 shadow-lg backdrop-blur-sm whitespace-nowrap">
-              OFERTA EXCLUSIVA
-            </div>
+             <div className="text-xs font-medium px-2 py-1 rounded-md bg-gradient-to-r from-blue-600/90 to-blue-500/90 text-white border-blue-300/40 shadow-lg backdrop-blur-sm whitespace-nowrap">
+               OFERTA EXCLUSIVA
+             </div>
           )}
         </div>
 
