@@ -1,277 +1,170 @@
-import React, { useState, useCallback, memo } from 'react';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/Button';
+import React, { memo, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
-import { Product } from '@/types';
-import { useApp } from '@/contexts/AppContext';
-import { parsePrice, formatPrice } from '@/utils/priceUtils';
+import { Badge } from '@/components/ui/badge';
+import { LazyImage } from '@/components/LazyImage';
+import { AddToCartButtonAnimated } from '@/components/AddToCartButtonAnimated';
 import { FavoriteButton } from '@/components/FavoriteButton';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { ShoppingCart, Check } from 'lucide-react';
-import { useNotifications } from '@/hooks/useNotifications';
+import { StockStatus } from '@/components/StockStatus';
+import { useOptimizedIntersection } from '@/hooks/useOptimizedIntersection';
+import { FluidWrapper } from '@/components/FluidWrapper';
+import { cn } from '@/lib/utils';
+import type { Product } from '@/types';
 
-interface ProductCardProps {
+interface OptimizedProductCardProps {
   product: Product;
+  priority?: boolean;
+  variant?: 'default' | 'compact' | 'featured';
   onProductClick?: (id: string) => void;
-  onClick?: () => void;
-  showBadgesAtBase?: boolean;
-  badgeStyle?: 'default' | 'hero';
 }
 
 /**
- * ProductCard otimizado com React.memo e lazy loading
+ * Card de produto ultra-otimizado para máxima fluidez
+ * Usa memoization, lazy loading e animações suaves
  */
-const OptimizedProductCard: React.FC<ProductCardProps> = memo(({ 
+export const OptimizedProductCard = memo<OptimizedProductCardProps>(({ 
   product, 
-  onProductClick, 
-  onClick, 
-  showBadgesAtBase = false,
-  badgeStyle = 'default',
+  priority = false,
+  variant = 'default',
+  onProductClick
 }) => {
-  const { addToCart } = useApp();
-  const { notifyCartAction } = useNotifications();
-  const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [justAdded, setJustAdded] = useState(false);
+  const navigate = useNavigate();
+  const { elementRef, isIntersecting } = useOptimizedIntersection({
+    threshold: 0.1,
+    triggerOnce: true
+  });
 
-  // Memoized calculations (placed before handlers to satisfy TS)
-  const mainImage = React.useMemo(() => 
-    (product as any).image_url || product.image || 
-    (product.images && product.images[0]) || '/placeholder.svg'
-  , [product]);
-  
-  const priceDisplay = React.useMemo(() => 
-    typeof product.price === 'string' 
-      ? formatPrice(parseFloat(product.price))
-      : formatPrice(product.price)
-  , [product.price]);
-
-  const originalDisplay = React.useMemo(() => 
-    product.original_price
-      ? (typeof product.original_price === 'string' 
-          ? formatPrice(parseFloat(product.original_price)) 
-          : formatPrice(product.original_price))
-      : null
-  , [product.original_price]);
-
-  const isOfferActive = React.useMemo(() => 
-    product.original_price && 
-    parseFloat(product.original_price.toString()) > parseFloat(product.price.toString())
-  , [product.original_price, product.price]);
-
-  const isOutOfStock = React.useMemo(() => 
-    (product as any).stock_quantity === 0
-  , [(product as any).stock_quantity]);
-
-  // Memoized handlers
   const handleClick = useCallback(() => {
     if (onProductClick) {
       onProductClick(product.id);
-    } else if (onClick) {
-      onClick();
+    } else {
+      navigate(`/produto/${product.id}`);
     }
-  }, [onProductClick, onClick, product.id]);
+  }, [navigate, product.id, onProductClick]);
 
-  const handleQuickAddToCart = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (isOutOfStock) return;
-    addToCart({
-      id: product.id,
-      name: product.name,
-      price: priceDisplay || 'Consulte',
-      image: mainImage
-    });
-    notifyCartAction('add', product.name);
-    setJustAdded(true);
-    setTimeout(() => setJustAdded(false), 700);
-  }, [addToCart, product.id, product.name, notifyCartAction, isOutOfStock, priceDisplay, mainImage]);
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleClick();
+    }
+  }, [handleClick]);
 
-  const handleImageClick = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    setLightboxOpen(true);
-  }, []);
-
-  const handleImageLoad = useCallback(() => {
-    setImageLoaded(true);
-  }, []);
-
+  const cardVariants = {
+    default: 'h-[400px]',
+    compact: 'h-[350px]',
+    featured: 'h-[450px]'
+  };
 
   return (
-    <Card className="group relative w-full max-w-full mx-auto bg-gradient-to-br from-background to-background/95 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-700 hover:scale-[1.03] hover:-translate-y-2 overflow-hidden border border-border/30 backdrop-blur-sm touch-pan-y"
-          style={{
-            touchAction: 'pan-y',
-            WebkitTouchCallout: 'none',
-            WebkitUserSelect: 'none',
-            userSelect: 'none'
-          }}>
-      {/* Área da Imagem com lazy loading otimizado */}
-      <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-muted/20 to-muted/5">
-        <div
-          className="w-full h-full cursor-pointer group/image"
-          onClick={handleImageClick}
-        >
-          {/* Skeleton loader */}
-          {!imageLoaded && (
-            <div className="w-full h-full bg-gradient-to-br from-muted/50 to-muted/20 animate-pulse" />
-          )}
-          
-          <img
-            src={mainImage}
-            alt={`${product.brand} ${product.name}`}
-            className={`w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-110 ${
-              imageLoaded ? 'opacity-100' : 'opacity-0'
-            }`}
-            loading="lazy"
-            onLoad={handleImageLoad}
-            decoding="async"
-          />
-          
-          {/* Overlay elegante multicamadas */}
-          <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/30 via-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
-          <div className="absolute inset-0 pointer-events-none bg-gradient-to-br from-primary/10 via-transparent to-accent/10 opacity-0 group-hover:opacity-70 transition-all duration-500"></div>
-          
-          {/* Indicador de zoom sutil */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none">
-            <div className="bg-white/20 backdrop-blur-lg rounded-full p-3 border border-white/30 shadow-xl">
-              <div className="w-6 h-6 border-2 border-white rounded-full relative">
-                <div className="absolute -top-1 -right-1 w-3 h-3 border-2 border-white rounded-full rotate-45 transform translate-x-1 translate-y-1"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Badge de Oferta - Design sofisticado */}
-        {isOfferActive && (
-          <div className="absolute top-4 left-4 z-10">
-            <div
-              className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide shadow-xl backdrop-blur-xl hover:shadow-2xl transition-all duration-300 border 
-                ${badgeStyle === 'hero'
-                  ? 'glass-card bg-gradient-to-r from-foreground/70 to-foreground text-background border-foreground/30'
-                  : 'bg-gradient-to-r from-primary/90 to-primary text-primary-foreground border-primary/40'}
-              `}
-            >
-              OFERTA
-            </div>
-          </div>
+    <FluidWrapper 
+      className={cn(
+        'w-full max-w-sm mx-auto',
+        cardVariants[variant]
+      )}
+      smoothEntry={!priority}
+    >
+      <Card 
+        ref={elementRef}
+        className={cn(
+          'group relative h-full cursor-pointer overflow-hidden',
+          'transition-all duration-300 ease-out',
+          'hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1',
+          'border-border/50 hover:border-primary/30',
+          'gpu-accelerated'
         )}
-
-        {/* Coração de Favorito - Premium Glass Effect */}
-        <div className="absolute top-4 right-4 z-10">
-          <FavoriteButton 
-            productId={product.id} 
-            productName={product.name}
-            size="md"
-            className="bg-white/25 backdrop-blur-2xl hover:bg-white/40 shadow-2xl border border-white/40 rounded-2xl w-12 h-12 lg:w-14 lg:h-14 transition-all duration-500 hover:scale-110 hover:rotate-3"
+        onClick={handleClick}
+        onKeyDown={handleKeyDown}
+        tabIndex={0}
+        role="button"
+        aria-label={`Ver detalhes de ${product.name}`}
+      >
+        <div className="relative overflow-hidden rounded-t-lg">
+          <LazyImage
+            src={product.image}
+            alt={product.name}
+            className={cn(
+              'w-full object-cover transition-transform duration-500',
+              'group-hover:scale-110',
+              variant === 'compact' ? 'h-48' : variant === 'featured' ? 'h-64' : 'h-56'
+            )}
+            loading={priority ? 'eager' : 'lazy'}
           />
-        </div>
-
-        {/* Badge Status - Design sofisticado */}
-        <div className="absolute bottom-4 right-4 z-10">
-          {isOutOfStock ? (
-            <div className="px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wide shadow-xl bg-gradient-to-r from-stone-600/30 to-stone-500/30 text-stone-100 border border-stone-400/40 backdrop-blur-xl">
-              ESGOTADO
-            </div>
-          ) : (
-            <div
-              className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide shadow-xl backdrop-blur-xl hover:shadow-2xl transition-all duration-300 border 
-                ${badgeStyle === 'hero'
-                  ? 'glass-card bg-gradient-to-r from-foreground/70 to-foreground text-background border-foreground/30'
-                  : 'bg-gradient-to-r from-primary/90 to-primary text-primary-foreground border-primary/40'}
-              `}
-            >
-              ORIGINAL
-            </div>
-          )}
-        </div>
-
-        {/* Ícone de Carrinho Flutuante - Design premium */}
-        <div className="absolute bottom-4 left-4 z-10">
-          <button
-            onClick={handleQuickAddToCart}
-            disabled={isOutOfStock}
-            className={`btn-fluid ${justAdded ? 'cart-feedback' : ''} bg-gradient-to-r from-primary to-primary/90 text-primary-foreground p-3 rounded-2xl shadow-xl border border-primary/30 backdrop-blur-sm ${
-              isOutOfStock ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
-            title={isOutOfStock ? 'Produto esgotado' : 'Adicionar ao carrinho'}
-          >
-            {justAdded ? <Check className="w-5 h-5" /> : <ShoppingCart className="w-5 h-5" />}
-          </button>
-        </div>
-      </div>
-
-      {/* Área de Informações - Layout sofisticado premium */}
-      <CardContent className="p-4 lg:p-5 space-y-3 bg-gradient-to-t from-muted/10 to-transparent">
-        {/* Marca - Design luxuoso */}
-        <div className="flex items-center justify-between">
-          <p className="text-sm font-bold uppercase tracking-[0.15em] mb-1 px-3 py-1 rounded-full border border-foreground/30 bg-transparent text-foreground backdrop-blur-sm">
-            <span className="notranslate" translate="no">{product.brand}</span>
-          </p>
-          {isOfferActive && (
-            <div className="text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 border border-foreground/30 bg-transparent text-foreground">
-              OFERTA EXCLUSIVA
-            </div>
-          )}
-        </div>
-
-        {/* Nome do Produto - Tipografia premium */}
-        <h3 className="font-serif text-lg lg:text-xl font-bold text-foreground line-clamp-2 leading-tight min-h-[2.5rem] group-hover:text-primary transition-colors duration-300">
-          <span className="notranslate" translate="no">{product.name}</span>
-        </h3>
-
-        {/* Preços - Design luxuoso */}
-        <div className="space-y-1 py-1">
-          {isOfferActive && originalDisplay && (
-            <p className="text-lg text-muted-foreground line-through font-medium opacity-70">
-              {originalDisplay}
-            </p>
-          )}
           
-          <div className="flex items-baseline gap-2">
-            <p className="text-2xl lg:text-3xl font-bold text-foreground bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-              {priceDisplay || 'Consulte'}
-            </p>
+          {/* Gradient overlay for better text readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          
+          {/* Status badges */}
+          <div className="absolute top-2 left-2 flex flex-col gap-1">
+            {product.is_featured && (
+              <Badge variant="default" className="bg-green-500 hover:bg-green-600">
+                Novo
+              </Badge>
+            )}
+            {product.original_price && (
+              <Badge variant="destructive">
+                Oferta
+              </Badge>
+            )}
           </div>
-        </div>
 
-        {/* Descrição breve - Design sofisticado */}
-        <p className="text-sm text-muted-foreground line-clamp-1 leading-tight font-medium">
-          {product.description || (<>
-            Relógio <span className="notranslate" translate="no">{product.brand}</span> original em excelente estado
-          </>)}
-        </p>
-
-        {/* Botão Ver Detalhes - Design premium */}
-        <div className="pt-4">
-          <Button
-            variant="outline"
-            size="lg"
-            className="w-full h-14 text-lg font-bold bg-gradient-to-r from-background to-muted/50 border-2 border-primary/30 hover:from-primary hover:to-primary/90 hover:text-primary-foreground hover:border-primary transition-all duration-500 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
-            asChild
-          >
-            <Link to={`/produto/${product.id}`}>
-              Ver Detalhes
-            </Link>
-          </Button>
-        </div>
-      </CardContent>
-
-      {/* Modal para visualização da imagem completa */}
-      <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
-        <DialogContent className="max-w-4xl p-0 bg-transparent border-none shadow-none">
-          <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-background">
-            <img 
-              src={mainImage} 
-              alt={`${product.brand} ${product.name}`} 
-              className="w-full h-auto"
+          {/* Favorite button */}
+          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            <FavoriteButton 
+              productId={product.id} 
+              size="sm"
+              className="bg-white/90 hover:bg-white shadow-md"
             />
           </div>
-        </DialogContent>
-      </Dialog>
-    </Card>
+        </div>
+
+        <CardContent className="p-4 flex flex-col justify-between h-full">
+          <div className="space-y-2">
+            <div className="flex items-start justify-between gap-2">
+              <h3 className="font-semibold text-sm leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-200">
+                {product.name}
+              </h3>
+            </div>
+            
+            <p className="text-xs text-muted-foreground line-clamp-2">
+              {product.description}
+            </p>
+            
+            <StockStatus 
+              stockStatus={product.stock_status} 
+              quantity={product.stock_quantity} 
+            />
+          </div>
+
+          <div className="space-y-3 mt-4">
+            <div className="flex items-center justify-between">
+              <div className="flex flex-col">
+                {product.original_price && (
+                  <span className="text-xs text-muted-foreground line-through">
+                    R$ {product.original_price}
+                  </span>
+                )}
+                <span className="font-bold text-lg text-primary">
+                  R$ {product.price}
+                </span>
+              </div>
+            </div>
+            
+            {/* Lazy load do botão apenas quando visível */}
+            {isIntersecting && (
+              <AddToCartButtonAnimated 
+                product={product}
+                size="sm"
+                className="w-full"
+              />
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </FluidWrapper>
   );
 });
 
 OptimizedProductCard.displayName = 'OptimizedProductCard';
 
-export { OptimizedProductCard as ProductCard };
+// Export compatível com nome antigo
+export const ProductCard = OptimizedProductCard;

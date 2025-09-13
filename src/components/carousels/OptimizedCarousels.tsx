@@ -1,5 +1,5 @@
 import React, { useState, useEffect, memo, useCallback } from 'react';
-import { ProductCard } from '@/components/OptimizedProductCard';
+import { OptimizedProductCard } from '@/components/OptimizedProductCard';
 import { Product } from '@/types';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
@@ -71,9 +71,9 @@ export const OffersCarousel = memo(() => {
           <CarouselContent className="-ml-1 lg:-ml-2 pr-1 lg:pr-2">
             {products.map((product) => (
               <CarouselItem key={product.id} className="pl-2 lg:pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/3">
-                <ProductCard
+                <OptimizedProductCard
                   product={product}
-                  onProductClick={handleProductClick}
+                  variant="compact"
                 />
               </CarouselItem>
             ))}
@@ -151,9 +151,9 @@ export const NewProductsCarousel = memo(() => {
           <CarouselContent className="-ml-1 lg:-ml-2 pr-1 lg:pr-2">
             {products.map((product) => (
               <CarouselItem key={product.id} className="pl-2 lg:pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/3">
-                <ProductCard
+                <OptimizedProductCard
                   product={product}
-                  onProductClick={handleProductClick}
+                  variant="compact"
                 />
               </CarouselItem>
             ))}
@@ -223,9 +223,9 @@ export const OutOfStockCarousel = memo(() => {
           <CarouselContent className="-ml-1 lg:-ml-2 pr-1 lg:pr-2">
             {products.map((product) => (
               <CarouselItem key={product.id} className="pl-2 lg:pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/3">
-                <ProductCard
+                <OptimizedProductCard
                   product={product}
-                  onProductClick={handleProductClick}
+                  variant="compact"
                 />
               </CarouselItem>
             ))}
