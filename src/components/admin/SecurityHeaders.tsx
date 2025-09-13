@@ -1,104 +1,84 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/Button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Shield, CheckCircle, XCircle, AlertTriangle, RefreshCw } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { Check, X, RefreshCw, AlertTriangle } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface SecurityHeader {
   name: string;
   description: string;
   present: boolean;
-  value?: string;
   recommended: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
 }
 
 export const SecurityHeaders: React.FC = () => {
-  const { toast } = useToast();
   const [headers, setHeaders] = useState<SecurityHeader[]>([]);
   const [loading, setLoading] = useState(false);
 
   const checkSecurityHeaders = async () => {
     setLoading(true);
     try {
-      // Simular verificação de headers de segurança
-      // Em uma aplicação real, isso seria feito no servidor
-      const headerChecks: SecurityHeader[] = [
+      // Make a HEAD request to check response headers
+      const response = await fetch(window.location.origin, { method: 'HEAD' });
+      const responseHeaders = response.headers;
+      
+      const securityHeaders: SecurityHeader[] = [
         {
           name: 'Content-Security-Policy',
-          description: 'Previne ataques XSS e injeção de código',
-          present: false,
+          description: 'Prevents XSS attacks by controlling resource loading',
+          present: responseHeaders.has('content-security-policy'),
           recommended: "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'",
           severity: 'high'
         },
         {
           name: 'X-Frame-Options',
-          description: 'Previne ataques de clickjacking',
-          present: false,
-          recommended: 'DENY ou SAMEORIGIN',
+          description: 'Prevents clickjacking attacks',
+          present: responseHeaders.has('x-frame-options'),
+          recommended: 'DENY or SAMEORIGIN',
           severity: 'medium'
         },
         {
           name: 'X-Content-Type-Options',
-          description: 'Previne MIME type sniffing',
-          present: false,
+          description: 'Prevents MIME type sniffing',
+          present: responseHeaders.has('x-content-type-options'),
           recommended: 'nosniff',
           severity: 'medium'
         },
         {
           name: 'Referrer-Policy',
-          description: 'Controla informações de referrer',
-          present: false,
+          description: 'Controls referrer information sent to other sites',
+          present: responseHeaders.has('referrer-policy'),
           recommended: 'strict-origin-when-cross-origin',
           severity: 'low'
         },
         {
           name: 'Permissions-Policy',
-          description: 'Controla APIs do navegador',
-          present: false,
-          recommended: 'camera=(), microphone=(), geolocation=()',
-          severity: 'medium'
+          description: 'Controls browser feature access',
+          present: responseHeaders.has('permissions-policy'),
+          recommended: 'geolocation=(), microphone=(), camera=()',
+          severity: 'low'
         },
         {
           name: 'Strict-Transport-Security',
-          description: 'Força conexões HTTPS',
-          present: false,
+          description: 'Enforces HTTPS connections',
+          present: responseHeaders.has('strict-transport-security'),
           recommended: 'max-age=31536000; includeSubDomains',
           severity: 'high'
         }
       ];
 
-      // Verificar headers presentes (limitado em SPA)
-      // Esta implementação é básica - em produção seria verificado no servidor
-      const response = await fetch(window.location.origin, { method: 'HEAD' });
-      headerChecks.forEach(header => {
-        const headerValue = response.headers.get(header.name.toLowerCase());
-        if (headerValue) {
-          header.present = true;
-          header.value = headerValue;
-        }
-      });
-
-      setHeaders(headerChecks);
+      setHeaders(securityHeaders);
       
-      const missingCritical = headerChecks.filter(h => !h.present && (h.severity === 'critical' || h.severity === 'high')).length;
-      if (missingCritical > 0) {
-        toast({
-          title: "Headers de Segurança",
-          description: `${missingCritical} headers críticos não encontrados`,
-          variant: "destructive"
-        });
+      // Show warning for critical missing headers
+      const criticalMissing = securityHeaders.filter(h => !h.present && h.severity === 'critical');
+      if (criticalMissing.length > 0) {
+        toast.warning(`${criticalMissing.length} critical security headers missing!`);
       }
-
     } catch (error) {
-      console.error('Erro ao verificar headers:', error);
-      toast({
-        title: "Erro",
-        description: "Falha ao verificar headers de segurança",
-        variant: "destructive"
-      });
+      console.error('Failed to check security headers:', error);
+      toast.error('Failed to check security headers');
     } finally {
       setLoading(false);
     }
@@ -120,14 +100,13 @@ export const SecurityHeaders: React.FC = () => {
 
   const getStatusIcon = (present: boolean) => {
     return present ? (
-      <CheckCircle className="h-4 w-4 text-green-500" />
+      <Check className="h-4 w-4 text-green-600" />
     ) : (
-      <XCircle className="h-4 w-4 text-destructive" />
+      <X className="h-4 w-4 text-red-600" />
     );
   };
 
-  const missingHeaders = headers.filter(h => !h.present);
-  const criticalMissing = missingHeaders.filter(h => h.severity === 'critical' || h.severity === 'high');
+  const criticalMissing = headers.filter(h => !h.present && (h.severity === 'critical' || h.severity === 'high')).length;
 
   return (
     <Card>
@@ -135,84 +114,70 @@ export const SecurityHeaders: React.FC = () => {
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="flex items-center gap-2">
-              <Shield className="h-5 w-5" />
-              Headers de Segurança
+              <span>Security Headers</span>
+              <Badge variant={criticalMissing > 0 ? 'destructive' : 'secondary'}>
+                {headers.filter(h => h.present).length}/{headers.length} Present
+              </Badge>
             </CardTitle>
             <CardDescription>
-              Verificação de headers HTTP de segurança implementados
+              HTTP security headers help protect against common attacks
             </CardDescription>
           </div>
-          <Button 
-            onClick={checkSecurityHeaders} 
+          <button
+            onClick={checkSecurityHeaders}
             disabled={loading}
-            variant="outline"
-            size="sm"
+            className="flex items-center gap-2 px-3 py-1 border rounded-md text-sm hover:bg-muted transition-colors disabled:opacity-50"
           >
-            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-            Verificar
-          </Button>
+            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+            Refresh
+          </button>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {criticalMissing.length > 0 && (
-          <Alert variant="destructive">
+      <CardContent>
+        {criticalMissing > 0 && (
+          <Alert className="mb-4">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              <strong>Atenção:</strong> {criticalMissing.length} headers de segurança críticos estão ausentes.
-              Isso pode deixar a aplicação vulnerável a ataques.
+              {criticalMissing} critical security headers are missing. Configure these in your CDN or hosting provider.
             </AlertDescription>
           </Alert>
         )}
 
-        <div className="grid gap-3">
-          {headers.map((header, index) => (
-            <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-              <div className="flex items-center gap-3">
-                {getStatusIcon(header.present)}
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <p className="font-medium">{header.name}</p>
-                    <Badge variant={getSeverityColor(header.severity)} className="text-xs">
-                      {header.severity}
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground">{header.description}</p>
-                  {header.present && header.value && (
-                    <p className="text-xs text-green-600 mt-1 font-mono">
-                      Valor: {header.value}
-                    </p>
-                  )}
-                  {!header.present && (
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Recomendado: <span className="font-mono">{header.recommended}</span>
-                    </p>
-                  )}
+        <div className="space-y-4">
+          {headers.map((header) => (
+            <div
+              key={header.name}
+              className="flex items-start justify-between p-3 border rounded-lg"
+            >
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  {getStatusIcon(header.present)}
+                  <span className="font-medium">{header.name}</span>
+                  <Badge variant={getSeverityColor(header.severity)}>
+                    {header.severity}
+                  </Badge>
                 </div>
+                <p className="text-sm text-muted-foreground mb-2">
+                  {header.description}
+                </p>
+                {!header.present && (
+                  <div className="text-xs text-muted-foreground">
+                    <strong>Recommended:</strong> {header.recommended}
+                  </div>
+                )}
               </div>
-              <Badge variant={header.present ? "default" : "destructive"}>
-                {header.present ? "Presente" : "Ausente"}
-              </Badge>
             </div>
           ))}
         </div>
 
-        {missingHeaders.length > 0 && (
-          <Alert>
-            <Shield className="h-4 w-4" />
-            <AlertDescription>
-              <strong>Implementação:</strong> Para aplicações React/SPA, os headers de segurança devem ser configurados:
-              <ul className="mt-2 space-y-1 list-disc list-inside text-sm">
-                <li>No servidor web (Nginx, Apache)</li>
-                <li>No CDN (Cloudflare, AWS CloudFront)</li>
-                <li>Na plataforma de hospedagem (Vercel, Netlify)</li>
-              </ul>
-            </AlertDescription>
-          </Alert>
-        )}
-
-        <div className="text-sm text-muted-foreground">
-          <p><strong>Nota:</strong> Esta verificação tem limitações em aplicações SPA. 
-          Para uma análise completa, use ferramentas como SecurityHeaders.com ou Mozilla Observatory.</p>
+        <div className="mt-4 p-3 bg-muted rounded-lg">
+          <h4 className="font-medium mb-2">Configuration Notes:</h4>
+          <ul className="text-sm text-muted-foreground space-y-1">
+            <li>• Configure these headers in your CDN (Cloudflare, Vercel, etc.)</li>
+            <li>• For Vercel: Add headers to vercel.json</li>
+            <li>• For SPAs: Some headers may not appear in client-side checks</li>
+            <li>• Test with online tools like securityheaders.com for accurate results</li>
+          </ul>
         </div>
       </CardContent>
     </Card>

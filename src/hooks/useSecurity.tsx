@@ -9,17 +9,16 @@ export const useSecurity = () => {
     // Client-side logging (immediate)
     logSecurityEvent(eventType, details);
     
-    // Server-side logging (persistent) for high/critical events
-    if (severity === 'high' || severity === 'critical') {
-      try {
-        await supabase.rpc('log_security_event', {
-          p_event_type: eventType,
-          p_details: details,
-          p_severity: severity
-        });
-      } catch (error) {
-        console.error('Failed to log security event to database:', error);
-      }
+    // Server-side logging (persistent) using enhanced function
+    try {
+      await supabase.rpc('log_security_event_enhanced', {
+        p_event_type: eventType,
+        p_details: details,
+        p_severity: severity
+      });
+    } catch (error) {
+      console.error('Failed to log security event to database:', error);
+      // Fallback to client-side only logging
     }
   }, []);
 

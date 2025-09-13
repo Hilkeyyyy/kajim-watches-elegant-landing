@@ -56,6 +56,39 @@ export type Database = {
         }
         Relationships: []
       }
+      auth_rate_limit: {
+        Row: {
+          attempt_type: string
+          attempts_count: number | null
+          blocked_until: string | null
+          created_at: string | null
+          id: string
+          ip_address: unknown
+          updated_at: string | null
+          window_start: string | null
+        }
+        Insert: {
+          attempt_type: string
+          attempts_count?: number | null
+          blocked_until?: string | null
+          created_at?: string | null
+          id?: string
+          ip_address: unknown
+          updated_at?: string | null
+          window_start?: string | null
+        }
+        Update: {
+          attempt_type?: string
+          attempts_count?: number | null
+          blocked_until?: string | null
+          created_at?: string | null
+          id?: string
+          ip_address?: unknown
+          updated_at?: string | null
+          window_start?: string | null
+        }
+        Relationships: []
+      }
       brand_categories: {
         Row: {
           auto_generated: boolean | null
@@ -800,7 +833,20 @@ export type Database = {
         }
         Returns: undefined
       }
+      log_admin_action_enhanced: {
+        Args: {
+          action_type: string
+          details?: Json
+          record_id: string
+          table_name: string
+        }
+        Returns: undefined
+      }
       log_security_event: {
+        Args: { p_details?: Json; p_event_type: string; p_severity?: string }
+        Returns: undefined
+      }
+      log_security_event_enhanced: {
         Args: { p_details?: Json; p_event_type: string; p_severity?: string }
         Returns: undefined
       }
