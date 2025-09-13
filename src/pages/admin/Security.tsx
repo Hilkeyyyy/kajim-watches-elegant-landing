@@ -1,8 +1,6 @@
 import React from 'react';
 import { SecurityMonitor } from '@/components/admin/SecurityMonitor';
 import { SecurityValidator } from '@/components/admin/SecurityValidator';
-import { SecurityHeaders } from '@/components/admin/SecurityHeaders';
-import { SecurityConfiguration } from '@/components/admin/SecurityConfiguration';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Shield, AlertTriangle, CheckCircle, Info } from 'lucide-react';
@@ -160,12 +158,10 @@ const Security: React.FC = () => {
         </Card>
       </div>
 
-      <div className="grid gap-6">
-        <SecurityConfiguration />
-        <SecurityHeaders />
-        <SecurityMonitor />
-        <SecurityValidator />
-      </div>
+      {/* Security Logs Monitor */}
+          <SecurityMonitor />
+          
+          <SecurityValidator />
     </div>
   );
 };
