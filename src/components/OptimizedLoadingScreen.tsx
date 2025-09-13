@@ -1,108 +1,61 @@
-import React from 'react';
-import { Skeleton } from '@/components/ui/skeleton';
-import { cn } from '@/lib/utils';
+import React, { useEffect, useState } from 'react';
+import { Card } from '@/components/ui/card';
 
 interface OptimizedLoadingScreenProps {
-  variant?: 'page' | 'carousel' | 'card' | 'minimal';
-  className?: string;
+  message?: string;
+  showProgress?: boolean;
 }
 
-/**
- * Tela de carregamento otimizada com skeletons fluidos
- * Previne layout shifts e melhora UX
- */
-export const OptimizedLoadingScreen: React.FC<OptimizedLoadingScreenProps> = ({
-  variant = 'page',
-  className
+export const OptimizedLoadingScreen: React.FC<OptimizedLoadingScreenProps> = ({ 
+  message = 'Carregando...', 
+  showProgress = false 
 }) => {
-  const renderPageSkeleton = () => (
-    <div className="space-y-8">
-      {/* Hero skeleton */}
-      <Skeleton className="w-full h-96 rounded-lg" />
-      
-      {/* Category carousel skeleton */}
-      <div className="space-y-4">
-        <Skeleton className="h-6 w-48" />
-        <div className="flex gap-4 overflow-hidden">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-20 w-32 rounded-lg flex-shrink-0" />
-          ))}
-        </div>
-      </div>
-      
-      {/* Products grid skeleton */}
-      <div className="space-y-4">
-        <Skeleton className="h-8 w-64" />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="space-y-3">
-              <Skeleton className="h-48 w-full rounded-lg" />
-              <Skeleton className="h-4 w-3/4" />
-              <Skeleton className="h-4 w-1/2" />
-              <Skeleton className="h-8 w-full" />
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+  const [progress, setProgress] = useState(0);
 
-  const renderCarouselSkeleton = () => (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <Skeleton className="h-6 w-48" />
-        <div className="flex gap-2">
-          <Skeleton className="h-8 w-8 rounded-full" />
-          <Skeleton className="h-8 w-8 rounded-full" />
-        </div>
-      </div>
-      <div className="flex gap-4 overflow-hidden">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="flex-shrink-0 w-72 space-y-3">
-            <Skeleton className="h-48 w-full rounded-lg" />
-            <Skeleton className="h-4 w-3/4" />
-            <Skeleton className="h-4 w-1/2" />
-            <Skeleton className="h-8 w-full" />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  useEffect(() => {
+    if (showProgress) {
+      const interval = setInterval(() => {
+        setProgress(prev => (prev >= 95 ? 95 : prev + 1));
+      }, 50);
 
-  const renderCardSkeleton = () => (
-    <div className="space-y-3">
-      <Skeleton className="h-48 w-full rounded-lg" />
-      <Skeleton className="h-4 w-3/4" />
-      <Skeleton className="h-4 w-1/2" />
-      <Skeleton className="h-8 w-full" />
-    </div>
-  );
-
-  const renderMinimalSkeleton = () => (
-    <div className="flex items-center justify-center p-8">
-      <div className="relative">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent" />
-        <div className="absolute inset-0 rounded-full border-4 border-primary/20" />
-      </div>
-    </div>
-  );
-
-  const skeletonMap = {
-    page: renderPageSkeleton,
-    carousel: renderCarouselSkeleton,
-    card: renderCardSkeleton,
-    minimal: renderMinimalSkeleton
-  };
+      return () => clearInterval(interval);
+    }
+  }, [showProgress]);
 
   return (
-    <div className={cn(
-      'animate-pulse',
-      variant === 'page' && 'container mx-auto px-4 py-8',
-      variant === 'carousel' && 'w-full',
-      variant === 'card' && 'w-full max-w-sm',
-      className
-    )}>
-      {skeletonMap[variant]()}
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted/5 to-background flex items-center justify-center p-4">
+      <Card className="p-8 text-center bg-card/80 backdrop-blur-xl border border-border/20 shadow-2xl">
+        <div className="space-y-6">
+          {/* Logo ou ícone */}
+          <div className="mx-auto w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center">
+            <div className="w-8 h-8 bg-white rounded-full animate-pulse"></div>
+          </div>
+
+          {/* Spinner animado */}
+          <div className="flex justify-center">
+            <div className="relative w-12 h-12">
+              <div className="absolute inset-0 border-4 border-primary/20 rounded-full"></div>
+              <div className="absolute inset-0 border-4 border-transparent border-t-primary rounded-full animate-spin"></div>
+            </div>
+          </div>
+
+          {/* Mensagem */}
+          <div className="space-y-2">
+            <h3 className="text-lg font-semibold text-foreground">{message}</h3>
+            {showProgress && (
+              <div className="w-48 mx-auto">
+                <div className="bg-muted rounded-full h-2">
+                  <div 
+                    className="bg-gradient-to-r from-primary to-accent h-2 rounded-full transition-all duration-200"
+                    style={{ width: `${progress}%` }}
+                  ></div>
+                </div>
+                <p className="text-sm text-muted-foreground mt-2">{progress}%</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </Card>
     </div>
   );
 };
