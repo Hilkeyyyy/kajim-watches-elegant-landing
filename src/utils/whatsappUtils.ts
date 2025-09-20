@@ -7,18 +7,33 @@ import { formatPrice, parsePrice } from './priceUtils';
 const getUserName = async (): Promise<string> => {
   try {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return '[Nome do Usuário]';
+    if (!user) return 'Cliente';
 
+    // Primeiro tenta buscar no profiles
     const { data: profile } = await supabase
       .from('profiles')
       .select('name')
       .eq('id', user.id)
       .single();
 
-    return profile?.name || user.email?.split('@')[0] || '[Nome do Usuário]';
+    if (profile?.name) {
+      return profile.name;
+    }
+
+    // Se não encontrou no profiles, usa o email ou metadata do user
+    if (user.user_metadata?.name) {
+      return user.user_metadata.name;
+    }
+
+    if (user.email) {
+      const emailName = user.email.split('@')[0];
+      return emailName.charAt(0).toUpperCase() + emailName.slice(1);
+    }
+
+    return 'Cliente';
   } catch (error) {
     console.error('Erro ao buscar nome do usuário:', error);
-    return '[Nome do Usuário]';
+    return 'Cliente';
   }
 };
 
@@ -43,24 +58,24 @@ export const generateProductWhatsAppMessage = async (product: any): Promise<stri
     ? (product.image.startsWith('http') ? product.image : `${window.location.origin}${product.image}`)
     : 'Imagem não disponível';
 
-  return `Assunto: ⌚ Confirmação de Interesse – KAJIM Relógios
+  return `Assunto: Confirmação de Interesse - KAJIM Relógios
 
 Prezados(as),
 
 Gostaria de manifestar meu interesse no seguinte produto:
 
-1️⃣ Produto: ${product.name}
-🏷️ Marca: ${product.brand || 'Informe a marca do produto'}
-💰 Preço Unitário: ${formatPrice(typeof product.price === 'number' ? product.price : parsePrice(product.price))}
-📊 Quantidade: 1
-💵 Subtotal: ${formatPrice(typeof product.price === 'number' ? product.price : parsePrice(product.price))}
+Produto: ${product.name}
+Marca: ${product.brand || 'Informe a marca do produto'}
+Preço Unitário: ${formatPrice(typeof product.price === 'number' ? product.price : parsePrice(product.price))}
+Quantidade: 1
+Subtotal: ${formatPrice(typeof product.price === 'number' ? product.price : parsePrice(product.price))}
 
-📸 Imagem do produto:
+Imagem do produto:
 ${imageUrl}
 
-📅 Data da consulta: ${currentDate} às ${currentTime}
+Data da consulta: ${currentDate} às ${currentTime}
 
-🔍 Solicito, por gentileza, mais informações sobre o produto mencionado, bem como detalhes sobre condições de compra e prazos de entrega.
+Solicito, por gentileza, mais informações sobre o produto mencionado, bem como detalhes sobre condições de compra e prazos de entrega.
 
 Atenciosamente,
 ${userName}`;
@@ -125,19 +140,19 @@ export const generateCartWhatsAppMessage = async (cartItems: any[], totalItems: 
   );
 
   const itemsList = enrichedItems
-    .map((it) => `${it.index}️⃣ Produto: ${it.name}
-🏷️ Marca: ${it.brand}
-💰 Preço Unitário: ${formatPrice(it.unitPrice)}
-📊 Quantidade: ${it.quantity}
-💵 Subtotal: ${formatPrice(it.subtotal)}
+    .map((it) => `${it.index}. Produto: ${it.name}
+Marca: ${it.brand}
+Preço Unitário: ${formatPrice(it.unitPrice)}
+Quantidade: ${it.quantity}
+Subtotal: ${formatPrice(it.subtotal)}
 
-📸 Imagem do produto:
+Imagem do produto:
 ${it.imageUrl}`)
     .join('\n\n');
 
   const computedTotalValue = enrichedItems.reduce((sum, it) => sum + it.subtotal, 0);
 
-  return `Assunto: ⌚ Confirmação de Interesse – KAJIM Relógios
+  return `Assunto: Confirmação de Interesse - KAJIM Relógios
 
 Prezados(as),
 
@@ -145,13 +160,13 @@ Gostaria de manifestar meu interesse nos seguintes produtos:
 
 ${itemsList}
 
-📋 Resumo do pedido:
-🛒 Quantidade total de itens: ${totalItems}
-💰 Valor total estimado: ${formatPrice(computedTotalValue)}
+Resumo do pedido:
+Quantidade total de itens: ${totalItems}
+Valor total estimado: ${formatPrice(computedTotalValue)}
 
-📅 Data da consulta: ${currentDate} às ${currentTime}
+Data da consulta: ${currentDate} às ${currentTime}
 
-🔍 Solicito, por gentileza, mais informações sobre os produtos mencionados, bem como detalhes sobre condições de compra e prazos de entrega.
+Solicito, por gentileza, mais informações sobre os produtos mencionados, bem como detalhes sobre condições de compra e prazos de entrega.
 
 Atenciosamente,
 ${userName}`;
