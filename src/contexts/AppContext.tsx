@@ -312,8 +312,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const totalItems = getTotalItems();
       
       const message = await generateCartWhatsAppMessage(state.cart, totalItems, parseFloat(totalValue.toString()));
-      // A função já retorna a mensagem com encoding seguro
-      const whatsappUrl = `https://wa.me/559181993435?text=${message}`;
+      const whatsappUrl = `https://wa.me/559181993435?text=${encodeURIComponent(message)}`;
       
       window.open(whatsappUrl, '_blank');
       notifySuccess('Pedido enviado', 'Seu pedido foi enviado para o WhatsApp!');

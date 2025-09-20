@@ -134,7 +134,7 @@ ${SAFE_EMOJIS.search} Solicito, por gentileza, mais informações sobre o produt
 Atenciosamente,
 ${userName}`);
 
-  return safeEncodeMessage(message);
+  return message;
 };
 
 /**
@@ -227,5 +227,5 @@ ${SAFE_EMOJIS.search} Solicito, por gentileza, mais informações sobre os produ
 Atenciosamente,
 ${userName}`);
 
-  return safeEncodeMessage(message);
+  return message;
 };
