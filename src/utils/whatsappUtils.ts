@@ -2,6 +2,60 @@ import { supabase } from '@/integrations/supabase/client';
 import { formatPrice, parsePrice } from './priceUtils';
 
 /**
+ * Emojis seguros com alta compatibilidade entre dispositivos
+ */
+const SAFE_EMOJIS = {
+  watch: '⌚',
+  brand: '🏷️',
+  price: '💰',
+  quantity: '📊',
+  total: '💵',
+  image: '📸',
+  date: '📅',
+  search: '🔍',
+  cart: '🛒',
+  summary: '📋',
+  star: '⭐',
+  check: '✅'
+};
+
+/**
+ * Função para encoding seguro de mensagens WhatsApp
+ */
+const safeEncodeMessage = (message: string): string => {
+  try {
+    // Primeiro tenta encoding normal
+    const encoded = encodeURIComponent(message);
+    
+    // Verifica se o encoding funcionou (não deve ter caracteres estranhos)
+    const decoded = decodeURIComponent(encoded);
+    if (decoded === message) {
+      return encoded;
+    }
+    
+    // Se falhou, remove emojis e tenta novamente
+    const fallbackMessage = message.replace(/[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, '');
+    return encodeURIComponent(fallbackMessage);
+  } catch (error) {
+    console.warn('Erro no encoding da mensagem WhatsApp:', error);
+    // Fallback: remove todos os caracteres especiais
+    const cleanMessage = message.replace(/[^\w\s\-.,!?:()]/g, '');
+    return encodeURIComponent(cleanMessage);
+  }
+};
+
+/**
+ * Cria uma mensagem formatada com emojis seguros
+ */
+const createFormattedMessage = (content: string, useEmojis: boolean = true): string => {
+  if (!useEmojis) {
+    // Versão texto puro como fallback
+    return content.replace(/[⌚🏷️💰📊💵📸📅🔍🛒📋⭐✅]/g, '');
+  }
+  return content;
+};
+
+/**
  * Busca o nome do usuário logado
  */
 const getUserName = async (): Promise<string> => {
@@ -58,27 +112,29 @@ export const generateProductWhatsAppMessage = async (product: any): Promise<stri
     ? (product.image.startsWith('http') ? product.image : `${window.location.origin}${product.image}`)
     : 'Imagem não disponível';
 
-  return `Assunto: Confirmação de Interesse - KAJIM Relógios
+  const message = createFormattedMessage(`Assunto: ${SAFE_EMOJIS.watch} Confirmação de Interesse - KAJIM Relógios
 
 Prezados(as),
 
 Gostaria de manifestar meu interesse no seguinte produto:
 
-Produto: ${product.name}
-Marca: ${product.brand || 'Informe a marca do produto'}
-Preço Unitário: ${formatPrice(typeof product.price === 'number' ? product.price : parsePrice(product.price))}
-Quantidade: 1
-Subtotal: ${formatPrice(typeof product.price === 'number' ? product.price : parsePrice(product.price))}
+${SAFE_EMOJIS.check} Produto: ${product.name}
+${SAFE_EMOJIS.brand} Marca: ${product.brand || 'Informe a marca do produto'}
+${SAFE_EMOJIS.price} Preço Unitário: ${formatPrice(typeof product.price === 'number' ? product.price : parsePrice(product.price))}
+${SAFE_EMOJIS.quantity} Quantidade: 1
+${SAFE_EMOJIS.total} Subtotal: ${formatPrice(typeof product.price === 'number' ? product.price : parsePrice(product.price))}
 
-Imagem do produto:
+${SAFE_EMOJIS.image} Imagem do produto:
 ${imageUrl}
 
-Data da consulta: ${currentDate} às ${currentTime}
+${SAFE_EMOJIS.date} Data da consulta: ${currentDate} às ${currentTime}
 
-Solicito, por gentileza, mais informações sobre o produto mencionado, bem como detalhes sobre condições de compra e prazos de entrega.
+${SAFE_EMOJIS.search} Solicito, por gentileza, mais informações sobre o produto mencionado, bem como detalhes sobre condições de compra e prazos de entrega.
 
 Atenciosamente,
-${userName}`;
+${userName}`);
+
+  return safeEncodeMessage(message);
 };
 
 /**
@@ -140,19 +196,19 @@ export const generateCartWhatsAppMessage = async (cartItems: any[], totalItems: 
   );
 
   const itemsList = enrichedItems
-    .map((it) => `${it.index}. Produto: ${it.name}
-Marca: ${it.brand}
-Preço Unitário: ${formatPrice(it.unitPrice)}
-Quantidade: ${it.quantity}
-Subtotal: ${formatPrice(it.subtotal)}
+    .map((it) => `${it.index}${SAFE_EMOJIS.check} Produto: ${it.name}
+${SAFE_EMOJIS.brand} Marca: ${it.brand}
+${SAFE_EMOJIS.price} Preço Unitário: ${formatPrice(it.unitPrice)}
+${SAFE_EMOJIS.quantity} Quantidade: ${it.quantity}
+${SAFE_EMOJIS.total} Subtotal: ${formatPrice(it.subtotal)}
 
-Imagem do produto:
+${SAFE_EMOJIS.image} Imagem do produto:
 ${it.imageUrl}`)
     .join('\n\n');
 
   const computedTotalValue = enrichedItems.reduce((sum, it) => sum + it.subtotal, 0);
 
-  return `Assunto: Confirmação de Interesse - KAJIM Relógios
+  const message = createFormattedMessage(`Assunto: ${SAFE_EMOJIS.watch} Confirmação de Interesse - KAJIM Relógios
 
 Prezados(as),
 
@@ -160,14 +216,16 @@ Gostaria de manifestar meu interesse nos seguintes produtos:
 
 ${itemsList}
 
-Resumo do pedido:
-Quantidade total de itens: ${totalItems}
-Valor total estimado: ${formatPrice(computedTotalValue)}
+${SAFE_EMOJIS.summary} Resumo do pedido:
+${SAFE_EMOJIS.cart} Quantidade total de itens: ${totalItems}
+${SAFE_EMOJIS.price} Valor total estimado: ${formatPrice(computedTotalValue)}
 
-Data da consulta: ${currentDate} às ${currentTime}
+${SAFE_EMOJIS.date} Data da consulta: ${currentDate} às ${currentTime}
 
-Solicito, por gentileza, mais informações sobre os produtos mencionados, bem como detalhes sobre condições de compra e prazos de entrega.
+${SAFE_EMOJIS.search} Solicito, por gentileza, mais informações sobre os produtos mencionados, bem como detalhes sobre condições de compra e prazos de entrega.
 
 Atenciosamente,
-${userName}`;
+${userName}`);
+
+  return safeEncodeMessage(message);
 };
