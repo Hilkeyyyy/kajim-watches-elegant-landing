@@ -1,9 +1,14 @@
 import React from 'react';
 import { SecurityMonitor } from '@/components/admin/SecurityMonitor';
 import { SecurityValidator } from '@/components/admin/SecurityValidator';
+import { SecurityDashboard } from '@/components/admin/SecurityDashboard';
+import { RealtimeSecurityMonitor } from '@/components/admin/RealtimeSecurityMonitor';
+import { SecurityRateLimiter } from '@/components/admin/SecurityRateLimiter';
+import { SecurityReporting } from '@/components/admin/SecurityReporting';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Shield, AlertTriangle, CheckCircle, Info } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Shield, AlertTriangle, CheckCircle, Info, Activity, Clock, FileText, Ban } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 const Security: React.FC = () => {
@@ -158,10 +163,59 @@ const Security: React.FC = () => {
         </Card>
       </div>
 
-      {/* Security Logs Monitor */}
+      {/* Tabs para diferentes módulos de segurança */}
+      <Tabs defaultValue="dashboard" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-6">
+          <TabsTrigger value="dashboard" className="flex items-center gap-2">
+            <Activity className="h-4 w-4" />
+            Dashboard
+          </TabsTrigger>
+          <TabsTrigger value="realtime" className="flex items-center gap-2">
+            <Clock className="h-4 w-4" />
+            Tempo Real
+          </TabsTrigger>
+          <TabsTrigger value="ratelimit" className="flex items-center gap-2">
+            <Ban className="h-4 w-4" />
+            Rate Limit
+          </TabsTrigger>
+          <TabsTrigger value="reports" className="flex items-center gap-2">
+            <FileText className="h-4 w-4" />
+            Relatórios
+          </TabsTrigger>
+          <TabsTrigger value="monitor" className="flex items-center gap-2">
+            <Shield className="h-4 w-4" />
+            Monitor
+          </TabsTrigger>
+          <TabsTrigger value="validator" className="flex items-center gap-2">
+            <CheckCircle className="h-4 w-4" />
+            Validador
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="dashboard">
+          <SecurityDashboard />
+        </TabsContent>
+
+        <TabsContent value="realtime">
+          <RealtimeSecurityMonitor />
+        </TabsContent>
+
+        <TabsContent value="ratelimit">
+          <SecurityRateLimiter />
+        </TabsContent>
+
+        <TabsContent value="reports">
+          <SecurityReporting />
+        </TabsContent>
+
+        <TabsContent value="monitor">
           <SecurityMonitor />
-          
+        </TabsContent>
+
+        <TabsContent value="validator">
           <SecurityValidator />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
