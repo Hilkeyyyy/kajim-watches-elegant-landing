@@ -5,6 +5,7 @@ import { SecurityDashboard } from '@/components/admin/SecurityDashboard';
 import { RealtimeSecurityMonitor } from '@/components/admin/RealtimeSecurityMonitor';
 import { SecurityRateLimiter } from '@/components/admin/SecurityRateLimiter';
 import { SecurityReporting } from '@/components/admin/SecurityReporting';
+import { SecurityEnhancer } from '@/components/admin/SecurityEnhancer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -95,30 +96,54 @@ const Security: React.FC = () => {
           </CardHeader>
           <CardContent className="space-y-3">
             <Alert>
-              <Info className="h-4 w-4" />
+              <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span>OTP Expiry</span>
-                    <Badge variant="destructive">Configurar</Badge>
+                    <span>OTP Expiry (24h)</span>
+                    <Badge variant="destructive">CRÍTICO</Badge>
                   </div>
-                  <p className="text-sm">
-                    Configure o tempo de expiração do OTP para 15-30 minutos nas configurações do Supabase Auth.
+                  <p className="text-sm text-red-600">
+                    ⚠️ VULNERABILIDADE: Tempo de expiração do OTP muito longo (24h). Configure para 15-30 minutos.
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Acesse: Supabase Dashboard → Authentication → Settings → Auth
                   </p>
                 </div>
               </AlertDescription>
             </Alert>
             
             <Alert>
-              <Info className="h-4 w-4" />
+              <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span>Proteção contra Senhas Vazadas</span>
-                    <Badge variant="destructive">Ativar</Badge>
+                    <Badge variant="destructive">CRÍTICO</Badge>
                   </div>
-                  <p className="text-sm">
-                    Ative a proteção contra senhas comprometidas nas configurações do Supabase Auth.
+                  <p className="text-sm text-red-600">
+                    ⚠️ VULNERABILIDADE: Proteção contra senhas comprometidas desabilitada.
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Acesse: Supabase Dashboard → Authentication → Settings → Password Security
+                  </p>
+                </div>
+              </AlertDescription>
+            </Alert>
+
+            <Alert>
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span>PostgreSQL Versão</span>
+                    <Badge variant="destructive">ATUALIZAR</Badge>
+                  </div>
+                  <p className="text-sm text-orange-600">
+                    ⚠️ SEGURANÇA: Patches de segurança disponíveis para PostgreSQL.
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Acesse: Supabase Dashboard → Settings → General → Infrastructure
                   </p>
                 </div>
               </AlertDescription>
@@ -165,10 +190,14 @@ const Security: React.FC = () => {
 
       {/* Tabs para diferentes módulos de segurança */}
       <Tabs defaultValue="dashboard" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="dashboard" className="flex items-center gap-2">
             <Activity className="h-4 w-4" />
             Dashboard
+          </TabsTrigger>
+          <TabsTrigger value="enhancer" className="flex items-center gap-2">
+            <Shield className="h-4 w-4" />
+            Aprimorador
           </TabsTrigger>
           <TabsTrigger value="realtime" className="flex items-center gap-2">
             <Clock className="h-4 w-4" />
@@ -194,6 +223,10 @@ const Security: React.FC = () => {
 
         <TabsContent value="dashboard">
           <SecurityDashboard />
+        </TabsContent>
+
+        <TabsContent value="enhancer">
+          <SecurityEnhancer />
         </TabsContent>
 
         <TabsContent value="realtime">

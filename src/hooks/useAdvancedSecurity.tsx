@@ -116,18 +116,22 @@ export const useAdvancedSecurity = () => {
     if (!isAdmin) return;
 
     try {
-      // Buscar eventos de segurança
+      // Buscar eventos de segurança com validação
       const { data: eventsData, error: eventsError } = await supabase
         .from('security_audit_logs')
         .select('*')
         .order('created_at', { ascending: false })
         .limit(100);
 
-      if (eventsError) throw eventsError;
+      if (eventsError) {
+        console.error('Erro ao carregar eventos de segurança:', eventsError);
+        auditLogger.log('security_data_load_error', { error: eventsError.message });
+        throw eventsError;
+      }
 
       const events = (eventsData || []).map(event => ({
         ...event,
-        severity: event.severity as 'low' | 'medium' | 'high' | 'critical',
+        severity: (event.severity as 'low' | 'medium' | 'high' | 'critical') || 'medium',
         ip_address: event.ip_address as string | undefined,
         user_agent: event.user_agent as string | undefined,
         user_id: event.user_id as string | undefined
