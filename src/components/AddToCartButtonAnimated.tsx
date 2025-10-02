@@ -10,6 +10,7 @@ interface AddToCartButtonAnimatedProps {
     name: string;
     price: string | number;
     image?: string;
+    brand?: string;
   };
   variant?: "outline" | "ghost" | "primary" | "secondary" | "destructive";
   size?: "sm" | "md" | "lg";
@@ -41,7 +42,8 @@ export const AddToCartButtonAnimated = React.memo(({
         id: product.id,
         name: product.name,
         price: typeof product.price === 'string' ? product.price : product.price.toString(),
-        image: product.image || ''
+        image: product.image || '',
+        brand: product.brand
       });
       
       // Trigger success animation

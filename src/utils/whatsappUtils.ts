@@ -1,59 +1,17 @@
 import { supabase } from '@/integrations/supabase/client';
 import { formatPrice, parsePrice } from './priceUtils';
 
-/**
- * Símbolos ASCII seguros para formatação
- */
-const SAFE_SYMBOLS = {
-  watch: '⌚',
-  brand: '🏢',
-  price: '💰',
-  quantity: '📦',
-  total: '💯',
-  image: '🖼️',
-  date: '📅',
-  search: '❓',
-  cart: '🛒',
-  summary: '📊',
-  bullet: '▸',
-  check: '✓'
+// Remover emojis problemáticos - usar apenas texto
+const TEXT_SYMBOLS = {
+  header: '===',
+  separator: '---',
+  bullet: '>',
+  total: 'TOTAL:'
 };
 
-/**
- * Função para encoding seguro de mensagens WhatsApp
- */
-const safeEncodeMessage = (message: string): string => {
-  try {
-    // Primeiro tenta encoding normal
-    const encoded = encodeURIComponent(message);
-    
-    // Verifica se o encoding funcionou (não deve ter caracteres estranhos)
-    const decoded = decodeURIComponent(encoded);
-    if (decoded === message) {
-      return encoded;
-    }
-    
-    // Se falhou, remove emojis e tenta novamente
-    const fallbackMessage = message.replace(/[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, '');
-    return encodeURIComponent(fallbackMessage);
-  } catch (error) {
-    console.warn('Erro no encoding da mensagem WhatsApp:', error);
-    // Fallback: remove todos os caracteres especiais
-    const cleanMessage = message.replace(/[^\w\s\-.,!?:()]/g, '');
-    return encodeURIComponent(cleanMessage);
-  }
-};
+// Remover função de encoding - não é mais necessária
 
-/**
- * Cria uma mensagem formatada com emojis seguros
- */
-const createFormattedMessage = (content: string, useEmojis: boolean = true): string => {
-  if (!useEmojis) {
-    // Versão texto puro como fallback
-    return content.replace(/[⌚🏷️💰📊💵📸📅🔍🛒📋⭐✅]/g, '');
-  }
-  return content;
-};
+// Remover função de formatação - não é mais necessária
 
 /**
  * Busca o nome do usuário logado
@@ -104,21 +62,19 @@ export const generateProductWhatsAppMessage = async (product: any): Promise<stri
 
   const price = typeof product.price === 'number' ? product.price : parsePrice(product.price);
 
-  const message = `🛍️ *Solicitação de Informações - KAJIM Relógios*
+  const message = `*KAJIM RELOGIOS - Consulta de Produto*
 
-📋 *Referência:* ${refNumber}
+Referencia: ${refNumber}
 
-*Produto de Interesse:*
-${product.name}
-Marca: ${product.brand || 'A definir'}
-Valor: ${formatPrice(price)}
+*Produto:* ${product.name}
+*Marca:* ${product.brand || 'A definir'}
+*Valor:* ${formatPrice(price)}
 
-🖼️ *Imagem:*
-${imageUrl}
+Link da imagem: ${imageUrl}
 
-👤 Solicitante: ${userName}
+Solicitante: ${userName}
 
-Gostaria de mais informações sobre este produto.
+Gostaria de mais informacoes sobre este produto.
 
 Obrigado!`;
 
@@ -132,56 +88,58 @@ export const generateCartWhatsAppMessage = async (cartItems: any[], totalItems: 
   const userName = await getUserName();
   const refNumber = `PED${Date.now().toString().slice(-8)}`;
 
-  const enrichedItems = await Promise.all(
-    cartItems.map(async (item, index) => {
-      const unitPrice = typeof item.price === 'number' ? item.price : parsePrice(item.price);
-      const quantity = Number(item.quantity) || 1;
-      const subtotal = unitPrice * quantity;
-      const imageSrc = item.image || item.image_url;
-      const imageUrl = imageSrc
-        ? (imageSrc.startsWith('http') ? imageSrc : `${window.location.origin}${imageSrc}`)
-        : 'Sem imagem';
-      
-      // Usar diretamente o campo brand do item do carrinho
-      const brand = item.brand || 'A definir';
-
-      return {
-        index: index + 1,
-        name: item.name,
-        brand,
-        unitPrice,
-        quantity,
-        subtotal,
-        imageUrl,
-      };
-    })
-  );
+  // Enriquecer items com cálculos
+  const enrichedItems = cartItems.map((item, index) => {
+    const unitPrice = typeof item.price === 'number' ? item.price : parsePrice(item.price);
+    const quantity = Number(item.quantity) || 1;
+    const subtotal = unitPrice * quantity;
+    const imageSrc = item.image || item.image_url;
+    const imageUrl = imageSrc
+      ? (imageSrc.startsWith('http') ? imageSrc : `${window.location.origin}${imageSrc}`)
+      : 'Sem imagem';
+    
+    // DEBUG: Verificar o que está vindo no item
+    console.log('Item do carrinho:', {
+      name: item.name,
+      brand: item.brand,
+      itemCompleto: item
+    });
+    
+    return {
+      index: index + 1,
+      name: item.name,
+      brand: item.brand || 'Marca nao informada',
+      unitPrice,
+      quantity,
+      subtotal,
+      imageUrl,
+    };
+  });
 
   const itemsList = enrichedItems
     .map((it) => `*${it.index}. ${it.name}*
-Marca: ${it.brand}
-Valor Unit.: ${formatPrice(it.unitPrice)} | Qtd: ${it.quantity}
-Subtotal: ${formatPrice(it.subtotal)}
-🖼️ ${it.imageUrl}`)
+*Marca:* ${it.brand}
+Valor: ${formatPrice(it.unitPrice)} x ${it.quantity} = ${formatPrice(it.subtotal)}
+Imagem: ${it.imageUrl}`)
     .join('\n\n');
 
   const computedTotalValue = enrichedItems.reduce((sum, it) => sum + it.subtotal, 0);
 
-  const message = `🛍️ *Solicitação de Orçamento - KAJIM Relógios*
+  const message = `*KAJIM RELOGIOS - Orcamento*
 
-📋 *Referência:* ${refNumber}
+Referencia: ${refNumber}
+Solicitante: ${userName}
 
-*Produtos Selecionados:*
+*PRODUTOS:*
 
 ${itemsList}
 
-━━━━━━━━━━━━━━━━
-📊 *Resumo:*
-Items: ${totalItems} | Total: ${formatPrice(computedTotalValue)}
+${TEXT_SYMBOLS.separator}
+*RESUMO DO PEDIDO:*
+Total de items: ${totalItems}
+Valor total: ${formatPrice(computedTotalValue)}
 
-👤 Solicitante: ${userName}
-
-Gostaria de mais informações sobre disponibilidade e condições de compra.
+Gostaria de mais informacoes sobre disponibilidade e formas de pagamento.
 
 Obrigado!`;
 

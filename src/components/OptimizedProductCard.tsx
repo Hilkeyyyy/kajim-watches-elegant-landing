@@ -80,7 +80,8 @@ const OptimizedProductCard: React.FC<ProductCardProps> = memo(({
       id: product.id,
       name: product.name,
       price: priceDisplay || 'Consulte',
-      image: mainImage
+      image: mainImage,
+      brand: product.brand
     });
     notifyCartAction('add', product.name);
     setJustAdded(true);
