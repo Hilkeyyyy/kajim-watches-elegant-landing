@@ -54,27 +54,32 @@ const getUserName = async (): Promise<string> => {
  */
 export const generateProductWhatsAppMessage = async (product: any): Promise<string> => {
   const userName = await getUserName();
-  const refNumber = `REF${Date.now().toString().slice(-8)}`;
   
   const imageUrl = product.image 
     ? (product.image.startsWith('http') ? product.image : `${window.location.origin}${product.image}`)
-    : 'Sem imagem';
+    : '';
 
   const price = typeof product.price === 'number' ? product.price : parsePrice(product.price);
+  const brandName = product.brand ? product.brand.toUpperCase() : 'A DEFINIR';
 
-  const message = `*KAJIM RELOGIOS - Consulta de Produto*
+  const message = `KAJIM RELOGIOS
 
-Referencia: ${refNumber}
+📄 Consulta de Produto
 
-*Produto:* ${product.name}
-*Marca:* ${product.brand || 'A definir'}
-*Valor:* ${formatPrice(price)}
+Cliente: ${userName}
 
-Link da imagem: ${imageUrl}
+Produto Selecionado
 
-Solicitante: ${userName}
+${product.name}
 
-Gostaria de mais informacoes sobre este produto.
+Marca: ${brandName}
+
+Valor: ${formatPrice(price)}
+
+Ver produto: ${imageUrl}
+
+
+📌 Solicitacao: Gostaria de mais informacoes sobre este produto.
 
 Obrigado!`;
 
@@ -129,39 +134,53 @@ export const generateCartWhatsAppMessage = async (cartItems: any[], totalItems: 
     })
   );
 
-  // Formatar lista de produtos de forma limpa
+  // Formatar lista de produtos seguindo o formato especificado
   const itemsList = enrichedItems
     .map((it) => {
-      const lines = [
+      const brandName = it.brand ? it.brand.toUpperCase() : 'SEM MARCA';
+      const productLines = [
         `${it.index}. ${it.name}`,
-        `   Marca: ${it.brand}`,
-        `   ${formatPrice(it.unitPrice)} x ${it.quantity} un = ${formatPrice(it.subtotal)}`
+        '',
+        `Marca: ${brandName}`,
+        '',
+        `Valor unitario: ${formatPrice(it.unitPrice)}`,
+        '',
+        `Quantidade: ${it.quantity} un`,
+        '',
+        `Subtotal: ${formatPrice(it.subtotal)}`,
+        ''
       ];
+      
       if (it.imageUrl) {
-        lines.push(`   ${it.imageUrl}`);
+        productLines.push(`Ver produto: ${it.imageUrl}`);
       }
-      return lines.join('\n');
+      
+      return productLines.join('\n');
     })
-    .join('\n\n');
+    .join('\n\n\n');
 
   const computedTotalValue = enrichedItems.reduce((sum, it) => sum + it.subtotal, 0);
 
-  // Mensagem limpa e organizada
-  const message = `*KAJIM RELOGIOS*
-Consulta de Orcamento
+  // Mensagem formatada conforme especificação
+  const message = `KAJIM RELOGIOS
 
-Referencia: ${refNumber}
+📄 Consulta de Orcamento
+
 Cliente: ${userName}
 
-PRODUTOS SELECIONADOS:
+Produtos Selecionados
+
 ${itemsList}
 
-================================
-RESUMO:
-Items: ${totalItems}
+
+Resumo do Pedido
+
+Itens: ${totalItems}
+
 Total: ${formatPrice(computedTotalValue)}
 
-Gostaria de informacoes sobre disponibilidade e formas de pagamento.
+
+📌 Solicitacao: Gostaria de informacoes sobre disponibilidade e formas de pagamento.
 
 Obrigado!`;
 
