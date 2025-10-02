@@ -88,58 +88,80 @@ export const generateCartWhatsAppMessage = async (cartItems: any[], totalItems: 
   const userName = await getUserName();
   const refNumber = `PED${Date.now().toString().slice(-8)}`;
 
-  // Enriquecer items com cálculos
-  const enrichedItems = cartItems.map((item, index) => {
-    const unitPrice = typeof item.price === 'number' ? item.price : parsePrice(item.price);
-    const quantity = Number(item.quantity) || 1;
-    const subtotal = unitPrice * quantity;
-    const imageSrc = item.image || item.image_url;
-    const imageUrl = imageSrc
-      ? (imageSrc.startsWith('http') ? imageSrc : `${window.location.origin}${imageSrc}`)
-      : 'Sem imagem';
-    
-    // DEBUG: Verificar o que está vindo no item
-    console.log('Item do carrinho:', {
-      name: item.name,
-      brand: item.brand,
-      itemCompleto: item
-    });
-    
-    return {
-      index: index + 1,
-      name: item.name,
-      brand: item.brand || 'Marca nao informada',
-      unitPrice,
-      quantity,
-      subtotal,
-      imageUrl,
-    };
-  });
+  // Enriquecer items com cálculos e buscar marca do banco se necessário
+  const enrichedItems = await Promise.all(
+    cartItems.map(async (item, index) => {
+      const unitPrice = typeof item.price === 'number' ? item.price : parsePrice(item.price);
+      const quantity = Number(item.quantity) || 1;
+      const subtotal = unitPrice * quantity;
+      const imageSrc = item.image || item.image_url;
+      const imageUrl = imageSrc
+        ? (imageSrc.startsWith('http') ? imageSrc : `${window.location.origin}${imageSrc}`)
+        : '';
+      
+      // Se não tem marca no item, buscar do banco de dados
+      let brand = item.brand;
+      if (!brand || brand === 'Marca não informada') {
+        try {
+          const { data: product } = await supabase
+            .from('products')
+            .select('brand')
+            .eq('id', item.id)
+            .single();
+          
+          if (product?.brand) {
+            brand = product.brand;
+          }
+        } catch (error) {
+          console.error('Erro ao buscar marca do produto:', error);
+        }
+      }
+      
+      return {
+        index: index + 1,
+        name: item.name,
+        brand: brand || 'Sem marca',
+        unitPrice,
+        quantity,
+        subtotal,
+        imageUrl,
+      };
+    })
+  );
 
+  // Formatar lista de produtos de forma limpa
   const itemsList = enrichedItems
-    .map((it) => `*${it.index}. ${it.name}*
-*Marca:* ${it.brand}
-Valor: ${formatPrice(it.unitPrice)} x ${it.quantity} = ${formatPrice(it.subtotal)}
-Imagem: ${it.imageUrl}`)
+    .map((it) => {
+      const lines = [
+        `${it.index}. ${it.name}`,
+        `   Marca: ${it.brand}`,
+        `   ${formatPrice(it.unitPrice)} x ${it.quantity} un = ${formatPrice(it.subtotal)}`
+      ];
+      if (it.imageUrl) {
+        lines.push(`   ${it.imageUrl}`);
+      }
+      return lines.join('\n');
+    })
     .join('\n\n');
 
   const computedTotalValue = enrichedItems.reduce((sum, it) => sum + it.subtotal, 0);
 
-  const message = `*KAJIM RELOGIOS - Orcamento*
+  // Mensagem limpa e organizada
+  const message = `*KAJIM RELOGIOS*
+Consulta de Orcamento
 
 Referencia: ${refNumber}
-Solicitante: ${userName}
+Cliente: ${userName}
 
-*PRODUTOS:*
-
+PRODUTOS SELECIONADOS:
 ${itemsList}
 
-${TEXT_SYMBOLS.separator}
-*RESUMO DO PEDIDO:*
-Total de items: ${totalItems}
-Valor total: ${formatPrice(computedTotalValue)}
+================================
+RESUMO:
+Items: ${totalItems}
+Total: ${formatPrice(computedTotalValue)}
 
-Gostaria de mais informacoes sobre disponibilidade e formas de pagamento.
+Gostaria de informacoes sobre disponibilidade e formas de pagamento.
 
 Obrigado!`;
 
