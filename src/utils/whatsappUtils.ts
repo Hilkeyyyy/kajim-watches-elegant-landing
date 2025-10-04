@@ -63,12 +63,15 @@ export const generateProductWhatsAppMessage = async (product: any): Promise<stri
   const brandName = product.brand ? product.brand.toUpperCase() : 'A DEFINIR';
 
   const message = `KAJIM RELOGIOS
+===================================
 
-📄 Consulta de Produto
+CONSULTA DE PRODUTO
 
 Cliente: ${userName}
 
-Produto Selecionado
+-----------------------------------
+
+PRODUTO SELECIONADO
 
 ${product.name}
 
@@ -78,8 +81,9 @@ Valor: ${formatPrice(price)}
 
 Ver produto: ${imageUrl}
 
+-----------------------------------
 
-📌 Solicitacao: Gostaria de mais informacoes sobre este produto.
+Gostaria de mais informacoes sobre este produto.
 
 Obrigado!`;
 
@@ -163,24 +167,29 @@ export const generateCartWhatsAppMessage = async (cartItems: any[], totalItems: 
 
   // Mensagem formatada conforme especificação
   const message = `KAJIM RELOGIOS
+===================================
 
-📄 Consulta de Orcamento
+CONSULTA DE ORCAMENTO
 
 Cliente: ${userName}
 
-Produtos Selecionados
+-----------------------------------
+
+PRODUTOS SELECIONADOS
 
 ${itemsList}
 
+-----------------------------------
 
-Resumo do Pedido
+RESUMO DO PEDIDO
 
 Itens: ${totalItems}
 
 Total: ${formatPrice(computedTotalValue)}
 
+-----------------------------------
 
-📌 Solicitacao: Gostaria de informacoes sobre disponibilidade e formas de pagamento.
+Gostaria de informacoes sobre disponibilidade e formas de pagamento.
 
 Obrigado!`;
 
