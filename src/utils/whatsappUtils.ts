@@ -63,29 +63,24 @@ export const generateProductWhatsAppMessage = async (product: any): Promise<stri
   const brandName = product.brand ? product.brand.toUpperCase() : 'A DEFINIR';
 
   const message = `KAJIM RELOGIOS
-===================================
 
 CONSULTA DE PRODUTO
 
-Cliente: ${userName}
-
------------------------------------
+ Cliente: ${userName}
 
 PRODUTO SELECIONADO
+ • Nome: ${product.name}
+ • Marca: ${brandName}
+ • Valor: ${formatPrice(price)}
+ • Ver produto:
+ ${imageUrl}
 
-${product.name}
 
-Marca: ${brandName}
+• Mensagem:
+ Gostaria de receber mais informacoes sobre este produto.
 
-Valor: ${formatPrice(price)}
-
-Ver produto: ${imageUrl}
-
------------------------------------
-
-Gostaria de mais informacoes sobre este produto.
-
-Obrigado!`;
+• Atenciosamente,
+ ${userName}`;
 
   return message;
 };
@@ -144,54 +139,44 @@ export const generateCartWhatsAppMessage = async (cartItems: any[], totalItems: 
       const brandName = it.brand ? it.brand.toUpperCase() : 'SEM MARCA';
       const productLines = [
         `${it.index}. ${it.name}`,
-        '',
-        `Marca: ${brandName}`,
-        '',
-        `Valor unitario: ${formatPrice(it.unitPrice)}`,
-        '',
-        `Quantidade: ${it.quantity} un`,
-        '',
-        `Subtotal: ${formatPrice(it.subtotal)}`,
-        ''
+        ` • Marca: ${brandName}`,
+        ` • Valor unitario: ${formatPrice(it.unitPrice)}`,
+        ` • Quantidade: ${it.quantity} un`,
+        ` • Subtotal: ${formatPrice(it.subtotal)}`
       ];
       
       if (it.imageUrl) {
-        productLines.push(`Ver produto: ${it.imageUrl}`);
+        productLines.push(` • Ver produto:\n ${it.imageUrl}`);
       }
       
       return productLines.join('\n');
     })
-    .join('\n\n\n');
+    .join('\n\n');
 
   const computedTotalValue = enrichedItems.reduce((sum, it) => sum + it.subtotal, 0);
 
   // Mensagem formatada conforme especificação
   const message = `KAJIM RELOGIOS
-===================================
 
 CONSULTA DE ORCAMENTO
 
-Cliente: ${userName}
-
------------------------------------
+ Cliente: ${userName}
 
 PRODUTOS SELECIONADOS
 
 ${itemsList}
 
------------------------------------
 
 RESUMO DO PEDIDO
+ • Itens: ${totalItems}
+ • Total: ${formatPrice(computedTotalValue)}
 
-Itens: ${totalItems}
 
-Total: ${formatPrice(computedTotalValue)}
+• Mensagem:
+ Gostaria de informacoes sobre disponibilidade e formas de pagamento.
 
------------------------------------
-
-Gostaria de informacoes sobre disponibilidade e formas de pagamento.
-
-Obrigado!`;
+• Atenciosamente,
+ ${userName}`;
 
   return message;
 };
